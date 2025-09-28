@@ -310,7 +310,7 @@ const FloatingNav = () => {
         </div>
       </header>
 
-      {/* Mobile Bottom Navigation */}
+      {/* Mobile Bottom Navigation 
       {isMobile && (
         <div className="fixed bottom-0 left-0 right-0 z-40 glass-effect border-t border-white/10 bg-black/80 backdrop-blur-lg">
           <div className="flex items-center justify-between px-1">
@@ -342,7 +342,7 @@ const FloatingNav = () => {
             </Button>
           </div>
         </div>
-      )}
+      )}*/}
 
       {/* Background overlay */}
       <AnimatePresence>

@@ -57,9 +57,9 @@ export function HeroSlider({ collections, autoPlay = true, interval = 5000 }: He
       <AnimatePresence mode="wait">
         <motion.div
           key={currentSlide}
-          initial={{ opacity: 0, scale: 1.1 }}
+          initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.95 }}
+          exit={{ opacity: 0, scale: 1 }}
           transition={{ duration: 1.2, ease: "easeInOut" }}
           className="absolute inset-0"
         >
@@ -82,7 +82,7 @@ export function HeroSlider({ collections, autoPlay = true, interval = 5000 }: He
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentSlide}
-                initial={{ opacity: 0, y: 50 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -30 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
@@ -94,7 +94,7 @@ export function HeroSlider({ collections, autoPlay = true, interval = 5000 }: He
                   transition={{ duration: 0.6, delay: 0.4 }}
                 >
                   <Badge className="mb-4 md:mb-6 bg-primary/20 text-primary-foreground border-primary/30 text-sm">
-                    Featured Collection
+                    Featured Collections
                   </Badge>
                 </motion.div>
 

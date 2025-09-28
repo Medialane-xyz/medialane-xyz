@@ -464,7 +464,7 @@ export default function Footer() {
 
           <div className="flex items-center space-x-2 text-sm text-gray-400">
             <Shield className="h-4 w-4 text-green-400" />
-            <span>Secured by blockchain technology</span>
+            <span>Powered bu Starknet</span>
           </div>
         </motion.div>
       </motion.div>
