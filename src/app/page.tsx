@@ -303,62 +303,7 @@ export default function Home() {
 
 
 
-        {/* Live Platform Stats */}
-        <motion.section
-          initial="hidden"
-          animate="visible"
-          variants={containerVariants}
-          className="py-6 md:py-8 bg-muted/30 -mx-3 md:-mx-4 px-3 md:px-4"
-        >
-          <motion.div variants={itemVariants} className="max-w-5xl mx-auto">
-            <div className="text-center mb-6">
-              <div className="inline-flex items-center justify-center px-3 py-1.5 bg-primary/10 rounded-full mb-2">
-                <Activity className="w-3 h-3 mr-1.5 text-primary animate-pulse" />
-                <span className="text-xs font-medium">Live Platform Stats</span>
-              </div>
-              <h2 className="text-lg md:text-xl font-bold mb-1">Growing Ecosystem</h2>
-              <p className="text-sm text-muted-foreground">Real-time marketplace metrics</p>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[
-                {
-                  value: stats?.assets?.toLocaleString() || "12.8K",
-                  label: "Total Assets",
-                  color: "text-primary",
-                  change: "+12%",
-                },
-                {
-                  value: "3.2K",
-                  label: "Active Remixes",
-                  color: "text-purple-500",
-                  change: "+23%",
-                },
-                {
-                  value: stats?.users?.toLocaleString() || "5.6K",
-                  label: "Creators",
-                  color: "text-green-500",
-                  change: "+8%",
-                },
-                {
-                  value: `$${stats?.volume?.toLocaleString() || "8.4"}M`,
-                  label: "Trading Volume",
-                  color: "text-cyan-500",
-                  change: "+15%",
-                },
-              ].map((stat, index) => (
-                <motion.div
-                  key={index}
-                  variants={itemVariants}
-                  className="text-center p-4 bg-background/50 rounded-lg backdrop-blur-sm"
-                >
-                  <div className={`text-2xl md:text-3xl font-bold ${stat.color} mb-1`}>{stat.value}</div>
-                  <div className="text-sm text-muted-foreground mb-1">{stat.label}</div>
-                  <div className="text-xs text-green-500 font-medium">{stat.change}</div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </motion.section>
+        
 
 
 
