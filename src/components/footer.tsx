@@ -61,7 +61,7 @@ export default function Footer() {
         { name: "All Assets", href: "/explore" },
         { name: "Collections", href: "/collections" },
         { name: "Trending", href: "/explore?sort=trending" },
-        { name: "New Releases", href: "/explore/new" },
+        { name: "New Releases", href: "/new-releases" },
         { name: "Categories", href: "/explore?view=categories" },
       ],
     },
@@ -72,8 +72,7 @@ export default function Footer() {
       links: [
         { name: "New Asset", href: "/create" },
         { name: "New Collection", href: "/create?type=collection" },
-        { name: "Batch Upload", href: "/create?type=batch" },
-        { name: "Templates", href: "/create?view=templates" },
+        { name: "With Templates", href: "/create?view=templates" },
       ],
     },
     {
@@ -339,7 +338,7 @@ export default function Footer() {
 
 
 
-              {/* Main Navigation Section */}
+      {/* Main Navigation Section */}
       <div className="relative border-b border-gray-800/50">
         <motion.div
           className="container mx-auto px-4 py-12"
@@ -422,7 +421,7 @@ export default function Footer() {
 
 
 
-            {/* Resources and Support Section */}
+            {/* Resources and Support Section 
       <div className="relative border-b border-gray-800/50">
         <motion.div
           className="container mx-auto px-4 py-12"
@@ -455,7 +454,7 @@ export default function Footer() {
             ))}
           </div>
         </motion.div>
-      </div>
+      </div>*/}
 
 
 

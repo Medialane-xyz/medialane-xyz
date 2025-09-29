@@ -106,6 +106,8 @@ export function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
+            
+            
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-2 group">
               <div className="w-8 h-8 bg-gradient-to-br from-primary to-purple-600 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
@@ -115,6 +117,10 @@ export function Navbar() {
                 MediaLane
               </span>
             </Link>
+
+
+
+
 
             {/* Desktop Navigation */}
             {!isMobile && (
