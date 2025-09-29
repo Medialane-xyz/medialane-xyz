@@ -178,34 +178,26 @@ export default function CreatorsPage() {
   )
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen pt-16 sm:pt-20 md:pt-24 pb-20 sm:pb-24 md:pb-32">
       {/* Streamlined Header */}
-      <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b">
+      <div className="bg-background/95 backdrop-blur-sm mt-100">
         <div className="px-3 py-3">
-          <div className="flex items-center justify-between mb-3">
-            <div>
-              <h1 className="text-lg font-bold">Creators</h1>
-              <p className="text-xs text-muted-foreground">{sortedCreators.length} creators</p>
+          
+          
+          <motion.div
+            className="text-center mb-4 sm:mb-6 md:mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="inline-flex items-center justify-center p-2 bg-primary/10 rounded-full mb-3 sm:mb-4">
+              <Grid3X3 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-primary" />
+              <span className="text-xs sm:text-sm font-medium">Discover</span>
             </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant={viewMode === "grid" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setViewMode("grid")}
-                className="h-8 w-8 p-0"
-              >
-                <Grid3X3 className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={viewMode === "list" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setViewMode("list")}
-                className="h-8 w-8 p-0"
-              >
-                <List className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
+            <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-2 sm:mb-3 md:mb-4 gradient-text">
+              Creators
+            </h1>
+          </motion.div>
 
           {/* Search & Filter Button */}
           <div className="flex gap-2">

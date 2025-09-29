@@ -158,24 +158,21 @@ export default function CollectionsPage() {
           >
             <div className="inline-flex items-center justify-center p-2 bg-primary/10 rounded-full mb-3 sm:mb-4">
               <Grid3X3 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-primary" />
-              <span className="text-xs sm:text-sm font-medium">Curated Collections</span>
+              <span className="text-xs sm:text-sm font-medium">Explore from creators worldwide</span>
             </div>
             <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-2 sm:mb-3 md:mb-4 gradient-text">
-              IP Asset Collections
+              Collections
             </h1>
-            <p className="text-sm sm:text-base md:text-lg text-zinc-400 max-w-2xl mx-auto px-2">
-              Explore thematic collections of intellectual property assets curated by leading creators
-            </p>
           </motion.div>
 
-          {/* Stats */}
+          {/* Stats 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
             <CollectionStats collections={collections} />
-          </motion.div>
+          </motion.div>*/}
 
           {/* Mobile-optimized search and filters */}
           <motion.div

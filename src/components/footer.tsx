@@ -162,10 +162,10 @@ export default function Footer() {
 
   // Platform stats
   const stats = [
-    { label: "Active Creators", value: "10K+", color: "text-purple-400", icon: Users },
-    { label: "IP Assets", value: "50K+", color: "text-blue-400", icon: Layers },
-    { label: "Trading Volume", value: "$5M+", color: "text-green-400", icon: BarChart3 },
-    { label: "Transactions", value: "120K+", color: "text-cyan-400", icon: Zap },
+    { label: "Active Creators", value: "X+", color: "text-purple-400", icon: Users },
+    { label: "IP Assets", value: "X+", color: "text-blue-400", icon: Layers },
+    { label: "Trading Volume", value: "$X", color: "text-green-400", icon: BarChart3 },
+    { label: "Transactions", value: "X+", color: "text-cyan-400", icon: Zap },
   ]
 
   return (
@@ -175,113 +175,16 @@ export default function Footer() {
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
 
-      {/* Main Navigation Section */}
-      <div className="relative border-b border-gray-800/50">
-        <motion.div
-          className="container mx-auto px-4 py-12"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-        >
-          <motion.h2
-            className="text-2xl font-bold mb-8 text-center bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent"
-            variants={itemVariants}
-          >
-            Explore MediaLane
-          </motion.h2>
+      
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {mainNavigation.map((category, idx) => (
-              <motion.div key={idx} className="space-y-4" variants={itemVariants}>
-                <h3 className={`text-lg font-semibold flex items-center ${category.color}`}>
-                  <category.icon className="h-5 w-5 mr-2" />
-                  {category.title}
-                </h3>
-                <ul className="space-y-2">
-                  {category.links.map((link, linkIdx) => (
-                    <li key={linkIdx}>
-                      <Link
-                        href={link.href}
-                        className="text-gray-400 hover:text-white transition-colors duration-200 flex items-center group"
-                      >
-                        <ChevronRight className="h-3 w-3 mr-1 opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-200" />
-                        <span>{link.name}</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      </div>
+      
 
-      {/* Resources and Support Section */}
-      <div className="relative border-b border-gray-800/50">
-        <motion.div
-          className="container mx-auto px-4 py-12"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {resourceLinks.map((category, idx) => (
-              <motion.div key={idx} className="space-y-4" variants={itemVariants}>
-                <h3 className={`text-lg font-semibold flex items-center ${category.color}`}>
-                  <category.icon className="h-5 w-5 mr-2" />
-                  {category.title}
-                </h3>
-                <ul className="space-y-2">
-                  {category.links.map((link, linkIdx) => (
-                    <li key={linkIdx}>
-                      <Link
-                        href={link.href}
-                        className="text-gray-400 hover:text-white transition-colors duration-200 flex items-center group"
-                      >
-                        <ChevronRight className="h-3 w-3 mr-1 opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-200" />
-                        <span>{link.name}</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      </div>
+      
 
-      {/* Stats Section */}
-      <motion.div
-        className="relative container mx-auto px-4 py-12 border-b border-gray-800/50"
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-      >
-        <motion.h2
-          className="text-xl font-bold mb-8 text-center bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent"
-          variants={itemVariants}
-        >
-          Platform Statistics
-        </motion.h2>
 
-        <motion.div className="grid grid-cols-2 md:grid-cols-4 gap-6" variants={itemVariants}>
-          {stats.map((stat, index) => (
-            <motion.div
-              key={index}
-              className="bg-gray-900/50 border border-gray-800/50 rounded-xl p-4 text-center"
-              whileHover={{ scale: 1.03, y: -5 }}
-              transition={{ duration: 0.2 }}
-            >
-              <stat.icon className={`h-6 w-6 mx-auto mb-2 ${stat.color}`} />
-              <div className={`text-2xl md:text-3xl font-bold ${stat.color} mb-1`}>{stat.value}</div>
-              <div className="text-gray-400 text-sm">{stat.label}</div>
-            </motion.div>
-          ))}
-        </motion.div>
-      </motion.div>
+
+
+      
 
       {/* Brand and Features Section */}
       <motion.div
@@ -332,10 +235,9 @@ export default function Footer() {
             {/* Social Links */}
             <div className="flex space-x-4">
               {[
-                { icon: Twitter, href: "#", label: "Twitter" },
-                { icon: Instagram, href: "#", label: "Instagram" },
-                { icon: Github, href: "#", label: "GitHub" },
-                { icon: Linkedin, href: "#", label: "LinkedIn" },
+                { icon: Twitter, href: "https://x.com/medialane_xyz", label: "X Twitter" },
+                { icon: Github, href: "https://github.com/Medialane-xyz", label: "GitHub" },
+
               ].map((social, index) => (
                 <motion.a
                   key={index}
@@ -353,27 +255,23 @@ export default function Footer() {
 
           {/* Quick Access Links */}
           <motion.div className="lg:col-span-4" variants={itemVariants}>
-            <h3 className="text-lg font-semibold mb-6 flex items-center text-white">
-              <Flame className="h-5 w-5 mr-2 text-orange-400" />
-              Popular Features
-            </h3>
 
             <div className="grid grid-cols-1 gap-3">
               {[
                 {
                   icon: Heart,
                   color: "from-pink-500 to-purple-500",
-                  text: "Favorite Collections",
+                  text: "Collections",
                   href: "/collections?filter=popular",
                 },
-                { icon: Award, color: "from-amber-500 to-orange-500", text: "Top Creators", href: "/creators" },
+                { icon: Award, color: "from-amber-500 to-orange-500", text: "Creators", href: "/creators" },
                 {
                   icon: Lightbulb,
                   color: "from-blue-500 to-cyan-500",
-                  text: "IP Licensing Guide",
-                  href: "/guides/licensing",
+                  text: "Create New Asset",
+                  href: "/create",
                 },
-                { icon: Code, color: "from-green-500 to-emerald-500", text: "Developer API", href: "/developers/api" },
+                { icon: Code, color: "from-green-500 to-emerald-500", text: "Explore assets", href: "/explore" },
               ].map((feature, index) => (
                 <Link key={index} href={feature.href}>
                   <motion.div
@@ -415,25 +313,158 @@ export default function Footer() {
                 <h4 className="text-sm font-medium text-gray-300 mb-3">Language</h4>
                 <select className="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
                   <option value="en">English</option>
-                  <option value="es">Español</option>
-                  <option value="fr">Français</option>
-                  <option value="de">Deutsch</option>
-                  <option value="ja">日本語</option>
-                  <option value="zh">中文</option>
                 </select>
               </div>
 
               {/* App Version */}
               <div className="p-4 rounded-xl border border-gray-800/50 bg-gray-900/30">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-400">App Version</span>
-                  <span className="text-white font-mono bg-gray-800 px-2 py-1 rounded text-xs">v0.9.2-beta</span>
+                  <span className="text-gray-400">dApp v</span>
+                  <span className="text-white font-mono bg-gray-800 px-2 py-1 rounded text-xs">v0.0.1-testnet</span>
                 </div>
               </div>
             </div>
           </motion.div>
         </div>
       </motion.div>
+
+
+
+
+
+
+
+
+
+
+
+
+              {/* Main Navigation Section */}
+      <div className="relative border-b border-gray-800/50">
+        <motion.div
+          className="container mx-auto px-4 py-12"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+        >
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {mainNavigation.map((category, idx) => (
+              <motion.div key={idx} className="space-y-4" variants={itemVariants}>
+                <h3 className={`text-lg font-semibold flex items-center ${category.color}`}>
+                  <category.icon className="h-5 w-5 mr-2" />
+                  {category.title}
+                </h3>
+                <ul className="space-y-2">
+                  {category.links.map((link, linkIdx) => (
+                    <li key={linkIdx}>
+                      <Link
+                        href={link.href}
+                        className="text-gray-400 hover:text-white transition-colors duration-200 flex items-center group"
+                      >
+                        <ChevronRight className="h-3 w-3 mr-1 opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-200" />
+                        <span>{link.name}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       {/* Stats Section */}
+      <motion.div
+        className="relative container mx-auto px-4 py-12 border-b border-gray-800/50"
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+      >
+
+
+          <motion.div className="grid grid-cols-2 md:grid-cols-4 gap-6" variants={itemVariants}>
+            {stats.map((stat, index) => (
+              <motion.div
+                key={index}
+                className="bg-gray-900/50 border border-gray-800/50 rounded-xl p-4 text-center"
+                whileHover={{ scale: 1.03, y: -5 }}
+                transition={{ duration: 0.2 }}
+              >
+                <stat.icon className={`h-6 w-6 mx-auto mb-2 ${stat.color}`} />
+                <div className={`text-2xl md:text-3xl font-bold ${stat.color} mb-1`}>{stat.value}</div>
+                <div className="text-gray-400 text-sm">{stat.label}</div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </motion.div>
+
+
+
+
+
+
+
+            {/* Resources and Support Section */}
+      <div className="relative border-b border-gray-800/50">
+        <motion.div
+          className="container mx-auto px-4 py-12"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {resourceLinks.map((category, idx) => (
+              <motion.div key={idx} className="space-y-4" variants={itemVariants}>
+                <h3 className={`text-lg font-semibold flex items-center ${category.color}`}>
+                  <category.icon className="h-5 w-5 mr-2" />
+                  {category.title}
+                </h3>
+                <ul className="space-y-2">
+                  {category.links.map((link, linkIdx) => (
+                    <li key={linkIdx}>
+                      <Link
+                        href={link.href}
+                        className="text-gray-400 hover:text-white transition-colors duration-200 flex items-center group"
+                      >
+                        <ChevronRight className="h-3 w-3 mr-1 opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-200" />
+                        <span>{link.name}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+
+
+
+
+
+
+
+
+
 
       {/* Bottom Section */}
       <motion.div
@@ -448,23 +479,23 @@ export default function Footer() {
           variants={itemVariants}
         >
           <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6">
-            <p className="text-gray-400 text-sm">© {new Date().getFullYear()} MediaLane. All rights reserved.</p>
+            <p className="text-gray-400 text-sm">© {new Date().getFullYear()} MediaLane</p>
             <div className="flex space-x-4 text-sm">
-              <Link href="#" className="text-gray-400 hover:text-white transition-colors">
+              <Link href="https://mediolano.xyz/privacy-policy/" className="text-gray-400 hover:text-white transition-colors">
                 Privacy Policy
               </Link>
-              <Link href="#" className="text-gray-400 hover:text-white transition-colors">
+              <Link href="https://mediolano.xyz/terms-of-use/" className="text-gray-400 hover:text-white transition-colors">
                 Terms of Service
               </Link>
-              <Link href="#" className="text-gray-400 hover:text-white transition-colors">
-                Cookie Policy
+              <Link href="https://mediolano.xyz/guidelines/" className="text-gray-400 hover:text-white transition-colors">
+                Guidelines
               </Link>
             </div>
           </div>
 
           <div className="flex items-center space-x-2 text-sm text-gray-400">
             <Shield className="h-4 w-4 text-green-400" />
-            <span>Powered bu Starknet</span>
+            <span>Powered on Starknet</span>
           </div>
         </motion.div>
       </motion.div>
