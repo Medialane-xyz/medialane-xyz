@@ -57,8 +57,8 @@ export function HeroSlider({ collections, autoPlay = true, interval = 5000 }: He
       <AnimatePresence mode="wait">
         <motion.div
           key={currentSlide}
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, scale: 1 }}
+          animate={{ opacity: 1, scale: 1.1 }}
           exit={{ opacity: 0, scale: 1 }}
           transition={{ duration: 1.2, ease: "easeInOut" }}
           className="absolute inset-0"
