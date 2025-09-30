@@ -25,7 +25,7 @@ export default function Home() {
   // Featured collections for hero slider
   const featuredCollections = collections.slice(0, 5)
 
-  // Live activity simulation
+  // Live activity 
   const [liveActivities, setLiveActivities] = useState(activities.slice(0, 3))
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export default function Home() {
     return () => clearTimeout(timer)
   }, [])
 
-  // Simulate live activity updates
+  // live activity updates
   useEffect(() => {
     const interval = setInterval(() => {
       setLiveActivities((prev) => {

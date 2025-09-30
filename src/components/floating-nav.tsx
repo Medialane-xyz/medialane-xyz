@@ -16,6 +16,7 @@ import {
   Settings,
   LogOut,
   Wallet,
+  Rocket,
 } from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/src/components/ui/button"
@@ -32,6 +33,7 @@ import { useMobile } from "@/src/hooks/use-mobile"
 import { cn } from "@/src/lib/utils"
 import NotificationsMenu from "@/src/components/notifications-menu"
 import { useToast } from "@/src/components/ui/use-toast"
+import { LogoMedialane } from "./brand/logo-medialane"
 
 const FloatingNav = () => {
   const pathname = usePathname()
@@ -84,8 +86,8 @@ const FloatingNav = () => {
   // Main navigation items (simplified)
   const mainNavItems = [
     {
-      icon: <Home className="w-4 h-4" />,
-      label: "Home",
+      icon: <Rocket className="w-4 h-4" />,
+      label: "Start",
       href: "/",
       isActive: pathname === "/",
     },
@@ -133,10 +135,7 @@ const FloatingNav = () => {
           <div className="relative flex items-center justify-between h-12 md:h-14">
             {/* Logo */}
             <div className="flex-shrink-0 flex items-center px-3 md:px-4">
-              <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigateTo("/")}>
-                <div className="h-7 w-7 md:h-8 md:w-8 rounded-full bg-gradient-to-r from-purple-600 to-primary"></div>
-                {!isMobile && <span className="font-bold text-lg text-white">MediaLane</span>}
-              </div>
+              <LogoMedialane />
             </div>
 
             {/* Desktop Navigation */}

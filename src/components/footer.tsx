@@ -31,6 +31,9 @@ import {
 } from "lucide-react"
 import { ThemeToggle } from "@/src/components/theme-toggle"
 import { useMobile } from "@/src/hooks/use-mobile"
+import { LogoMediolano } from "./brand/logo-mediolano"
+import { LogoMedialane } from "./brand/logo-medialane"
+import { LogoMedialaneFooter } from "./brand/logo-medialane-footer"
 
 export default function Footer() {
   const isMobile = useMobile()
@@ -197,18 +200,7 @@ export default function Footer() {
           {/* Brand Section */}
           <motion.div className="lg:col-span-4" variants={itemVariants}>
             <div className="flex items-center space-x-3 mb-6">
-              <div className="relative">
-                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-purple-500 via-blue-500 to-cyan-500 flex items-center justify-center">
-                  <Sparkles className="h-5 w-5 text-white" />
-                </div>
-                <div className="absolute -top-1 -right-1 h-4 w-4 bg-green-500 rounded-full animate-pulse" />
-              </div>
-              <div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                  MediaLane
-                </span>
-                <div className="text-xs text-purple-400 font-medium">BETA</div>
-              </div>
+              <LogoMedialaneFooter />
             </div>
 
             <p className="text-gray-300 text-lg leading-relaxed mb-6 max-w-md">
