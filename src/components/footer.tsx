@@ -69,13 +69,16 @@ export default function Footer() {
       ],
     },
     {
-      title: "Create",
+      title: "Portfolio",
       icon: PlusCircle,
       color: "text-blue-400",
       links: [
-        { name: "New Asset", href: "/create" },
-        { name: "New Collection", href: "/create?type=collection" },
-        { name: "With Templates", href: "/create?view=templates" },
+        { name: "Create Asset", href: "/create" },
+        { name: "Create Collection", href: "/create?type=collection" },
+        { name: "Dashboard", href: "/portfolio/dashboard" },
+        { name: "My Assets", href: "/portfolio?tab=assets" },
+        { name: "My Collections", href: "/portfolio?tab=collections" },
+        { name: "Licensing", href: "/portfolio/licensings" },
       ],
     },
     {
@@ -91,15 +94,14 @@ export default function Footer() {
       ],
     },
     {
-      title: "Portfolio",
+      title: "Guidelines",
       icon: Wallet,
       color: "text-green-400",
       links: [
-        { name: "Dashboard", href: "/portfolio/dashboard" },
-        { name: "My Assets", href: "/portfolio?tab=assets" },
-        { name: "My Collections", href: "/portfolio?tab=collections" },
-        { name: "Licensing", href: "/portfolio/licensings" },
-        { name: "Analytics", href: "/portfolio?tab=analytics" },
+        { name: "Community Guidelines", href: "https://mediolano.xyz/community-guidelines/" },
+        { name: "Compliance Guidelines", href: "https://mediolano.xyz/compliance-guidelines/" },
+        { name: "Privacy Policy", href: "https://mediolano.xyz/privacy-policy/" },
+        { name: "Terms of Use", href: "https://mediolano.xyz/terms-of-use/" },
       ],
     },
   ]
@@ -164,60 +166,24 @@ export default function Footer() {
 
   // Platform stats
   const stats = [
-    { label: "Active Creators", value: "X+", color: "text-purple-400", icon: Users },
+    { label: "Creators", value: "X+", color: "text-purple-400", icon: Users },
     { label: "IP Assets", value: "X+", color: "text-blue-400", icon: Layers },
-    { label: "Trading Volume", value: "$X", color: "text-green-400", icon: BarChart3 },
+    { label: "Trading", value: "$X", color: "text-green-400", icon: BarChart3 },
     { label: "Transactions", value: "X+", color: "text-cyan-400", icon: Zap },
   ]
 
   return (
-    <footer className="relative bg-gradient-to-br from-blue-900/20 via-gray-900 to-black border-t border-gray-800/50 overflow-hidden">
+    <footer className="relative bg-gradient-to-br from-blue-600/20 via-rose-900/10 to-black border-t border-gray-800/50 overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-gradient-to-r from-rose-500/5 via-blue-500/5 to-blue-500/5" />
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-rose-500/10 rounded-full blur-3xl" />
-      <div className="absolute right-0 top-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-rose-500/10 rounded-full blur-3xl" />
+      <div className="absolute top-0 right-1/4 w-96 h-96 bg-rose-800/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-rose-800/10 rounded-full blur-3xl" />
 
       
 
       
 
-       {/* Main Navigation Section */}
-      <div className="relative border-b border-gray-800/50">
-        <motion.div
-          className="container mx-auto px-4 py-12"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-        >
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {mainNavigation.map((category, idx) => (
-              <motion.div key={idx} className="space-y-4" variants={itemVariants}>
-                <h3 className={`text-lg font-semibold flex items-center ${category.color}`}>
-                  <category.icon className="h-5 w-5 mr-2" />
-                  {category.title}
-                </h3>
-                <ul className="space-y-2">
-                  {category.links.map((link, linkIdx) => (
-                    <li key={linkIdx}>
-                      <Link
-                        href={link.href}
-                        className="text-gray-400 hover:text-white transition-colors duration-200 flex items-center group"
-                      >
-                        <ChevronRight className="h-3 w-3 mr-1 opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-200" />
-                        <span>{link.name}</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      </div>
-
+      
 
 
 
@@ -295,10 +261,10 @@ export default function Footer() {
                 {
                   icon: Lightbulb,
                   color: "from-blue-500 to-cyan-500",
-                  text: "Create New Asset",
+                  text: "Create Asset",
                   href: "/create",
                 },
-                { icon: Code, color: "from-green-500 to-emerald-500", text: "Explore assets", href: "/explore" },
+                { icon: Code, color: "from-green-500 to-emerald-500", text: "Explore", href: "/explore" },
               ].map((feature, index) => (
                 <Link key={index} href={feature.href}>
                   <motion.div
@@ -366,7 +332,42 @@ export default function Footer() {
 
 
 
-     
+      {/* Main Navigation Section */}
+      <div className="relative border-t border-gray-800/50">
+        <motion.div
+          className="container mx-auto px-4 py-12"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+        >
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {mainNavigation.map((category, idx) => (
+              <motion.div key={idx} className="space-y-4" variants={itemVariants}>
+                <h3 className={`text-lg font-semibold flex items-center ${category.color}`}>
+                  <category.icon className="h-5 w-5 mr-2" />
+                  {category.title}
+                </h3>
+                <ul className="space-y-2">
+                  {category.links.map((link, linkIdx) => (
+                    <li key={linkIdx}>
+                      <Link
+                        href={link.href}
+                        className="text-gray-400 hover:text-white transition-colors duration-200 flex items-center group"
+                      >
+                        <ChevronRight className="h-3 w-3 mr-1 opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-200" />
+                        <span>{link.name}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+
 
 
 
@@ -384,7 +385,7 @@ export default function Footer() {
 
        {/* Stats Section */}
       <motion.div
-        className="relative container mx-auto px-4 py-4 border-b border-gray-800/50"
+        className="relative container mx-auto px-4 py-12 border-b border-gray-800/50"
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
@@ -473,15 +474,10 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6">
             <p className="text-gray-400 text-sm">© {new Date().getFullYear()} MediaLane</p>
             <div className="flex space-x-4 text-sm">
-              <Link href="https://mediolano.xyz/privacy-policy/" className="text-gray-400 hover:text-white transition-colors">
-                Privacy Policy
-              </Link>
-              <Link href="https://mediolano.xyz/terms-of-use/" className="text-gray-400 hover:text-white transition-colors">
-                Terms of Service
-              </Link>
+              {/*
               <Link href="https://mediolano.xyz/guidelines/" className="text-gray-400 hover:text-white transition-colors">
                 Guidelines
-              </Link>
+              </Link>*/}
             </div>
           </div>
 
