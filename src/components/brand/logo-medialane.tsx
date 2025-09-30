@@ -3,9 +3,8 @@ import Image from "next/image";
 
 export function LogoMedialane() {
   return (
-    <div className="flex items-center space-x-2 ml-4">
+    <div className="flex items-center">
     <Link href="/">
-      
         <Image
           className="hidden dark:block"
           src="/medialane-ip-marketplace-w.png"
@@ -19,8 +18,7 @@ export function LogoMedialane() {
           alt="light-mode-image"
           width={177}
           height={33}
-        />
-         
+        />       
     </Link>
     </div>
   )
