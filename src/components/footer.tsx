@@ -157,9 +157,9 @@ export default function Footer() {
     { icon: Zap, text: "Zero-Fee Trading" },
     { icon: Shield, text: "IP Protection" },
     { icon: Globe, text: "Global Marketplace" },
-    { icon: Users, text: "Creator Community" },
-    { icon: BarChart3, text: "Analytics Dashboard" },
-    { icon: Layers, text: "Multi-Chain Support" },
+    { icon: Users, text: "Self-custody Assets" },
+    { icon: BarChart3, text: "Censorship Resistance" },
+    { icon: Layers, text: "Zero Kowledge Proof" },
   ]
 
   // Platform stats
@@ -171,17 +171,53 @@ export default function Footer() {
   ]
 
   return (
-    <footer className="relative bg-gradient-to-br from-black via-gray-900 to-black border-t border-gray-800/50 overflow-hidden">
+    <footer className="relative bg-gradient-to-br from-blue-900/20 via-gray-900 to-black border-t border-gray-800/50 overflow-hidden">
       {/* Background Effects */}
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-blue-500/5 to-cyan-500/5" />
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
+      <div className="absolute inset-0 bg-gradient-to-r from-rose-500/5 via-blue-500/5 to-blue-500/5" />
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-rose-500/10 rounded-full blur-3xl" />
+      <div className="absolute right-0 top-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-rose-500/10 rounded-full blur-3xl" />
 
       
 
       
 
-      
+       {/* Main Navigation Section */}
+      <div className="relative border-b border-gray-800/50">
+        <motion.div
+          className="container mx-auto px-4 py-12"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+        >
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {mainNavigation.map((category, idx) => (
+              <motion.div key={idx} className="space-y-4" variants={itemVariants}>
+                <h3 className={`text-lg font-semibold flex items-center ${category.color}`}>
+                  <category.icon className="h-5 w-5 mr-2" />
+                  {category.title}
+                </h3>
+                <ul className="space-y-2">
+                  {category.links.map((link, linkIdx) => (
+                    <li key={linkIdx}>
+                      <Link
+                        href={link.href}
+                        className="text-gray-400 hover:text-white transition-colors duration-200 flex items-center group"
+                      >
+                        <ChevronRight className="h-3 w-3 mr-1 opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-200" />
+                        <span>{link.name}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+
 
 
 
@@ -330,42 +366,7 @@ export default function Footer() {
 
 
 
-      {/* Main Navigation Section */}
-      <div className="relative border-b border-gray-800/50">
-        <motion.div
-          className="container mx-auto px-4 py-12"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-        >
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {mainNavigation.map((category, idx) => (
-              <motion.div key={idx} className="space-y-4" variants={itemVariants}>
-                <h3 className={`text-lg font-semibold flex items-center ${category.color}`}>
-                  <category.icon className="h-5 w-5 mr-2" />
-                  {category.title}
-                </h3>
-                <ul className="space-y-2">
-                  {category.links.map((link, linkIdx) => (
-                    <li key={linkIdx}>
-                      <Link
-                        href={link.href}
-                        className="text-gray-400 hover:text-white transition-colors duration-200 flex items-center group"
-                      >
-                        <ChevronRight className="h-3 w-3 mr-1 opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-200" />
-                        <span>{link.name}</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      </div>
-
+     
 
 
 
@@ -383,7 +384,7 @@ export default function Footer() {
 
        {/* Stats Section */}
       <motion.div
-        className="relative container mx-auto px-4 py-12 border-b border-gray-800/50"
+        className="relative container mx-auto px-4 py-4 border-b border-gray-800/50"
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
