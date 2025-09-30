@@ -29,7 +29,7 @@ export function CollectionCard({ collection, index }: CollectionCardProps) {
       variants={item}
       onClick={handleCollectionClick}
     >
-      <div className="relative h-32 overflow-hidden">
+      <div className="relative h-48 overflow-hidden">
         <img
           src={collection.banner || "/placeholder.svg"}
           alt={collection.name}

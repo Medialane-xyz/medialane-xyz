@@ -38,7 +38,7 @@ export default function CreatorCard({ creator }: CreatorCardProps) {
   return (
     <Card className="group overflow-hidden border border-border/50 hover:border-border transition-all duration-300 hover:shadow-lg bg-card/50 backdrop-blur-sm">
       {/* Banner Section */}
-      <div className="relative h-20 md:h-24 overflow-hidden">
+      <div className="relative h-32 md:h-48 overflow-hidden">
         <img
           src={creator.banner || "/placeholder.svg?height=96&width=400&text=Creator+Banner"}
           alt={`${creator.name} banner`}

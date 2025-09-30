@@ -181,10 +181,6 @@ export default function CollectionDetailPage() {
             </Tooltip>
           </TooltipProvider>
 
-          <Button variant="default">
-            <ExternalLink className="h-4 w-4 mr-2" />
-            View on Starknet
-          </Button>
         </div>
       </div>
 
@@ -193,7 +189,7 @@ export default function CollectionDetailPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="relative w-full h-64 md:h-80 rounded-xl overflow-hidden mb-8"
+        className="relative w-full h-64 md:h-96 rounded-xl overflow-hidden mb-8"
       >
         <img
           src={collection.banner || "/placeholder.svg?height=400&width=1200"}
@@ -223,7 +219,7 @@ export default function CollectionDetailPage() {
             </div>
 
             <div className="mt-4 md:mt-0">
-              <Button className="w-full md:w-auto">License Assets</Button>
+             
             </div>
           </div>
         </div>
