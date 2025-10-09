@@ -59,7 +59,7 @@ export function CollectionCard({ collection, index }: CollectionCardProps) {
             </div>
 
             <div className="text-sm">
-              <div className="font-medium">{collection.volume || collection.totalVolume || "0 ETH"}</div>
+              <div className="font-medium">{collection.volume || collection.totalVolume || "0 STRK"}</div>
               <div className="text-xs text-muted-foreground">Volume</div>
             </div>
 

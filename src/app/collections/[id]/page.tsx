@@ -150,11 +150,11 @@ export default function CollectionDetailPage() {
     },
     {
       label: "Floor Price",
-      value: collection?.floorPrice || "0.5 ETH",
+      value: collection?.floorPrice || "0.5 STRK",
     },
     {
       label: "Volume",
-      value: collection?.volume || collection?.totalVolume || "0 ETH",
+      value: collection?.volume || collection?.totalVolume || "0 STRK",
     },
   ]
 

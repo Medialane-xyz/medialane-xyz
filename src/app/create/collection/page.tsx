@@ -77,7 +77,7 @@ export default function CreateCollectionPage() {
     isUnlimited: false,
     royaltyPercentage: 5,
     mintPrice: 0.1,
-    currency: "ETH",
+    currency: "STRK",
 
     // Programmable IP Settings
     enableRemixing: true,
@@ -737,10 +737,7 @@ export default function CreateCollectionPage() {
                           onChange={(e) => setFormData((prev) => ({ ...prev, currency: e.target.value }))}
                           className="w-full p-3 bg-black/40 border border-white/10 rounded-lg text-white focus:border-green-400"
                         >
-                          <option value="ETH">ETH</option>
-                          <option value="MATIC">MATIC</option>
-                          <option value="BNB">BNB</option>
-                          <option value="SOL">SOL</option>
+                          <option value="STRK">STRK</option>
                         </select>
                       </div>
                     </div>
