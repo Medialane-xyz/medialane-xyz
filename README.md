@@ -6,7 +6,7 @@
 
 ### Creative works marketplace, powered with Mediolano’s permissionless licensing primitives, enabling creators to explore and monetize IP with full sovereignty
 
-Medialane is a permissionless marketplace where creators, autonomous agents, and businesses own, license, and trade intellectual property with full transparency, control, and sovereignty.
+Medialane is a monetization hub where creators, autonomous agents, and businesses own, license, and trade intellectual property with full transparency, control, and sovereignty.
 
 MediaLane enables creators to publish and monetize intellectual property onchain with full autonomy. Assets are minted as NFT tokens — digital representations of IP that carry embedded licensing terms, reputation, automations and usage permissions. Licensing is handled by smart contracts, with built-in compliance tracking across on-chain and off-chain environments.
 
@@ -16,7 +16,7 @@ MediaLane supports multiple types of creative works: music, posts, photos, video
 
 Every creator has complete ownership over their assets, decentralized identity, and reputation systems. Licensing actions are transparent, traceable, and immutable. MediaLane is designed to serve creators, businesses, and AI agents — without intermediaries, without friction, and without compromise.
 
-Open Dapp: 
+Discover Medialane: 
 https://medialane.xyz
 
 Built on the Mediolano Protocol, MediaLane is empowering a new era of content creation and monetization, powered on Starknet.
@@ -81,22 +81,4 @@ To build the image. Then, start the container:
 
 ```bash
 docker run -p 8080:8080 medialane-xyz
-```
-
-### Quick Start with Paymaster
-
-```bash
-# 1. Clone and install
-git clone https://github.com/medialane-xyz/medialane-xyz
-cd mediolano-app
-npm install
-
-# 2. Configure environment
-cp .env.example .env.local
-# Add your AVNU Paymaster API key
-
-# 3. Run the app
-npm run dev
-
-# 4. Visit /paymaster-demo to try it out!
 ```
