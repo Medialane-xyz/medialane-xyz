@@ -16,15 +16,18 @@ MediaLane supports multiple types of creative works: music, posts, photos, video
 
 Every creator has complete ownership over their assets, decentralized identity, and reputation systems. Licensing actions are transparent, traceable, and immutable. MediaLane is designed to serve creators, businesses, and AI agents — without intermediaries, without friction, and without compromise.
 
-Discover Medialane: 
-https://medialane.xyz
-
-Built on the Mediolano Protocol, MediaLane is empowering a new era of content creation and monetization, powered on Starknet.
-
-Discover Mediolano:
-https://mediolano.xyz
+Discover Medialane:  [https://medialane.xyz](https://medialane.xyz)
 
 
+## Roadmap
+
+- [ ] Medialane Protocol @ Starknet Sepolia **25.11**
+
+- [ ] Medialane Dapp @ Starknet Sepolia **25.11**
+
+- [ ] Medialane Protocol @ Starknet Mainnet **25.12**
+
+- [ ] Medialane Dapp @ Starknet Mainnet **26.01**
 
 
 ## Contributing
