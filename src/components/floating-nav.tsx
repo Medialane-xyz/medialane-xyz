@@ -85,7 +85,7 @@ const FloatingNav = () => {
   const mainNavItems = [
     {
       icon: <Home className="w-4 h-4" />,
-      label: "Home",
+      label: "Start",
       href: "/",
       isActive: pathname === "/",
     },
@@ -171,7 +171,7 @@ const FloatingNav = () => {
                 <Search className="w-4 h-4" />
               </Button>
 
-              <NotificationsMenu />
+              {/* <NotificationsMenu /> */}
 
               {/* Create Button - Desktop Only */}
               {!isMobile && (

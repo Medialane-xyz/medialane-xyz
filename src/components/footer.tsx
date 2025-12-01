@@ -152,7 +152,7 @@ export default function Footer() {
 
   // Platform features with icons
   const features = [
-    { icon: Zap, text: "Zero-Fee Trading" },
+    { icon: Zap, text: "Low-Fee Trading" },
     { icon: Shield, text: "IP Protection" },
     { icon: Globe, text: "Global Marketplace" },
     { icon: Users, text: "Creator Community" },
@@ -310,8 +310,7 @@ export default function Footer() {
             </div>
 
             <p className="text-gray-300 text-lg leading-relaxed mb-6 max-w-md">
-              The world's first <span className="text-purple-400 font-semibold">zero-fee</span> marketplace for
-              programmable IP. Empowering creators to monetize their digital assets and intellectual property.
+              Marketplace for programmable IP. Empowering creators to monetize their digital assets and intellectual property.
             </p>
 
             {/* Feature Highlights */}
