@@ -16,7 +16,7 @@ const notifications = [
     id: "1",
     type: "activity",
     title: "New Sale",
-    message: "Your asset 'Digital Landscape' was sold for 2.5 STRK",
+    message: "Your asset 'Digital Landscape' was sold for 2.5 ETH",
     time: "2 hours ago",
     read: false,
     avatar: "/placeholder.svg?height=40&width=40&text=U1",

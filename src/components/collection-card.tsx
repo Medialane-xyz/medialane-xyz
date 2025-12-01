@@ -29,7 +29,7 @@ export function CollectionCard({ collection, index }: CollectionCardProps) {
       variants={item}
       onClick={handleCollectionClick}
     >
-      <div className="relative h-48 overflow-hidden">
+      <div className="relative h-32 overflow-hidden">
         <img
           src={collection.banner || "/placeholder.svg"}
           alt={collection.name}
@@ -59,7 +59,7 @@ export function CollectionCard({ collection, index }: CollectionCardProps) {
             </div>
 
             <div className="text-sm">
-              <div className="font-medium">{collection.volume || collection.totalVolume || "0 STRK"}</div>
+              <div className="font-medium">{collection.volume || collection.totalVolume || "0 ETH"}</div>
               <div className="text-xs text-muted-foreground">Volume</div>
             </div>
 

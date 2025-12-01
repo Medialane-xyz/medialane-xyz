@@ -151,7 +151,7 @@ export default function UsersPage() {
   return (
     <div className="container px-4 py-12">
       {/* Header */}
-      <div className="flex flex-col gap-6 mb-8 mt-40">
+      <div className="flex flex-col gap-6 mb-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold mb-2">Discover Creators</h1>

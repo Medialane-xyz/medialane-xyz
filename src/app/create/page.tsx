@@ -43,6 +43,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/src/compo
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/src/components/ui/sheet"
 import { useMobile } from "@/src/hooks/use-mobile"
 import PageTransition from "@/src/components/page-transition"
+import { CollectionSelector } from "@/src/components/collection-selector"
 
 export default function CreateAssetPage() {
   const [assetFile, setAssetFile] = useState<File | null>(null)
@@ -55,6 +56,7 @@ export default function CreateAssetPage() {
   const [isDragOver, setIsDragOver] = useState(false)
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
+  const [selectedCollection, setSelectedCollection] = useState<string | null>(null)
 
   // Advanced settings with sensible defaults
   const [royaltyPercentage, setRoyaltyPercentage] = useState([5])
@@ -161,7 +163,7 @@ export default function CreateAssetPage() {
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
     toast({
-      title: "Asset Created Successfully!",
+      title: "Asset Created Successfully! 🎉",
       description: "Your programmable IP asset has been created and deployed to Starknet",
     })
 
@@ -258,7 +260,52 @@ export default function CreateAssetPage() {
 
   return (
     <PageTransition>
-      <div className="min-h-screen mt-40">
+      <div className="min-h-screen bg-black">
+        {/* Mobile Header */}
+        {isMobile && (
+          <div className="sticky top-0 z-50 bg-black/95 backdrop-blur-xl border-b border-white/10">
+            <div className="flex items-center justify-between px-4 py-3">
+              <Button variant="ghost" size="sm" onClick={() => router.back()} className="p-2">
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <h1 className="text-lg font-semibold">Create Asset</h1>
+              <Sheet open={showPreview} onOpenChange={setShowPreview}>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="sm" className="p-2">
+                    <Eye className="h-5 w-5" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl">
+                  <SheetHeader className="mb-4">
+                    <SheetTitle className="flex items-center gap-2 text-left">
+                      <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                      Live Preview
+                    </SheetTitle>
+                  </SheetHeader>
+                  <div className="overflow-y-auto h-full pb-6">
+                    <PreviewContent />
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
+          </div>
+        )}
+
+        {/* Desktop Header */}
+        {!isMobile && (
+          <div className="text-center pt-20 md:pt-24 pb-8 px-4">
+            <div className="inline-flex items-center justify-center p-3 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-full mb-6">
+              <Sparkles className="w-6 h-6 mr-2 text-primary" />
+              <span className="text-sm font-medium">Create Programmable IP</span>
+            </div>
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-primary to-purple-400 bg-clip-text text-transparent">
+              Create Your NFT Asset
+            </h1>
+            <p className="text-xl text-zinc-400 max-w-3xl mx-auto leading-relaxed">
+              Transform your intellectual property into programmable NFTs with zero gas fees on Starknet
+            </p>
+          </div>
+        )}
 
         <div className={`${isMobile ? "px-3 pb-20" : "px-4 md:px-8 pb-24 md:pb-32"}`}>
           <div className={`max-w-6xl mx-auto ${isMobile ? "" : "grid grid-cols-1 lg:grid-cols-3 gap-8"}`}>
@@ -269,13 +316,13 @@ export default function CreateAssetPage() {
                 <div className="text-center mb-6 px-2">
                   <div className="inline-flex items-center justify-center p-2 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-full mb-3">
                     <Sparkles className="w-4 h-4 mr-1 text-primary" />
-                    <span className="text-xs font-medium">Create Asset</span>
+                    <span className="text-xs font-medium">Create Programmable IP</span>
                   </div>
                   <h1 className="text-2xl font-bold mb-2 bg-gradient-to-r from-white via-primary to-purple-400 bg-clip-text text-transparent">
-                    Create Your Programmable IP
+                    Create Your NFT Asset
                   </h1>
                   <p className="text-sm text-zinc-400 leading-relaxed">
-                    Tokenize your content with zero fees
+                    Transform your IP into programmable NFTs with zero gas fees
                   </p>
                 </div>
               )}
@@ -453,9 +500,17 @@ export default function CreateAssetPage() {
                         <p className="text-xs text-zinc-500">{assetDescription.length}/500 characters</p>
                       </div>
 
+                      {/* Collection Selector */}
+                      <div className="border-t border-white/10 pt-6">
+                        <CollectionSelector
+                          selectedCollection={selectedCollection}
+                          onCollectionSelect={setSelectedCollection}
+                        />
+                      </div>
+
                       <div className="space-y-2">
                         <Label htmlFor="assetPrice" className="text-sm font-medium">
-                          Price (STRK)
+                          Price (ETH)
                         </Label>
                         <Input
                           id="assetPrice"

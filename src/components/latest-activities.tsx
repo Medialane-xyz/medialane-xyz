@@ -1,11 +1,12 @@
 "use client"
 
 import { useState } from "react"
+import { motion } from "framer-motion"
 import { Card, CardContent } from "@/src/components/ui/card"
 import { Button } from "@/src/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
 import { ActivityItem } from "@/src/components/activity-item"
-import { Activity, TrendingUp, Shuffle, ShoppingCart } from "lucide-react"
+import { Activity, ArrowRight } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 interface LatestActivitiesProps {
   activities: any[]
@@ -13,9 +14,10 @@ interface LatestActivitiesProps {
   showTabs?: boolean
 }
 
-export default function LatestActivities({ activities, pageSize = 12, showTabs = true }: LatestActivitiesProps) {
+export default function LatestActivities({ activities, pageSize = 6, showTabs = false }: LatestActivitiesProps) {
   const [currentPage, setCurrentPage] = useState(0)
   const [activeTab, setActiveTab] = useState("all")
+  const router = useRouter()
 
   const filterActivities = (type?: string) => {
     if (!type || type === "all") return activities
@@ -48,105 +50,74 @@ export default function LatestActivities({ activities, pageSize = 12, showTabs =
     )
   }
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05,
+      },
+    },
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 12 },
+    visible: { opacity: 1, y: 0 },
+  }
+
   return (
-    <section className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="inline-flex items-center justify-center p-1.5 bg-primary/10 rounded-full mb-2">
-            <Activity className="w-3.5 h-3.5 mr-1.5 text-primary" />
-            <span className="text-xs font-medium">Live Activity</span>
+    <motion.section
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+      className="py-12 md:py-16 border-t border-border"
+    >
+      <div className="max-w-7xl mx-auto px-4 md:px-6">
+        <motion.div variants={itemVariants} className="mb-8">
+          <div className="flex items-end justify-between">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Latest Activities</h2>
+              <p className="text-base text-muted-foreground mt-2">Community activity that's shaping the marketplace</p>
+            </div>
+            <Button variant="outline" size="sm" onClick={() => router.push("/activity")} className="gap-2">
+              View More
+              <ArrowRight className="h-4 w-4" />
+            </Button>
           </div>
-          <h2 className="text-2xl font-bold">Latest Activities</h2>
-          <p className="text-sm text-muted-foreground mt-1">Real-time updates from the MediaLane community</p>
-        </div>
+        </motion.div>
+
+        <motion.div variants={itemVariants} className="space-y-3">
+          {displayedActivities.map((activity) => (
+            <motion.div key={activity.id} variants={itemVariants}>
+              <ActivityItem activity={activity} />
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 pt-6 border-t border-border/30">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
+              disabled={currentPage === 0}
+            >
+              Previous
+            </Button>
+            <span className="text-sm text-muted-foreground">
+              Page {currentPage + 1} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(Math.min(totalPages - 1, currentPage + 1))}
+              disabled={currentPage === totalPages - 1}
+            >
+              Next
+            </Button>
+          </div>
+        )}
       </div>
-
-      {showTabs ? (
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="all" className="flex items-center gap-2">
-              <Activity className="w-4 h-4" />
-              All
-            </TabsTrigger>
-            <TabsTrigger value="sale" className="flex items-center gap-2">
-              <ShoppingCart className="w-4 h-4" />
-              Sales
-            </TabsTrigger>
-            <TabsTrigger value="remix" className="flex items-center gap-2">
-              <Shuffle className="w-4 h-4" />
-              Remixes
-            </TabsTrigger>
-            <TabsTrigger value="mint" className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4" />
-              Mints
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value={activeTab} className="space-y-4">
-            <div className="grid gap-4">
-              {displayedActivities.map((activity) => (
-                <ActivityItem key={activity.id} activity={activity} compact={false} showImage={true} />
-              ))}
-            </div>
-
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-2 pt-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
-                  disabled={currentPage === 0}
-                >
-                  Previous
-                </Button>
-                <span className="text-sm text-muted-foreground">
-                  Page {currentPage + 1} of {totalPages}
-                </span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage(Math.min(totalPages - 1, currentPage + 1))}
-                  disabled={currentPage === totalPages - 1}
-                >
-                  Next
-                </Button>
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
-      ) : (
-        <div className="space-y-4">
-          <div className="grid gap-4">
-            {displayedActivities.map((activity) => (
-              <ActivityItem key={activity.id} activity={activity} compact={false} showImage={true} />
-            ))}
-          </div>
-
-          {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 pt-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
-                disabled={currentPage === 0}
-              >
-                Previous
-              </Button>
-              <span className="text-sm text-muted-foreground">
-                Page {currentPage + 1} of {totalPages}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(Math.min(totalPages - 1, currentPage + 1))}
-                disabled={currentPage === totalPages - 1}
-              >
-                Next
-              </Button>
-            </div>
-          )}
-        </div>
-      )}
-    </section>
+    </motion.section>
   )
 }

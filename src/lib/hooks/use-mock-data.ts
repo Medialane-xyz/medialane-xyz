@@ -13,7 +13,7 @@ const defaultMockAssets = [
     creatorAvatar: "/placeholder.svg?height=40&width=40&text=DA",
     image: "/placeholder.svg?height=400&width=400&text=Digital+Dreamscape",
     description: "A stunning digital artwork exploring the boundaries of imagination and reality.",
-    price: "0.5 STRK",
+    price: "0.5 ETH",
     category: "Art",
     likes: 42,
     liked: false,
@@ -28,7 +28,7 @@ const defaultMockAssets = [
     creatorAvatar: "/placeholder.svg?height=40&width=40&text=SW",
     image: "/placeholder.svg?height=400&width=400&text=Melodic+Memories",
     description: "An original music composition with programmable licensing for commercial use.",
-    price: "0.3 STRK",
+    price: "0.3 ETH",
     category: "Music",
     likes: 28,
     liked: false,
@@ -43,7 +43,7 @@ const defaultMockAssets = [
     creatorAvatar: "/placeholder.svg?height=40&width=40&text=TI",
     image: "/placeholder.svg?height=400&width=400&text=Quantum+Algorithm",
     description: "A patented quantum computing algorithm with programmable usage rights.",
-    price: "2.0 STRK",
+    price: "2.0 ETH",
     category: "Patent",
     likes: 15,
     liked: false,
@@ -58,7 +58,7 @@ const defaultMockAssets = [
     creatorAvatar: "/placeholder.svg?height=40&width=40&text=DS",
     image: "/placeholder.svg?height=400&width=400&text=Brand+Identity",
     description: "Complete brand identity package with logo, guidelines, and assets.",
-    price: "1.2 STRK",
+    price: "1.2 ETH",
     category: "Brand",
     likes: 36,
     liked: false,
@@ -73,7 +73,7 @@ const defaultMockAssets = [
     creatorAvatar: "/placeholder.svg?height=40&width=40&text=WS",
     image: "/placeholder.svg?height=400&width=400&text=Sci-Fi+Novel",
     description: "Publishing and adaptation rights for an award-winning science fiction novel.",
-    price: "0.8 STRK",
+    price: "0.8 ETH",
     category: "Literature",
     likes: 24,
     liked: false,
@@ -88,7 +88,7 @@ const defaultMockAssets = [
     creatorAvatar: "/placeholder.svg?height=40&width=40&text=AS",
     image: "/placeholder.svg?height=400&width=400&text=Abstract+Emotion",
     description: "An abstract representation of human emotions through digital art.",
-    price: "0.4 STRK",
+    price: "0.4 ETH",
     category: "Art",
     likes: 31,
     liked: false,
@@ -103,7 +103,7 @@ const defaultMockAssets = [
     creatorAvatar: "/placeholder.svg?height=40&width=40&text=FC",
     image: "/placeholder.svg?height=400&width=400&text=Cinematic+Score",
     description: "Original cinematic score suitable for film, games, and multimedia projects.",
-    price: "0.6 STRK",
+    price: "0.6 ETH",
     category: "Music",
     likes: 19,
     liked: false,
@@ -118,7 +118,7 @@ const defaultMockAssets = [
     creatorAvatar: "/placeholder.svg?height=40&width=40&text=GT",
     image: "/placeholder.svg?height=400&width=400&text=Renewable+Energy",
     description: "Innovative renewable energy technology with commercial licensing options.",
-    price: "3.0 STRK",
+    price: "3.0 ETH",
     category: "Patent",
     likes: 47,
     liked: false,
@@ -133,7 +133,7 @@ const defaultMockAssets = [
     creatorAvatar: "/placeholder.svg?height=40&width=40&text=SD",
     image: "/placeholder.svg?height=400&width=400&text=Fashion+Logo",
     description: "Premium fashion brand logo with complete usage rights and brand guidelines.",
-    price: "0.9 STRK",
+    price: "0.9 ETH",
     category: "Brand",
     likes: 33,
     liked: false,
@@ -148,7 +148,7 @@ const defaultMockAssets = [
     creatorAvatar: "/placeholder.svg?height=40&width=40&text=WB",
     image: "/placeholder.svg?height=400&width=400&text=Fantasy+Map",
     description: "Detailed fantasy world map with lore and world-building elements.",
-    price: "0.35 STRK",
+    price: "0.35 ETH",
     category: "Art",
     likes: 29,
     liked: false,
@@ -163,7 +163,7 @@ const defaultMockAssets = [
     creatorAvatar: "/placeholder.svg?height=40&width=40&text=BM",
     image: "/placeholder.svg?height=400&width=400&text=EDM+Track",
     description: "High-energy electronic dance music track with commercial licensing options.",
-    price: "0.25 STRK",
+    price: "0.25 ETH",
     category: "Music",
     likes: 38,
     liked: false,
@@ -178,7 +178,7 @@ const defaultMockAssets = [
     creatorAvatar: "/placeholder.svg?height=40&width=40&text=DS",
     image: "/placeholder.svg?height=400&width=400&text=AI+Algorithm",
     description: "Advanced AI algorithm framework for machine learning applications.",
-    price: "1.8 STRK",
+    price: "1.8 ETH",
     category: "Patent",
     likes: 22,
     liked: false,
@@ -198,7 +198,7 @@ const defaultMockCollections = [
     items: 24,
     verified: true,
     description: "A curated collection of digital art masterpieces from renowned artists around the world.",
-    volume: "45.8 STRK",
+    volume: "45.8 ETH",
   },
   {
     id: "2",
@@ -210,7 +210,7 @@ const defaultMockCollections = [
     verified: true,
     description:
       "A comprehensive collection of music tracks available for commercial licensing with programmable terms.",
-    volume: "32.5 STRK",
+    volume: "32.5 ETH",
   },
   {
     id: "3",
@@ -222,7 +222,7 @@ const defaultMockCollections = [
     verified: false,
     description:
       "A collection of technology patents and intellectual property rights available for licensing and development.",
-    volume: "78.2 STRK",
+    volume: "78.2 ETH",
   },
   {
     id: "4",
@@ -233,7 +233,7 @@ const defaultMockCollections = [
     items: 30,
     verified: true,
     description: "Complete brand identity packages including logos, guidelines, and marketing materials.",
-    volume: "56.7 STRK",
+    volume: "56.7 ETH",
   },
   {
     id: "5",
@@ -244,7 +244,7 @@ const defaultMockCollections = [
     items: 15,
     verified: false,
     description: "A collection of literary works with publishing rights and adaptation options.",
-    volume: "28.9 STRK",
+    volume: "28.9 ETH",
   },
   {
     id: "6",
@@ -255,7 +255,7 @@ const defaultMockCollections = [
     items: 20,
     verified: true,
     description: "A portfolio of film and video content with distribution and adaptation rights.",
-    volume: "62.3 STRK",
+    volume: "62.3 ETH",
   },
 ]
 
@@ -269,7 +269,7 @@ const defaultMockActivities = [
     userAvatar: "/placeholder.svg?height=40&width=40&text=CC",
     asset: "Digital Dreamscape",
     assetId: "1",
-    price: "0.5 STRK",
+    price: "0.5 ETH",
     timestamp: new Date(Date.now() - 1000 * 60 * 5).toISOString(), // 5 minutes ago
   },
   {
@@ -280,7 +280,7 @@ const defaultMockActivities = [
     userAvatar: "/placeholder.svg?height=40&width=40&text=AS",
     asset: "Abstract Emotion",
     assetId: "6",
-    price: "0.4 STRK",
+    price: "0.4 ETH",
     timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(), // 15 minutes ago
   },
   {
@@ -312,7 +312,7 @@ const defaultMockActivities = [
     userAvatar: "/placeholder.svg?height=40&width=40&text=BM",
     asset: "Brand Identity Package",
     assetId: "4",
-    price: "1.2 STRK",
+    price: "1.2 ETH",
     timestamp: new Date(Date.now() - 1000 * 60 * 90).toISOString(), // 1.5 hours ago
   },
   {
@@ -323,7 +323,7 @@ const defaultMockActivities = [
     userAvatar: "/placeholder.svg?height=40&width=40&text=WS",
     asset: "Sci-Fi Novel Rights",
     assetId: "5",
-    price: "0.8 STRK",
+    price: "0.8 ETH",
     timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString(), // 2 hours ago
   },
   {

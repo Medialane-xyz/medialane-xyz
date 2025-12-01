@@ -58,44 +58,37 @@
   }
 }
 
-/* Custom scrollbar */
+/* Optimized scrollbar styling */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.3);
 }
 
-/* Custom styles */
-.glow-effect {
-  box-shadow: 0 0 15px rgba(124, 58, 237, 0.5);
-}
-
 .glass-effect {
-  background: rgba(15, 15, 15, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 15, 15, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .premium-glass {
-  background: linear-gradient(to bottom, rgba(30, 30, 30, 0.8), rgba(15, 15, 15, 0.7));
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  background: rgba(20, 20, 20, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .gradient-text {
@@ -104,21 +97,35 @@
   -webkit-text-fill-color: transparent;
 }
 
-.gradient-border {
-  position: relative;
+/* Add gradient border animation effect for asset cards */
+@keyframes gradient-border-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
-.gradient-border::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(to right, transparent, rgba(124, 58, 237, 0.5), transparent);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
+.gradient-border-animated {
+  position: relative;
+  background: linear-gradient(to bottom, hsl(var(--background)), hsl(var(--background))) padding-box,
+    linear-gradient(90deg, #8b5cf6, #ec4899, #8b5cf6) border-box;
+  background-size: 200% 100%;
+  animation: gradient-border-animation 3s ease-in-out infinite;
+  border: 1px solid transparent;
+}
+
+.gradient-border-hover {
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.gradient-border-hover:hover {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3), inset 0 0 20px rgba(139, 92, 246, 0.1);
+  transform: translateY(-8px);
 }
 
 .floating-button {
@@ -129,15 +136,6 @@
 .floating-button:hover {
   box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4), 0 0 20px rgba(124, 58, 237, 0.4);
   transform: translateY(-2px);
-}
-
-.asset-card {
-  transform-style: preserve-3d;
-  transform: perspective(1000px);
-}
-
-.asset-card-content {
-  transform: translateZ(20px);
 }
 
 .floating-nav-item {
@@ -169,24 +167,6 @@
 .creator-card {
   overflow: hidden;
   position: relative;
-}
-
-.creator-card::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: conic-gradient(transparent, rgba(124, 58, 237, 0.3), transparent 30%);
-  animation: rotate 4s linear infinite;
-  z-index: -1;
-}
-
-@keyframes rotate {
-  100% {
-    transform: rotate(1turn);
-  }
 }
 
 .activity-item {
@@ -242,34 +222,11 @@
   transform: translateY(-1px);
 }
 
-/* Subtle shimmer effect for premium elements */
-.shimmer {
-  position: relative;
-  overflow: hidden;
-}
-
-.shimmer::after {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.05) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  transform: rotate(30deg);
-  animation: shimmer 6s infinite linear;
-}
-
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%) rotate(30deg);
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  100% {
-    transform: translateX(100%) rotate(30deg);
+  to {
+    opacity: 1;
   }
 }

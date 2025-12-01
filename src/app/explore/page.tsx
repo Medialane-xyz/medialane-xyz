@@ -203,12 +203,14 @@ export default function ExplorePage() {
         >
           <div className="inline-flex items-center justify-center p-2 bg-primary/10 rounded-full mb-4">
             <Compass className="w-4 h-4 mr-2 text-primary" />
-            <span className="text-sm font-medium">Explore</span>
+            <span className="text-sm font-medium">Discover IP</span>
           </div>
 
-          <h1 className="text-3xl md:text-5xl font-bold mb-3 md:mb-4 gradient-text">Programmable IP</h1>
+          <h1 className="text-3xl md:text-5xl font-bold mb-3 md:mb-4 gradient-text">Explore Programmable IP</h1>
 
-
+          <p className="text-base md:text-lg text-zinc-400 max-w-2xl mb-8">
+            Discover unique intellectual property assets with zero-fee licensing on Starknet
+          </p>
 
           {/* Featured tags */}
           <div className="flex flex-wrap gap-2 justify-center max-w-3xl mb-6">

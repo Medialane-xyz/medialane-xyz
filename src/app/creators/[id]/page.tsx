@@ -13,9 +13,13 @@ import {
   Share2,
   ExternalLink,
   Info,
+  Globe,
+  Twitter,
+  Instagram,
 } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar"
 import { Button } from "@/src/components/ui/button"
+import { Badge } from "@/src/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
 import { Input } from "@/src/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
@@ -45,32 +49,33 @@ const EmptyState = ({ title, description, action }) => (
   </motion.div>
 )
 
-export default function CollectionDetailPage() {
+export default function CreatorDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const { collections, assets } = useMockData()
-  const [collection, setCollection] = useState(null)
-  const [collectionAssets, setCollectionAssets] = useState([])
+  const { creators, assets } = useMockData()
+  const [creator, setCreator] = useState(null)
+  const [creatorAssets, setCreatorAssets] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [sortBy, setSortBy] = useState("recent")
+  const [viewMode, setViewMode] = useState("grid")
 
-  // Simulated loading of collection data
+  // Simulated loading of creator data
   useEffect(() => {
-    const collectionId = params.id
-    // Find the collection in mock data
-    const foundCollection = collections.find((c) => c.id === collectionId)
+    const creatorId = params.id
+    // Find the creator in mock data
+    const foundCreator = creators.find((c) => c.id === creatorId)
 
-    if (foundCollection) {
-      setCollection(foundCollection)
+    if (foundCreator) {
+      setCreator(foundCreator)
 
-      // Generate some assets for this collection
-      const collectionAssets = assets.slice(0, foundCollection.items || foundCollection.totalItems).map((asset) => ({
+      // Generate some assets for this creator
+      const creatorAssets = assets.slice(0, foundCreator.totalAssets || 12).map((asset) => ({
         ...asset,
-        collectionId: collectionId,
+        creatorId: creatorId,
       }))
 
-      setCollectionAssets(collectionAssets)
+      setCreatorAssets(creatorAssets)
     }
 
     // Simulate loading delay
@@ -79,14 +84,14 @@ export default function CollectionDetailPage() {
     }, 800)
 
     return () => clearTimeout(timer)
-  }, [params.id, collections, assets])
+  }, [params.id, creators, assets])
 
   const handleBack = () => {
     router.back()
   }
 
   // Filter and sort assets
-  const filteredAssets = collectionAssets.filter(
+  const filteredAssets = creatorAssets.filter(
     (asset) =>
       asset.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       asset.creator.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -103,8 +108,8 @@ export default function CollectionDetailPage() {
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
-        title: `MediaLane: ${collection?.name}`,
-        text: `Check out ${collection?.name} on MediaLane - Zero-fee IP licensing`,
+        title: `MediaLane: ${creator?.name}`,
+        text: `Check out ${creator?.name} on MediaLane - Zero-fee IP licensing`,
         url: window.location.href,
       })
     } else {
@@ -121,12 +126,12 @@ export default function CollectionDetailPage() {
     )
   }
 
-  if (!collection) {
+  if (!creator) {
     return (
       <div className="container mx-auto px-4 py-8 min-h-screen">
         <div className="w-full max-w-4xl mx-auto text-center">
-          <h1 className="text-2xl font-bold mb-4">Collection Not Found</h1>
-          <p className="mb-6">The collection you're looking for doesn't exist or has been removed.</p>
+          <h1 className="text-2xl font-bold mb-4">Creator Not Found</h1>
+          <p className="mb-6">The creator you're looking for doesn't exist or has been removed.</p>
           <Button onClick={handleBack}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Go Back
@@ -138,25 +143,26 @@ export default function CollectionDetailPage() {
 
   const statsData = [
     {
-      label: "Items",
-      value: collection?.items || collection?.totalItems || 0,
+      label: "Assets",
+      value: creator?.totalAssets || 0,
     },
     {
-      label: "Owners",
-      value: collection?.owners || Math.floor((collection?.items || collection?.totalItems || 0) * 0.7),
-    },
-    {
-      label: "Floor Price",
-      value: collection?.floorPrice || "0.5 STRK",
+      label: "Followers",
+      value: creator?.followers || 0,
     },
     {
       label: "Volume",
-      value: collection?.volume || collection?.totalVolume || "0 STRK",
+      value: creator?.volumeTraded || "0 STRK",
+    },
+    {
+      label: "Sales",
+      value: creator?.totalSales || 0,
     },
   ]
 
   return (
     <div className="min-h-screen pt-0 md:pt-0 pb-24 md:pb-32">
+      {/* Back button - positioned over banner */}
       <div className="fixed top-20 left-4 z-40 md:absolute md:top-6">
         <Button
           variant="ghost"
@@ -176,8 +182,8 @@ export default function CollectionDetailPage() {
         className="relative w-full h-96 md:h-[500px] overflow-hidden"
       >
         <img
-          src={collection.banner || "/placeholder.svg?height=500&width=1200&query=collection-banner"}
-          alt={collection.name}
+          src={creator.banner || "/placeholder.svg?height=500&width=1200&query=creator-banner"}
+          alt={creator.name}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
@@ -185,24 +191,19 @@ export default function CollectionDetailPage() {
         <div className="absolute bottom-0 left-0 right-0 w-full px-4 md:px-8 py-6 md:py-8">
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-8">
-              {/* Collection Info */}
+              {/* Creator Info */}
               <div className="flex items-center gap-4 flex-1">
                 <Avatar className="h-20 w-20 md:h-24 md:w-24 border-4 border-background flex-shrink-0">
-                  <AvatarImage
-                    src={collection.image || "/placeholder.svg?height=100&width=100"}
-                    alt={collection.name}
-                  />
-                  <AvatarFallback>{collection.name.substring(0, 2)}</AvatarFallback>
+                  <AvatarImage src={creator.avatar || "/placeholder.svg?height=100&width=100"} alt={creator.name} />
+                  <AvatarFallback>{creator.name.substring(0, 2)}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 text-white min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h1 className="text-2xl md:text-4xl font-bold">{collection.name}</h1>
-                    {collection.verified && (
-                      <CheckCircle2 className="h-6 w-6 md:h-7 md:w-7 text-primary flex-shrink-0" />
-                    )}
+                    <h1 className="text-2xl md:text-4xl font-bold">{creator.name}</h1>
+                    {creator.verified && <CheckCircle2 className="h-6 w-6 md:h-7 md:w-7 text-primary flex-shrink-0" />}
                   </div>
-                  <p className="text-sm md:text-base text-zinc-300 mt-1">by {collection.creator}</p>
-                  <p className="text-xs md:text-sm text-zinc-400 mt-2 line-clamp-2">{collection.description}</p>
+                  {creator.location && <p className="text-sm md:text-base text-zinc-300 mt-1">{creator.location}</p>}
+                  <p className="text-xs md:text-sm text-zinc-400 mt-2 line-clamp-2">{creator.bio}</p>
                 </div>
               </div>
 
@@ -221,14 +222,14 @@ export default function CollectionDetailPage() {
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>Share collection</p>
+                      <p>Share creator</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
 
                 <Button className="bg-primary hover:bg-primary/90">
                   <ExternalLink className="h-4 w-4 mr-2" />
-                  License Assets
+                  Follow
                 </Button>
               </div>
             </div>
@@ -239,6 +240,83 @@ export default function CollectionDetailPage() {
       {/* Main Content */}
       <div className="px-4 md:px-8 pt-8 pb-8">
         <div className="max-w-7xl mx-auto">
+          {/* Creator Description */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mb-8">
+            <p className="text-muted-foreground text-sm md:text-base leading-relaxed">{creator.bio}</p>
+
+            {/* Social Links & Info */}
+            {creator.specialties && creator.specialties.length > 0 && (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {creator.specialties.map((specialty) => (
+                  <Badge key={specialty} variant="secondary" className="text-xs">
+                    {specialty}
+                  </Badge>
+                ))}
+              </div>
+            )}
+
+            {/* Social Icons */}
+            <div className="mt-6 flex items-center gap-4">
+              {creator.website && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <a href={creator.website} target="_blank" rel="noopener noreferrer">
+                        <Button variant="ghost" size="icon" className="h-9 w-9">
+                          <Globe className="h-4 w-4" />
+                        </Button>
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Visit website</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+              {creator.twitter && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <a
+                        href={`https://twitter.com/${creator.twitter.replace("@", "")}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Button variant="ghost" size="icon" className="h-9 w-9">
+                          <Twitter className="h-4 w-4" />
+                        </Button>
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Twitter</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+              {creator.instagram && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <a
+                        href={`https://instagram.com/${creator.instagram.replace("@", "")}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Button variant="ghost" size="icon" className="h-9 w-9">
+                          <Instagram className="h-4 w-4" />
+                        </Button>
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Instagram</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+            </div>
+          </motion.div>
+
+          {/* Creator Stats */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -265,7 +343,7 @@ export default function CollectionDetailPage() {
             <TabsList className="w-full md:w-auto mb-6">
               <TabsTrigger value="assets" className="flex items-center">
                 <Grid3X3 className="h-4 w-4 mr-2" />
-                Items
+                Assets
               </TabsTrigger>
               <TabsTrigger value="activity" className="flex items-center">
                 <Clock className="h-4 w-4 mr-2" />
@@ -282,7 +360,7 @@ export default function CollectionDetailPage() {
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
                         type="search"
-                        placeholder="Search by name or creator..."
+                        placeholder="Search assets..."
                         className="pl-10"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -310,7 +388,7 @@ export default function CollectionDetailPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>All Items</DropdownMenuItem>
+                          <DropdownMenuItem>All Assets</DropdownMenuItem>
                           <DropdownMenuItem>Available for License</DropdownMenuItem>
                           <DropdownMenuItem>Recently Added</DropdownMenuItem>
                         </DropdownMenuContent>
@@ -341,8 +419,8 @@ export default function CollectionDetailPage() {
                 </motion.div>
               ) : (
                 <EmptyState
-                  title="No items found"
-                  description="Try adjusting your search criteria or check back later for new additions to this collection."
+                  title="No assets found"
+                  description="Try adjusting your search criteria or check back later for new additions from this creator."
                   action={{
                     label: "Reset Search",
                     onClick: () => setSearchQuery(""),
@@ -356,7 +434,7 @@ export default function CollectionDetailPage() {
                 <CardContent className="p-8">
                   <EmptyState
                     title="Activity Coming Soon"
-                    description="We're working on adding detailed activity tracking for this collection. Check back soon to see licensing history, transfers, and more."
+                    description="We're working on adding detailed activity tracking for this creator. Check back soon to see licensing history, transfers, and more."
                     action={null}
                   />
                 </CardContent>

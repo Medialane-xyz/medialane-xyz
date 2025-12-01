@@ -1,13 +1,18 @@
 "use client"
 
 import type React from "react"
-import { ExternalLink, Shuffle, Heart, Eye } from "lucide-react"
+import { Shuffle, MoreVertical, ShoppingCart, Share2, Flag } from "lucide-react"
 import { Badge } from "@/src/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar"
 import { Button } from "@/src/components/ui/button"
-import { Card, CardContent, CardFooter } from "@/src/components/ui/card"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/src/components/ui/tooltip"
 import { useRouter } from "next/navigation"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/src/components/ui/dropdown-menu"
 
 interface AssetCardProps {
   asset: any
@@ -31,141 +36,148 @@ export default function AssetCard({ asset, minimal = false }: AssetCardProps) {
     router.push(`/remix/${asset.id}`)
   }
 
+  const handleBuyNow = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    router.push(`/assets/${asset.id}?action=buy`)
+  }
+
+  const handleMakeOffer = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    router.push(`/assets/${asset.id}?action=offer`)
+  }
+
+  const handleViewAsset = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    router.push(`/assets/${asset.id}`)
+  }
+
+  const handleShareLink = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (navigator.share) {
+      navigator.share({
+        title: `${asset.name} on MediaLane`,
+        text: `Check out ${asset.name} by ${asset.creator}`,
+        url: `${window.location.origin}/assets/${asset.id}`,
+      })
+    } else {
+      navigator.clipboard.writeText(`${window.location.origin}/assets/${asset.id}`)
+    }
+  }
+
+  const handleReportAsset = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    router.push(`/assets/${asset.id}?action=report`)
+  }
+
   return (
-    <Card
-      className="overflow-hidden group cursor-pointer transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:-translate-y-1"
-      onClick={handleCardClick}
-    >
-      <div className="relative aspect-square overflow-hidden bg-muted/30">
-        <img
-          src={asset.image || "/placeholder.svg?height=400&width=400&query=asset-card"}
-          alt={asset.name}
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-          loading="lazy"
-          decoding="async"
-          sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-        />
+    <div className="group cursor-pointer" onClick={handleCardClick}>
+      <div className="gradient-border-animated gradient-border-hover rounded-xl overflow-hidden transition-all duration-300">
+        <div className="relative aspect-square overflow-hidden rounded-[10px] bg-muted/10">
+          <img
+            src={asset.image || "/placeholder.svg?height=400&width=400&query=asset-card"}
+            alt={asset.name}
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+            loading="lazy"
+            decoding="async"
+            sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+          />
 
-        {/* Top badges */}
-        <div className="absolute top-2 right-2 flex flex-col gap-1">
           {asset.category && (
-            <Badge variant="secondary" className="text-xs font-normal opacity-90">
-              {asset.category}
-            </Badge>
+            <div className="absolute top-3 left-3">
+              <Badge variant="secondary" className="text-xs font-medium backdrop-blur-sm bg-background/70">
+                {asset.category}
+              </Badge>
+            </div>
           )}
-          {asset.isRemix && <Badge className="bg-purple-500/90 hover:bg-purple-500 text-white text-xs">Remix</Badge>}
-        </div>
 
-        {/* Bottom badges */}
-        <div className="absolute bottom-2 left-2 flex gap-1">
-          <Badge variant="outline" className="bg-green-500/20 text-green-500 border-green-500/30 text-xs">
-            Zero Fees
-          </Badge>
-          {asset.programmable && (
-            <Badge variant="outline" className="bg-blue-500/20 text-blue-500 border-blue-500/30 text-xs">
-              Programmable
-            </Badge>
+          {asset.isRemix && (
+            <div className="absolute top-3 right-3">
+              <Badge className="bg-primary/90 text-primary-foreground text-xs font-medium flex items-center gap-1 backdrop-blur-sm">
+                <Shuffle className="h-3 w-3" />
+                Remix
+              </Badge>
+            </div>
           )}
         </div>
 
-        {/* Hover overlay */}
-        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-          <div className="flex gap-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
+        <div className="p-4 space-y-3">
+          <div>
+            <h3 className="font-bold text-base line-clamp-2 text-foreground">{asset.name}</h3>
+            <button
+              className="flex items-center gap-1.5 mt-2 cursor-pointer group/creator hover:opacity-80 transition-opacity"
+              onClick={handleCreatorClick}
+            >
+              <Avatar className="h-6 w-6">
+                <AvatarImage src={asset.creatorAvatar || "/placeholder.svg?height=24&width=24"} alt={asset.creator} />
+                <AvatarFallback className="text-[9px]">{String(asset.creator || "NA").slice(0, 2)}</AvatarFallback>
+              </Avatar>
+              <span className="text-xs text-muted-foreground font-medium">{asset.creator}</span>
+            </button>
+          </div>
+
+          {!minimal && (
+            <div className="space-y-2 pt-2 border-t border-border/20">
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  className="flex-1 h-10 text-sm rounded-lg bg-primary hover:bg-primary/90 flex items-center justify-center gap-2 font-semibold transition-all duration-200"
+                  onClick={handleBuyNow}
+                  title="Acquire complete property rights"
+                >
+                  <ShoppingCart className="h-4 w-4" />
+                  <span>{asset.price}</span>
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="flex-1 h-10 text-sm rounded-lg flex items-center justify-center gap-2 font-semibold bg-transparent hover:bg-accent/50"
+                  onClick={handleRemixClick}
+                >
+                  <Shuffle className="h-4 w-4" />
+                  <span>Remix</span>
+                </Button>
+              </div>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
                   <Button
                     size="sm"
-                    variant="secondary"
-                    className="bg-white/90 hover:bg-white text-black"
-                    onClick={handleCardClick}
+                    variant="outline"
+                    className="w-full h-9 rounded-lg flex items-center justify-center gap-2 bg-transparent hover:bg-accent/50 font-medium"
+                    onClick={(e) => e.stopPropagation()}
                   >
-                    <Eye className="h-4 w-4" />
+                    <MoreVertical className="h-4 w-4" />
+                    <span>More</span>
                   </Button>
-                </TooltipTrigger>
-                <TooltipContent>View Details</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button size="sm" className="bg-purple-500 hover:bg-purple-600 text-white" onClick={handleRemixClick}>
-                    <Shuffle className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Create Remix</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-44">
+                  <DropdownMenuItem onClick={handleViewAsset} className="cursor-pointer flex items-center gap-2">
+                    <ShoppingCart className="h-4 w-4" />
+                    <span>View Details</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleMakeOffer} className="cursor-pointer flex items-center gap-2">
+                    <ShoppingCart className="h-4 w-4" />
+                    <span>Make Offer</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleShareLink} className="cursor-pointer flex items-center gap-2">
+                    <Share2 className="h-4 w-4" />
+                    <span>Share</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={handleReportAsset}
+                    className="cursor-pointer flex items-center gap-2 text-red-500"
+                  >
+                    <Flag className="h-4 w-4" />
+                    <span>Report</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          )}
         </div>
       </div>
-
-      <CardContent className="p-3">
-        <div className="flex items-center justify-between">
-          <h3 className="font-medium text-sm truncate">{asset.name}</h3>
-          <div className="flex items-center gap-1 text-muted-foreground">
-            <Heart className="h-3 w-3" />
-            <span className="text-xs">{asset.likes || 0}</span>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between mt-1.5">
-          <div
-            className="flex items-center cursor-pointer hover:text-primary transition-colors"
-            onClick={handleCreatorClick}
-          >
-            <Avatar className="h-4 w-4 mr-1">
-              <AvatarImage src={asset.creatorAvatar || "/placeholder.svg?height=20&width=20"} alt={asset.creator} />
-              <AvatarFallback className="text-[8px]">{String(asset.creator || "NA").slice(0, 2)}</AvatarFallback>
-            </Avatar>
-            <span className="text-xs text-muted-foreground">{asset.creator}</span>
-          </div>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="font-medium text-xs">{asset.price}</div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Zero-fee licensing available</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-
-        {/* Remix info */}
-        {asset.isRemix && asset.originalAsset && (
-          <div className="mt-2 p-2 bg-purple-500/10 rounded-md">
-            <p className="text-xs text-purple-400">
-              Remix of <span className="font-medium">{asset.originalAsset}</span>
-            </p>
-          </div>
-        )}
-      </CardContent>
-
-      {!minimal && (
-        <CardFooter className="p-3 pt-0">
-          <div className="flex gap-2 w-full">
-            <Button
-              size="sm"
-              variant="outline"
-              className="flex-1 h-7 text-xs rounded-full bg-transparent"
-              onClick={handleCardClick}
-            >
-              <ExternalLink className="h-3 w-3 mr-1" />
-              View
-            </Button>
-            <Button
-              size="sm"
-              className="flex-1 h-7 text-xs rounded-full bg-purple-500 hover:bg-purple-600"
-              onClick={handleRemixClick}
-            >
-              <Shuffle className="h-3 w-3 mr-1" />
-              Remix
-            </Button>
-          </div>
-        </CardFooter>
-      )}
-    </Card>
+    </div>
   )
 }

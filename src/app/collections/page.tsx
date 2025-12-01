@@ -2,7 +2,7 @@
 
 import { useState, Suspense } from "react"
 import { motion } from "framer-motion"
-import { Grid3X3, Search, Filter, SortAsc, Eye, TrendingUp } from "lucide-react"
+import { Grid3X3, Search, Filter, SortAsc, Eye, TrendingUp, Plus } from "lucide-react"
 import { Input } from "@/src/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
 import { Button } from "@/src/components/ui/button"
@@ -12,6 +12,7 @@ import { useMockData } from "@/src/lib/hooks/use-mock-data"
 import CollectionCard from "@/src/components/collection-card"
 import PageTransition from "@/src/components/page-transition"
 import { useMobile } from "@/src/hooks/use-mobile"
+import Link from "next/link"
 
 // Mobile-optimized loading fallback
 const LoadingFallback = () => (
@@ -151,28 +152,39 @@ export default function CollectionsPage() {
         {/* Mobile-first header */}
         <div className="px-3 sm:px-4 md:px-8">
           <motion.div
-            className="text-center mb-4 sm:mb-6 md:mb-8"
+            className="text-center lg:text-left mb-4 sm:mb-6 md:mb-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="inline-flex items-center justify-center p-2 bg-primary/10 rounded-full mb-3 sm:mb-4">
-              <Grid3X3 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-primary" />
-              <span className="text-xs sm:text-sm font-medium">Explore from creators worldwide</span>
+            <div className="flex-1">
+              <div className="inline-flex items-center justify-center p-2 bg-primary/10 rounded-full mb-3 sm:mb-4">
+                <Grid3X3 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-primary" />
+                <span className="text-xs sm:text-sm font-medium">Curated Collections</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-2 sm:mb-3 md:mb-4 gradient-text">
+                IP Asset Collections
+              </h1>
+              <p className="text-sm sm:text-base md:text-lg text-zinc-400 max-w-2xl">
+                Explore thematic collections of intellectual property assets curated by leading creators
+              </p>
             </div>
-            <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-2 sm:mb-3 md:mb-4 gradient-text">
-              Collections
-            </h1>
+            <Link href="/create/collection">
+              <Button className="whitespace-nowrap bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 hover:from-purple-600 hover:via-blue-600 hover:to-cyan-600 text-white px-6 sm:px-8 py-5 sm:py-6 font-semibold">
+                <Plus className="w-4 h-4 mr-2" />
+                Create Collection
+              </Button>
+            </Link>
           </motion.div>
 
-          {/* Stats 
+          {/* Stats */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
             <CollectionStats collections={collections} />
-          </motion.div>*/}
+          </motion.div>
 
           {/* Mobile-optimized search and filters */}
           <motion.div

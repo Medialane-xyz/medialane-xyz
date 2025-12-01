@@ -57,21 +57,21 @@ export function HeroSlider({ collections, autoPlay = true, interval = 5000 }: He
       <AnimatePresence mode="wait">
         <motion.div
           key={currentSlide}
-          initial={{ opacity: 0, scale: 1 }}
-          animate={{ opacity: 1, scale: 1.1 }}
-          exit={{ opacity: 0, scale: 1 }}
+          initial={{ opacity: 0, scale: 1.1 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 1.2, ease: "easeInOut" }}
           className="absolute inset-0"
         >
           <div
-            className="absolute inset-0 bg-cover bg-center transition-transform duration-10000ms ease-out"
+            className="absolute inset-0 bg-cover bg-center transition-transform duration-[10000ms] ease-out"
             style={{
               backgroundImage: `url(${collections[currentSlide]?.banner || collections[currentSlide]?.image})`,
               transform: "scale(1.05)",
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-black/40 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/30" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/30" />
         </motion.div>
       </AnimatePresence>
 
@@ -82,7 +82,7 @@ export function HeroSlider({ collections, autoPlay = true, interval = 5000 }: He
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentSlide}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -30 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
@@ -94,7 +94,7 @@ export function HeroSlider({ collections, autoPlay = true, interval = 5000 }: He
                   transition={{ duration: 0.6, delay: 0.4 }}
                 >
                   <Badge className="mb-4 md:mb-6 bg-primary/20 text-primary-foreground border-primary/30 text-sm">
-                    Featured Collections
+                    Featured Collection
                   </Badge>
                 </motion.div>
 

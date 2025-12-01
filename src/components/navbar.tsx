@@ -42,7 +42,7 @@ import {
 } from "@/src/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar"
 import { ThemeToggle } from "@/src/components/theme-toggle"
-import NotificationsPopover from "@/src/components/notifications-popover"
+import { NotificationsPopover } from "@/src/components/notifications-popover"
 import { useMobile } from "@/src/hooks/use-mobile"
 
 const categories = [
@@ -106,8 +106,6 @@ export function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            
-            
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-2 group">
               <div className="w-8 h-8 bg-gradient-to-br from-primary to-purple-600 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
@@ -117,10 +115,6 @@ export function Navbar() {
                 MediaLane
               </span>
             </Link>
-
-
-
-
 
             {/* Desktop Navigation */}
             {!isMobile && (
@@ -391,7 +385,7 @@ export function Navbar() {
         )}
       </AnimatePresence>
 
-      {/* Mobile Bottom Navigation 
+      {/* Mobile Bottom Navigation */}
       {isMobile && (
         <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-t">
           <div className="grid grid-cols-6 gap-1 p-2">
@@ -412,9 +406,11 @@ export function Navbar() {
             })}
           </div>
         </div>
-      )}*/}
+      )}
 
-
+      {/* Spacer for fixed navbar */}
+      <div className="h-16" />
+      {isMobile && <div className="h-16" />}
     </>
   )
 }
