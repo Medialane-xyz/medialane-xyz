@@ -32,6 +32,7 @@ import { useMobile } from "@/src/hooks/use-mobile"
 import { cn } from "@/src/lib/utils"
 import NotificationsMenu from "@/src/components/notifications-menu"
 import { useToast } from "@/src/components/ui/use-toast"
+import { LogoMedialane } from "./logo-medialane"
 
 const FloatingNav = () => {
   const pathname = usePathname()
@@ -85,7 +86,7 @@ const FloatingNav = () => {
   const mainNavItems = [
     {
       icon: <Home className="w-4 h-4" />,
-      label: "Start",
+      label: "Home",
       href: "/",
       isActive: pathname === "/",
     },
@@ -133,10 +134,14 @@ const FloatingNav = () => {
           <div className="relative flex items-center justify-between h-12 md:h-14">
             {/* Logo */}
             <div className="flex-shrink-0 flex items-center px-3 md:px-4">
-              <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigateTo("/")}>
+              
+            <LogoMedialane />
+
+              {/* <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigateTo("/")}>
                 <div className="h-7 w-7 md:h-8 md:w-8 rounded-full bg-gradient-to-r from-purple-600 to-primary"></div>
                 {!isMobile && <span className="font-bold text-lg text-white">MediaLane</span>}
-              </div>
+              </div> */}
+
             </div>
 
             {/* Desktop Navigation */}
@@ -310,7 +315,7 @@ const FloatingNav = () => {
         </div>
       </header>
 
-      {/* Mobile Bottom Navigation */}
+      {/* Mobile Bottom Navigation 
       {isMobile && (
         <div className="fixed bottom-0 left-0 right-0 z-40 glass-effect border-t border-white/10 bg-black/80 backdrop-blur-lg">
           <div className="flex items-center justify-between px-1">
@@ -342,7 +347,7 @@ const FloatingNav = () => {
             </Button>
           </div>
         </div>
-      )}
+      )}*/}
 
       {/* Background overlay */}
       <AnimatePresence>

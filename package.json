@@ -1,5 +1,5 @@
 {
-  "name": "medialane-xyz",
+  "name": "my-v0-project",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -48,7 +48,7 @@
     "framer-motion": "latest",
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",
-    "next": "15.5.6",
+    "next": "^15.5.7",
     "next-themes": "latest",
     "react": "19.2.0",
     "react-day-picker": "9.8.0",

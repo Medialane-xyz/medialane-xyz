@@ -11,8 +11,8 @@ import FramerMotionProvider from "@/src/lib/framer-motion-provider"
 const inter = Inter({ subsets: ["latin"], display: "swap" })
 
 export const metadata = {
-  title: "MediaLaneP",
-  description: "The permissionless marketplace for creators to monetize digital assets and IP",
+  title: "MediaLane",
+  description: "The permissionless marketplace for the integrity web",
 }
 
 export default function RootLayout({
