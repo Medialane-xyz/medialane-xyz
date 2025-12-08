@@ -182,7 +182,7 @@ const FloatingNav = () => {
               {!isMobile && (
                 <Button
                   size="sm"
-                  className="rounded-full bg-primary hover:bg-primary/90"
+                  className="rounded-full bg-blue-700 hover:bg-primary/90"
                   onClick={() => navigateTo("/create")}
                 >
                   <Plus className="w-4 h-4 mr-1" />
@@ -270,7 +270,7 @@ const FloatingNav = () => {
                       onClick={() => navigateTo("/create")}
                     >
                       <Plus className="w-4 h-4 mr-2" />
-                      Create Asset
+                      Create 
                     </Button>
                   </div>
                 </div>

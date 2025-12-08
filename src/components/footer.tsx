@@ -72,7 +72,6 @@ export default function Footer() {
       links: [
         { name: "New Asset", href: "/create" },
         { name: "New Collection", href: "/create?type=collection" },
-        { name: "Batch Upload", href: "/create?type=batch" },
         { name: "Templates", href: "/create?view=templates" },
       ],
     },
@@ -85,7 +84,6 @@ export default function Footer() {
         { name: "Sell", href: "/marketplace?type=sell" },
         { name: "Auctions", href: "/marketplace?type=auctions" },
         { name: "Offers", href: "/marketplace?type=offers" },
-        { name: "Licensing", href: "/licensing" },
       ],
     },
     {
@@ -97,7 +95,6 @@ export default function Footer() {
         { name: "My Assets", href: "/portfolio?tab=assets" },
         { name: "My Collections", href: "/portfolio?tab=collections" },
         { name: "Licensing", href: "/portfolio/licensings" },
-        { name: "Analytics", href: "/portfolio?tab=analytics" },
       ],
     },
   ]
@@ -112,11 +109,11 @@ export default function Footer() {
         { name: "Documentation", href: "/docs" },
         { name: "API Reference", href: "/docs/api" },
         { name: "Tutorials", href: "/tutorials" },
-        { name: "Developer Hub", href: "/developers" },
+        { name: "Developers", href: "/developers" },
       ],
     },
     {
-      title: "Legal",
+      title: "Guidelines",
       icon: FileText,
       color: "text-red-400",
       links: [
@@ -134,18 +131,18 @@ export default function Footer() {
         { name: "Help Center", href: "/help" },
         { name: "Contact Us", href: "/contact" },
         { name: "FAQs", href: "/faqs" },
-        { name: "Report Issue", href: "/support/report" },
+        { name: "Report", href: "/report" },
       ],
     },
     {
-      title: "Company",
+      title: "Medialane",
       icon: Settings,
       color: "text-orange-400",
       links: [
-        { name: "About Us", href: "/about" },
-        { name: "Careers", href: "/careers" },
-        { name: "Blog", href: "/blog" },
-        { name: "Press Kit", href: "/press" },
+        { name: "About", href: "/about" },
+        { name: "Protocol", href: "/protocol" },
+        { name: "Github", href: "/" },
+        { name: "Press", href: "/press" },
       ],
     },
   ]
@@ -162,10 +159,10 @@ export default function Footer() {
 
   // Platform stats
   const stats = [
-    { label: "Active Creators", value: "10K+", color: "text-purple-400", icon: Users },
-    { label: "IP Assets", value: "50K+", color: "text-blue-400", icon: Layers },
-    { label: "Trading Volume", value: "$5M+", color: "text-green-400", icon: BarChart3 },
-    { label: "Transactions", value: "120K+", color: "text-cyan-400", icon: Zap },
+    { label: "Active Creators", value: "X", color: "text-purple-400", icon: Users },
+    { label: "IP Assets", value: "X", color: "text-blue-400", icon: Layers },
+    { label: "Trading Volume", value: "X", color: "text-green-400", icon: BarChart3 },
+    { label: "Transactions", value: "X", color: "text-cyan-400", icon: Zap },
   ]
 
   return (
@@ -188,7 +185,7 @@ export default function Footer() {
             className="text-2xl font-bold mb-8 text-center bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent"
             variants={itemVariants}
           >
-            Explore MediaLane
+            Explore
           </motion.h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -310,8 +307,8 @@ export default function Footer() {
             </div>
 
             <p className="text-gray-300 text-lg leading-relaxed mb-6 max-w-md">
-              The world's first <span className="text-purple-400 font-semibold">zero-fee</span> marketplace for
-              programmable IP. Empowering creators to monetize their digital assets and intellectual property.
+              Monetization hub and low fee marketplace for creative content.<br></br>
+              Empowering creators to monetize their digital assets and intellectual property.
             </p>
 
             {/* Feature Highlights */}
@@ -332,9 +329,9 @@ export default function Footer() {
             {/* Social Links */}
             <div className="flex space-x-4">
               {[
-                { icon: Twitter, href: "#", label: "Twitter" },
+                { icon: Twitter, href: "#", label: "X" },
                 { icon: Instagram, href: "#", label: "Instagram" },
-                { icon: Github, href: "#", label: "GitHub" },
+                { icon: Github, href: "#", label: "TikTok" },
                 { icon: Linkedin, href: "#", label: "LinkedIn" },
               ].map((social, index) => (
                 <motion.a
@@ -355,7 +352,7 @@ export default function Footer() {
           <motion.div className="lg:col-span-4" variants={itemVariants}>
             <h3 className="text-lg font-semibold mb-6 flex items-center text-white">
               <Flame className="h-5 w-5 mr-2 text-orange-400" />
-              Popular Features
+              Features
             </h3>
 
             <div className="grid grid-cols-1 gap-3">
@@ -427,7 +424,7 @@ export default function Footer() {
               <div className="p-4 rounded-xl border border-gray-800/50 bg-gray-900/30">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">App Version</span>
-                  <span className="text-white font-mono bg-gray-800 px-2 py-1 rounded text-xs">v0.9.2-beta</span>
+                  <span className="text-white font-mono bg-gray-800 px-2 py-1 rounded text-xs">v0.0.1-beta</span>
                 </div>
               </div>
             </div>
@@ -464,7 +461,7 @@ export default function Footer() {
 
           <div className="flex items-center space-x-2 text-sm text-gray-400">
             <Shield className="h-4 w-4 text-green-400" />
-            <span>Secured by blockchain technology</span>
+            <span>Powered on Starknet</span>
           </div>
         </motion.div>
       </motion.div>
