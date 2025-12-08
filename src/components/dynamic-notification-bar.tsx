@@ -24,7 +24,7 @@ const notifications = [
   {
     id: "2",
     title: "New Monetization Tools",
-    description: "Try our enhanced programmable IP features with zero fees",
+    description: "Try our enhanced programmable IP features",
     cta: "Explore",
     ctaLink: "/create/programmable",
     type: "platform",

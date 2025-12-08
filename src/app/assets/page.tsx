@@ -742,7 +742,7 @@ function AssetListItem({ asset }: { asset: any }) {
             </Badge>
           )}
           <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/20 text-[10px]">
-            Zero Fees
+            Protected
           </Badge>
           <span className="ml-auto text-xs text-muted-foreground">{asset.likes ?? 0} likes</span>
           <Button size="sm" variant="outline" className="h-7 px-3 ml-auto rounded-full bg-transparent">
