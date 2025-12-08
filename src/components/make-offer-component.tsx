@@ -139,7 +139,7 @@ export function MakeOfferComponent({ assetId }: MakeOfferComponentProps) {
             <div className="bg-gradient-to-r from-emerald-500/20 to-blue-500/20 p-4 rounded-lg border border-emerald-500/30">
               <div className="flex items-center mb-2">
                 <Shield className="h-5 w-5 text-emerald-400 mr-2" />
-                <span className="font-medium text-emerald-400">Zero-Fee Trading</span>
+                <span className="font-medium text-emerald-400">Low-fee Trading</span>
               </div>
               <p className="text-sm text-muted-foreground">
                 Your offer is recorded on-chain. MediaLane doesn't charge any platform fees for offers or trades.

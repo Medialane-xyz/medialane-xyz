@@ -632,7 +632,7 @@ export default function CheckoutPage() {
                     <span className="font-semibold text-green-900 dark:text-green-100">Zero Platform Fees</span>
                   </div>
                   <p className="text-sm text-green-700 dark:text-green-300">
-                    Save on every transaction with MediaLane's zero-fee marketplace. You save{" "}
+                    Save on every transaction with MediaLane's low-fee marketplace. You save{" "}
                     <strong>${(finalPrice * 0.025).toFixed(2)}</strong> compared to other platforms.
                   </p>
                 </div>

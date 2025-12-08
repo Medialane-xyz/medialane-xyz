@@ -104,7 +104,7 @@ export default function CollectionDetailPage() {
     if (navigator.share) {
       navigator.share({
         title: `MediaLane: ${collection?.name}`,
-        text: `Check out ${collection?.name} on MediaLane - Zero-fee IP licensing`,
+        text: `Check out ${collection?.name} on MediaLane - Low-fee IP licensing`,
         url: window.location.href,
       })
     } else {

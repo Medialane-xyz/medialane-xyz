@@ -214,7 +214,7 @@ export function LicensingDesigner({ assetId }: { assetId?: string }) {
                 <div className="bg-gradient-to-r from-emerald-500/20 to-blue-500/20 p-3 rounded-lg border border-emerald-500/30">
                   <div className="flex items-center">
                     <Shield className="h-5 w-5 text-emerald-400 mr-2" />
-                    <span className="font-medium text-emerald-400">Zero-Fee Licensing</span>
+                    <span className="font-medium text-emerald-400">Low-fee Licensing</span>
                   </div>
                   <p className="text-sm mt-1 text-muted-foreground">
                     Licenses are recorded on-chain. No platform fees are charged by the protocol.

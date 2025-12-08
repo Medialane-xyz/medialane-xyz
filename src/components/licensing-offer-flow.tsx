@@ -229,7 +229,7 @@ export function LicensingOfferFlow({
             <div className="bg-gradient-to-r from-emerald-500/20 to-blue-500/20 p-3 rounded-lg border border-emerald-500/30">
               <div className="flex items-center">
                 <Shield className="h-5 w-5 text-emerald-400 mr-2" />
-                <span className="font-medium text-emerald-400">Zero-Fee Licensing</span>
+                <span className="font-medium text-emerald-400">Low-fee Licensing</span>
               </div>
               <p className="text-sm mt-1 text-muted-foreground">
                 Licensing offers are recorded on-chain when approved. MediaLane does not charge platform fees.
@@ -376,7 +376,7 @@ export function LicensingOfferFlow({
               <div className="bg-gradient-to-r from-emerald-500/20 to-blue-500/20 p-3 rounded-lg border border-emerald-500/30">
                 <div className="flex items-center">
                   <Shield className="h-5 w-5 text-emerald-400 mr-2" />
-                  <span className="font-medium text-emerald-400">Zero-Fee Licensing</span>
+                  <span className="font-medium text-emerald-400">Low-fee Licensing</span>
                 </div>
                 <p className="text-sm mt-1 text-muted-foreground">
                   Your offer will be submitted to the owner for approval. No platform fees are charged by MediaLane.

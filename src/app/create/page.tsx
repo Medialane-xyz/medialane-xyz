@@ -234,7 +234,7 @@ export default function CreateAssetPage() {
       <div className="bg-green-500/10 rounded-lg p-3 border border-green-500/20">
         <h4 className="text-sm font-medium text-green-400 mb-2 flex items-center gap-2">
           <Zap className="h-4 w-4" />
-          Zero-Fee Benefits
+          Low-Fee Benefits
         </h4>
         <div className="space-y-1 text-xs">
           <div className="flex items-center gap-2">

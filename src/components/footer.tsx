@@ -150,7 +150,7 @@ export default function Footer() {
 
   // Platform features with icons
   const features = [
-    { icon: Zap, text: "Zero-Fee Trading" },
+    { icon: Zap, text: "Low-Fee Trading" },
     { icon: Shield, text: "IP Protection" },
     { icon: Globe, text: "Global Marketplace" },
     { icon: Users, text: "Creator Community" },

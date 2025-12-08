@@ -209,7 +209,7 @@ export default function ExplorePage() {
           <h1 className="text-3xl md:text-5xl font-bold mb-3 md:mb-4 gradient-text">Explore Programmable IP</h1>
 
           <p className="text-base md:text-lg text-zinc-400 max-w-2xl mb-8">
-            Discover unique intellectual property assets with zero-fee licensing on Starknet
+            Discover unique intellectual property assets with Low-fee licensing on Starknet
           </p>
 
           {/* Featured tags */}

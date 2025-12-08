@@ -109,7 +109,7 @@ export default function CreatorDetailPage() {
     if (navigator.share) {
       navigator.share({
         title: `MediaLane: ${creator?.name}`,
-        text: `Check out ${creator?.name} on MediaLane - Zero-fee IP licensing`,
+        text: `Check out ${creator?.name} on MediaLane - Low-fee IP licensing`,
         url: window.location.href,
       })
     } else {

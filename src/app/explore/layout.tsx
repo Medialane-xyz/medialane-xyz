@@ -4,7 +4,7 @@ import type { Metadata } from "next"
 export const metadata: Metadata = {
   title: "Explore IP | MediaLane",
   description:
-    "Discover, explore, and license intellectual property assets on MediaLane - the zero-fee IP marketplace on Starknet.",
+    "Discover, explore, and license intellectual property assets on MediaLane - the Low-fee IP marketplace on Starknet.",
 }
 
 export default function ExploreLayout({

@@ -200,7 +200,7 @@ export function PurchaseModal({ isOpen, onClose, asset, creator, onPurchaseCompl
                   <span className="font-medium text-green-900 dark:text-green-100">Zero Platform Fees</span>
                 </div>
                 <p className="text-sm text-green-700 dark:text-green-300">
-                  Save money with MediaLane's zero-fee marketplace
+                  Save money with MediaLane's Low-fee marketplace
                 </p>
               </div>
 
