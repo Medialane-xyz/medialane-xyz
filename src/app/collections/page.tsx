@@ -160,19 +160,17 @@ export default function CollectionsPage() {
             <div className="flex-1">
               <div className="inline-flex items-center justify-center p-2 bg-primary/10 rounded-full mb-3 sm:mb-4">
                 <Grid3X3 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-primary" />
-                <span className="text-xs sm:text-sm font-medium">Curated Collections</span>
+                <span className="text-xs sm:text-sm font-medium">Collections</span>
               </div>
               <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-2 sm:mb-3 md:mb-4 gradient-text">
-                IP Asset Collections
+                Intellectual Property
               </h1>
-              <p className="text-sm sm:text-base md:text-lg text-zinc-400 max-w-2xl">
-                Explore thematic collections of intellectual property assets curated by leading creators
-              </p>
+              
             </div>
             <Link href="/create/collection">
               <Button className="whitespace-nowrap bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 hover:from-purple-600 hover:via-blue-600 hover:to-cyan-600 text-white px-6 sm:px-8 py-5 sm:py-6 font-semibold">
                 <Plus className="w-4 h-4 mr-2" />
-                Create Collection
+                Create
               </Button>
             </Link>
           </motion.div>

@@ -203,13 +203,13 @@ export default function ExplorePage() {
         >
           <div className="inline-flex items-center justify-center p-2 bg-primary/10 rounded-full mb-4">
             <Compass className="w-4 h-4 mr-2 text-primary" />
-            <span className="text-sm font-medium">Discover IP</span>
+            <span className="text-sm font-medium">Explore</span>
           </div>
 
-          <h1 className="text-3xl md:text-5xl font-bold mb-3 md:mb-4 gradient-text">Explore</h1>
+          <h1 className="text-3xl md:text-5xl font-bold mb-3 md:mb-4 gradient-text">Discover digital assets</h1>
 
           <p className="text-base md:text-lg text-zinc-400 max-w-2xl mb-8">
-            Discover unique creative assets, collections, and creators from around the world.
+            Unique creative works, collections, and creators from around the world.
           </p>
 
 
@@ -280,7 +280,7 @@ export default function ExplorePage() {
               <Button
                 type="button"
                 variant="outline"
-                className="h-12 w-12 p-0 md:block flex items-center justify-center"
+                className="h-12 w-12 md:block flex items-center justify-center"
                 onClick={() => setShowFilters(!showFilters)}
               >
                 <Filter className="h-4 w-4" />

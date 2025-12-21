@@ -104,7 +104,7 @@ export default function NewReleasesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pt-20 pb-40">
       {/* Mobile Header */}
       {isMobile && (
         <div className="sticky top-16 z-40 bg-background/95 backdrop-blur-md border-b">

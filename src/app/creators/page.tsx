@@ -178,7 +178,7 @@ export default function CreatorsPage() {
   )
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pt-20 pb-40">
       {/* Streamlined Header */}
       <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b">
         <div className="px-3 py-3">

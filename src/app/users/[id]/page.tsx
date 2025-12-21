@@ -108,11 +108,11 @@ export default function UserProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-40">
       {/* Profile Header */}
       <div className="relative">
         {/* Banner */}
-        <div className="h-48 md:h-64 bg-gradient-to-r from-primary/20 to-purple-500/20 relative overflow-hidden">
+        <div className="h-200 md:h-300 bg-gradient-to-r from-primary/20 to-purple-500/20 relative overflow-hidden">
           {creator.banner && (
             <img
               src={creator.banner || "/placeholder.svg"}

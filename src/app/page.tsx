@@ -57,7 +57,7 @@ export default function Home() {
   }
 
   return (
-    <div className="relative w-full overflow-hidden">
+    <div className="relative w-full overflow-hidden pb-20">
       {/* Hero Slider */}
       <HeroSlider collections={featuredCollections} />
 
