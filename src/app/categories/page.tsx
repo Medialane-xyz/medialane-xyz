@@ -9,8 +9,9 @@ import { Card, CardContent } from "@/src/components/ui/card"
 import { Input } from "@/src/components/ui/input"
 import { Badge } from "@/src/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
-import { useMockData } from "@/src/lib/hooks/use-mock-data"
 import { useMobile } from "@/src/hooks/use-mobile"
+
+import { useMockData } from "@/src/lib/hooks/use-mock-data"
 
 export default function CategoriesPage() {
   const router = useRouter()
@@ -124,7 +125,7 @@ export default function CategoriesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pt-20 pb-40">
       {/* Header */}
       <section className="py-12 px-4 bg-gradient-to-br from-primary/5 to-purple-500/5">
         <div className="max-w-7xl mx-auto">
@@ -134,15 +135,15 @@ export default function CategoriesPage() {
               className="inline-flex items-center justify-center p-2 bg-primary/10 rounded-full mb-2"
             >
               <Grid3X3 className="w-4 h-4 mr-2 text-primary" />
-              <span className="text-sm font-medium">Explore Categories</span>
+              <span className="text-sm font-medium">Categories</span>
             </motion.div>
 
             <motion.h1 variants={itemVariants} className="text-3xl md:text-4xl font-bold">
-              Discover IP by Category
+              Discover by Category
             </motion.h1>
 
             <motion.p variants={itemVariants} className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Browse intellectual property across different categories and find the perfect assets for your projects
+              Browse creative works across different categories and find the perfect assets for your projects
             </motion.p>
 
             <motion.div variants={itemVariants} className="max-w-md mx-auto">
@@ -258,7 +259,7 @@ export default function CategoriesPage() {
 
                       {/* Subcategories */}
                       <div className="space-y-2 mb-4">
-                        <div className="text-sm font-medium">Popular Subcategories:</div>
+                        
                         <div className="flex flex-wrap gap-1">
                           {category.subcategories.slice(0, 3).map((sub) => (
                             <Badge key={sub} variant="secondary" className="text-xs">
@@ -276,14 +277,14 @@ export default function CategoriesPage() {
                       {/* Floor Price */}
                       <div className="flex items-center justify-between">
                         <div className="text-sm text-muted-foreground">
-                          Floor: <span className="font-medium text-foreground">{category.floorPrice}</span>
+                          Start: <span className="font-medium text-foreground">{category.floorPrice}</span>
                         </div>
                         <Button
                           variant="ghost"
                           size="sm"
                           className="group-hover:bg-primary group-hover:text-primary-foreground"
                         >
-                          Explore
+                          Visit
                           <ArrowRight className="w-4 h-4 ml-1" />
                         </Button>
                       </div>

@@ -34,14 +34,14 @@ export default function FeaturedCreatorsEnhanced({ creators }: FeaturedCreatorsP
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="py-12 md:py-16 border-t border-border"
+      className="py-12 md:py-16"
     >
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <motion.div variants={itemVariants} className="mb-10">
           <div className="flex items-end justify-between mb-2">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Featured Creators</h2>
-              <p className="text-base text-muted-foreground mt-2">Discover talented IP creators shaping the future</p>
+              <p className="text-base text-muted-foreground mt-2">Discover talented creators shaping the future</p>
             </div>
             <Button variant="outline" size="sm" onClick={() => router.push("/creators")} className="gap-2">
               View All
@@ -92,8 +92,8 @@ export default function FeaturedCreatorsEnhanced({ creators }: FeaturedCreatorsP
                       <p className="text-sm font-semibold">{creator.totalAssets}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground mb-1">Followers</p>
-                      <p className="text-sm font-semibold">{creator.followers.toLocaleString()}</p>
+                      <p className="text-xs text-muted-foreground mb-1">Sales</p>
+                      <p className="text-sm font-semibold">{creator.totalSales.toLocaleString()}</p>
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground mb-1">Volume</p>
@@ -115,7 +115,7 @@ export default function FeaturedCreatorsEnhanced({ creators }: FeaturedCreatorsP
                     router.push(`/users/${creator.id}`)
                   }}
                 >
-                  View Profile
+                  Visit Profile
                 </Button>
               </div>
             </motion.div>

@@ -70,14 +70,14 @@ export default function LatestActivities({ activities, pageSize = 6, showTabs = 
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="py-12 md:py-16 border-t border-border"
+      className="py-12 md:py-16"
     >
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <motion.div variants={itemVariants} className="mb-8">
           <div className="flex items-end justify-between">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Latest Activities</h2>
-              <p className="text-base text-muted-foreground mt-2">Community activity that's shaping the marketplace</p>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Latest</h2>
+              <p className="text-base text-muted-foreground mt-2">Follow the market in real time</p>
             </div>
             <Button variant="outline" size="sm" onClick={() => router.push("/activity")} className="gap-2">
               View More

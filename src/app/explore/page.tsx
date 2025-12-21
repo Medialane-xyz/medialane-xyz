@@ -206,13 +206,15 @@ export default function ExplorePage() {
             <span className="text-sm font-medium">Discover IP</span>
           </div>
 
-          <h1 className="text-3xl md:text-5xl font-bold mb-3 md:mb-4 gradient-text">Explore Programmable IP</h1>
+          <h1 className="text-3xl md:text-5xl font-bold mb-3 md:mb-4 gradient-text">Explore</h1>
 
           <p className="text-base md:text-lg text-zinc-400 max-w-2xl mb-8">
-            Discover unique intellectual property assets with Low-fee licensing on Starknet
+            Discover unique creative assets, collections, and creators from around the world.
           </p>
 
-          {/* Featured tags */}
+
+
+          {/* Featured tags 
           <div className="flex flex-wrap gap-2 justify-center max-w-3xl mb-6">
             <Badge
               variant="outline"
@@ -249,7 +251,13 @@ export default function ExplorePage() {
             >
               <FileCheck className="w-3 h-3 mr-1" /> Verified
             </Badge>
-          </div>
+          </div>*/}
+
+
+
+
+
+
 
           {/* Main search form */}
           <form className="w-full max-w-3xl" onSubmit={handleSearch}>

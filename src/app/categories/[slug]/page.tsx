@@ -158,11 +158,11 @@ export default function CategoryPage() {
   })
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pt-20 pb-40">
       {/* Category Header */}
       <div className="relative">
         {/* Banner */}
-        <div className="h-48 md:h-64 bg-gradient-to-r from-primary/20 to-purple-500/20 relative overflow-hidden">
+        <div className="h-64 md:h-72 bg-gradient-to-r from-primary/20 to-purple-500/20 relative overflow-hidden">
           <img src={category.banner || "/placeholder.svg"} alt={category.name} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-black/40" />
 
@@ -170,7 +170,7 @@ export default function CategoryPage() {
           <Button
             variant="ghost"
             size="sm"
-            className="absolute top-4 left-4 text-white hover:bg-white/20"
+            className="absolute top-8 right-8 text-white hover:bg-white/20"
             onClick={() => router.back()}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
