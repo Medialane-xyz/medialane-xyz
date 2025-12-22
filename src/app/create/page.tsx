@@ -296,13 +296,13 @@ export default function CreateAssetPage() {
           <div className="text-center pt-20 md:pt-24 pb-8 px-4">
             <div className="inline-flex items-center justify-center p-3 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-full mb-6">
               <Sparkles className="w-6 h-6 mr-2 text-primary" />
-              <span className="text-sm font-medium">Create Programmable IP</span>
+              <span className="text-sm font-medium">Programmable IP</span>
             </div>
             <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-primary to-purple-400 bg-clip-text text-transparent">
-              Create Your NFT Asset
+              Create Your Asset
             </h1>
-            <p className="text-xl text-zinc-400 max-w-3xl mx-auto leading-relaxed">
-              Transform your intellectual property into programmable NFTs with zero gas fees on Starknet
+            <p className="text-sm text-zinc-400 max-w-3xl mx-auto leading-relaxed">
+              Mint your intellectual property as smart contract NFTs with zero fees on Starknet
             </p>
           </div>
         )}

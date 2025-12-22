@@ -16,6 +16,7 @@ import {
   Settings,
   LogOut,
   Wallet,
+  Stars,
 } from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/src/components/ui/button"
@@ -85,8 +86,8 @@ const FloatingNav = () => {
   // Main navigation items (simplified)
   const mainNavItems = [
     {
-      icon: <Home className="w-4 h-4" />,
-      label: "Home",
+      icon: <Stars className="w-4 h-4" />,
+      label: "Start",
       href: "/",
       isActive: pathname === "/",
     },
@@ -128,7 +129,7 @@ const FloatingNav = () => {
         <div
           className={cn(
             "w-full mx-auto rounded-full glass-effect border border-white/10 transition-all duration-300",
-            scrolled ? "shadow-lg bg-black/80" : "bg-black/60",
+            scrolled ? "shadow-lg bg-black/70" : "bg-black/50",
           )}
         >
           <div className="relative flex items-center justify-between h-12 md:h-14">
@@ -190,7 +191,7 @@ const FloatingNav = () => {
                 </Button>
               )}
 
-              {/* User Menu */}
+              {/* User Menu 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 md:h-9 md:w-9">
@@ -222,7 +223,7 @@ const FloatingNav = () => {
                     Sign Out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
-              </DropdownMenu>
+              </DropdownMenu>*/}
 
               {/* Mobile Menu Button */}
               {isMobile && (

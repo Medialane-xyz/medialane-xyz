@@ -237,10 +237,8 @@ export default function CreateCollectionPage() {
     { id: "video", name: "Film & Video", icon: Video },
     { id: "photography", name: "Photography", icon: Camera },
     { id: "gaming", name: "Gaming", icon: Gamepad2 },
-    { id: "sports", name: "Sports", icon: Trophy },
     { id: "collectibles", name: "Collectibles", icon: Briefcase },
     { id: "literature", name: "Literature", icon: BookOpen },
-    { id: "patents", name: "Patents & IP", icon: Cpu },
   ]
 
   const licenseTypes = [
@@ -253,7 +251,7 @@ export default function CreateCollectionPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-black text-white pt-20 pb-8">
+    <div className="min-h-screen pt-40 pb-40">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
           {/* Main Form */}
@@ -265,10 +263,10 @@ export default function CreateCollectionPage() {
               className="text-center lg:text-left"
             >
               <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-purple-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent mb-4">
-                Create Your Collection
+                Mint your collection
               </h1>
               <p className="text-gray-400 text-lg max-w-2xl">
-                Launch your IP collection with advanced monetization, remix capabilities, and full licensing control
+                Launch your Programmable IP NFT collection with zero fees
               </p>
             </motion.div>
 

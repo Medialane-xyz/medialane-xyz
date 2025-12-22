@@ -160,10 +160,10 @@ export default function CollectionsPage() {
             <div className="flex-1">
               <div className="inline-flex items-center justify-center p-2 bg-primary/10 rounded-full mb-3 sm:mb-4">
                 <Grid3X3 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-primary" />
-                <span className="text-xs sm:text-sm font-medium">Collections</span>
+                <span className="text-xs sm:text-sm font-medium">Intellectual Property</span>
               </div>
               <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-2 sm:mb-3 md:mb-4 gradient-text">
-                Intellectual Property
+                Collections
               </h1>
               
             </div>
