@@ -77,7 +77,7 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-              {assets.slice(0, 4).map((asset, index) => (
+              {assets.slice(0, 12).map((asset, index) => (
                 <motion.div key={asset.id} variants={itemVariants}>
                   <AssetCard asset={asset} />
                 </motion.div>

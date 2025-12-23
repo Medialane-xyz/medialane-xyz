@@ -139,11 +139,11 @@ export default function CategoriesPage() {
             </motion.div>
 
             <motion.h1 variants={itemVariants} className="text-3xl md:text-4xl font-bold">
-              Discover by Category
+              Discover by Media Type
             </motion.h1>
 
             <motion.p variants={itemVariants} className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Browse creative works across different categories and find the perfect assets for your projects
+              Browse creative works in selected formats and media types.
             </motion.p>
 
             <motion.div variants={itemVariants} className="max-w-md mx-auto">

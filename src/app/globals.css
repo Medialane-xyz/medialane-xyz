@@ -92,7 +92,7 @@
 }
 
 .gradient-text {
-  background: linear-gradient(to right, #c084fc, #8b5cf6);
+  background: linear-gradient(to right, #8488fc, #8b5cf6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -113,7 +113,7 @@
 .gradient-border-animated {
   position: relative;
   background: linear-gradient(to bottom, hsl(var(--background)), hsl(var(--background))) padding-box,
-    linear-gradient(90deg, #8b5cf6, #ec4899, #8b5cf6) border-box;
+    linear-gradient(90deg, #8b5cf6, #ec4876, #5c7bf6) border-box;
   background-size: 200% 100%;
   animation: gradient-border-animation 3s ease-in-out infinite;
   border: 1px solid transparent;

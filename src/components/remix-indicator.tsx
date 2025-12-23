@@ -83,6 +83,7 @@ export function RemixIndicator({
               </span>
             </div>
           )}
+          
 
           {/* Original Asset Information */}
           {originalAsset ? (

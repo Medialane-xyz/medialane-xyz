@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { Shuffle, MoreVertical, ShoppingCart, Share2, Flag } from "lucide-react"
+import { Shuffle, MoreVertical, ShoppingCart, Share2, Flag, Link, Coins, Scale, Handshake, ZoomIn } from "lucide-react"
 import { Badge } from "@/src/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar"
 import { Button } from "@/src/components/ui/button"
@@ -117,46 +117,70 @@ export default function AssetCard({ asset, minimal = false }: AssetCardProps) {
 
           {!minimal && (
             <div className="space-y-2 pt-2 border-t border-border/20">
-              <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  className="flex-1 h-10 text-sm rounded-lg bg-primary hover:bg-primary/90 flex items-center justify-center gap-2 font-semibold transition-all duration-200"
-                  onClick={handleBuyNow}
-                  title="Acquire complete property rights"
-                >
-                  <ShoppingCart className="h-4 w-4" />
-                  <span>{asset.price}</span>
-                </Button>
+              
+               <div className="flex gap-2">
+
                 <Button
                   size="sm"
                   variant="outline"
-                  className="flex-1 h-10 text-sm rounded-lg flex items-center justify-center gap-2 font-semibold bg-transparent hover:bg-accent/50"
+                  className="h-10 rounded-lg flex items-center justify-center gap-2 bg-transparent hover:bg-accent/50 font-medium"
+                  onClick={handleBuyNow}
+                  title="Buy now property rights"
+                >
+                  <span>{asset.price}</span>
+                </Button>
+
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-10 rounded-lg flex items-center justify-center gap-2 bg-transparent hover:bg-accent/50 font-medium"
+                  onClick={handleViewAsset}
+                >
+                  <ZoomIn className="h-4 w-4" />
+                </Button>
+
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="flex-1 h-10 text-sm rounded-lg bg-primary hover:bg-primary/90 flex items-center justify-center gap-2 transition-all duration-200"
                   onClick={handleRemixClick}
                 >
                   <Shuffle className="h-4 w-4" />
-                  <span>Remix</span>
                 </Button>
-              </div>
+
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-10 rounded-lg flex items-center justify-center gap-2 bg-transparent hover:bg-accent/50 font-medium"
+                  onClick={handleMakeOffer}
+                >
+                  <Handshake className="h-4 w-4" />
+                </Button>
+
+                
+
+
+              
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     size="sm"
                     variant="outline"
-                    className="w-full h-9 rounded-lg flex items-center justify-center gap-2 bg-transparent hover:bg-accent/50 font-medium"
+                    className="h-9 rounded-lg flex items-center justify-center gap-2 bg-transparent hover:bg-accent/50 font-medium"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <MoreVertical className="h-4 w-4" />
-                    <span>More</span>
+                    
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-44">
                   <DropdownMenuItem onClick={handleViewAsset} className="cursor-pointer flex items-center gap-2">
-                    <ShoppingCart className="h-4 w-4" />
+                    <Link className="h-4 w-4" />
                     <span>View Details</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleMakeOffer} className="cursor-pointer flex items-center gap-2">
-                    <ShoppingCart className="h-4 w-4" />
+                    <Coins className="h-4 w-4" />
                     <span>Make Offer</span>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -174,6 +198,11 @@ export default function AssetCard({ asset, minimal = false }: AssetCardProps) {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+
+
+            </div>
+
+
             </div>
           )}
         </div>

@@ -17,6 +17,7 @@ import {
   LogOut,
   Wallet,
   Stars,
+  Shapes,
 } from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/src/components/ui/button"
@@ -86,16 +87,16 @@ const FloatingNav = () => {
   // Main navigation items (simplified)
   const mainNavItems = [
     {
-      icon: <Stars className="w-4 h-4" />,
-      label: "Start",
-      href: "/",
-      isActive: pathname === "/",
-    },
-    {
       icon: <Compass className="w-4 h-4" />,
       label: "Explore",
       href: "/explore",
       isActive: pathname.startsWith("/explore") || pathname.startsWith("/assets"),
+    },
+    {
+      icon: <Shapes className="w-4 h-4" />,
+      label: "Media",
+      href: "/categories",
+      isActive: pathname.startsWith("/categories") || pathname.startsWith("/categories"),
     },
     {
       icon: <Layers className="w-4 h-4" />,
