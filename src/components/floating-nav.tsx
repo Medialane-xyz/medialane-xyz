@@ -93,12 +93,6 @@ const FloatingNav = () => {
       isActive: pathname.startsWith("/explore") || pathname.startsWith("/assets"),
     },
     {
-      icon: <Shapes className="w-4 h-4" />,
-      label: "Media",
-      href: "/categories",
-      isActive: pathname.startsWith("/categories") || pathname.startsWith("/categories"),
-    },
-    {
       icon: <Layers className="w-4 h-4" />,
       label: "Collections",
       href: "/collections",
@@ -109,6 +103,12 @@ const FloatingNav = () => {
       label: "Creators",
       href: "/creators",
       isActive: pathname.startsWith("/creators") || pathname.startsWith("/users"),
+    },
+    {
+      icon: <Shapes className="w-4 h-4" />,
+      label: "Media",
+      href: "/categories",
+      isActive: pathname.startsWith("/categories") || pathname.startsWith("/categories"),
     },
     {
       icon: <Sparkles className="w-4 h-4" />,

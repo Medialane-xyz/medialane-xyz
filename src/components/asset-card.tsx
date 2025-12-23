@@ -123,7 +123,7 @@ export default function AssetCard({ asset, minimal = false }: AssetCardProps) {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="h-10 rounded-lg flex items-center justify-center gap-2 bg-transparent hover:bg-accent/50 font-medium"
+                  className="h-10 rounded-lg flex items-center justify-center gap-2 bg-transparent hover:bg-accent/50"
                   onClick={handleBuyNow}
                   title="Buy now property rights"
                 >
@@ -133,6 +133,7 @@ export default function AssetCard({ asset, minimal = false }: AssetCardProps) {
                 <Button
                   size="sm"
                   variant="outline"
+                  title="View asset"
                   className="h-10 rounded-lg flex items-center justify-center gap-2 bg-transparent hover:bg-accent/50 font-medium"
                   onClick={handleViewAsset}
                 >
@@ -142,6 +143,7 @@ export default function AssetCard({ asset, minimal = false }: AssetCardProps) {
                 <Button
                   size="sm"
                   variant="outline"
+                  title="Remix asset"
                   className="flex-1 h-10 text-sm rounded-lg bg-primary hover:bg-primary/90 flex items-center justify-center gap-2 transition-all duration-200"
                   onClick={handleRemixClick}
                 >
@@ -151,6 +153,7 @@ export default function AssetCard({ asset, minimal = false }: AssetCardProps) {
                 <Button
                   size="sm"
                   variant="outline"
+                  title="Make an offer"
                   className="h-10 rounded-lg flex items-center justify-center gap-2 bg-transparent hover:bg-accent/50 font-medium"
                   onClick={handleMakeOffer}
                 >
@@ -179,10 +182,7 @@ export default function AssetCard({ asset, minimal = false }: AssetCardProps) {
                     <Link className="h-4 w-4" />
                     <span>View Details</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleMakeOffer} className="cursor-pointer flex items-center gap-2">
-                    <Coins className="h-4 w-4" />
-                    <span>Make Offer</span>
-                  </DropdownMenuItem>
+                  
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleShareLink} className="cursor-pointer flex items-center gap-2">
                     <Share2 className="h-4 w-4" />

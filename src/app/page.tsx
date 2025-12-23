@@ -70,7 +70,7 @@ export default function Home() {
                 <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Trending Assets</h2>
                 <p className="text-base text-muted-foreground mt-2">Discover what's popular in our marketplace</p>
               </div>
-              <Button variant="outline" size="sm" onClick={() => router.push("/assets")} className="gap-2">
+              <Button variant="outline" size="sm" onClick={() => router.push("/explore")} className="gap-2">
                 View All
                 <ArrowRight className="h-4 w-4" />
               </Button>
