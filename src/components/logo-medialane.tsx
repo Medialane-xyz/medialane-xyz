@@ -6,10 +6,10 @@ export function LogoMedialane() {
     <div className="flex items-center space-x-2 ml-4">
     <Link href="/">
         <Image
-          src="/medialane.png"
+          src="/medialane-light-logo.png"
           alt="Medialane"
-          width={207}
-          height={36}
+          width={200}
+          height={35}
         />
     </Link>
     </div>
