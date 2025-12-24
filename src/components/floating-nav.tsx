@@ -89,7 +89,7 @@ const FloatingNav = () => {
     {
       icon: <Compass className="w-4 h-4" />,
       label: "Explore",
-      href: "/explore",
+      href: "/assets",
       isActive: pathname.startsWith("/explore") || pathname.startsWith("/assets"),
     },
     {

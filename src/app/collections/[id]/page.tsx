@@ -157,7 +157,9 @@ export default function CollectionDetailPage() {
 
   return (
     <div className="min-h-screen pt-0 md:pt-0 pb-24 md:pb-32">
-      <div className="fixed top-20 left-4 z-40 md:absolute md:top-6">
+      
+      {/*
+      <div className="fixed top-6 right-6 z-40 md:absolute md:top-20">
         <Button
           variant="ghost"
           size="sm"
@@ -168,6 +170,7 @@ export default function CollectionDetailPage() {
           Back
         </Button>
       </div>
+      */}
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -198,10 +201,10 @@ export default function CollectionDetailPage() {
                   <div className="flex items-center gap-2 flex-wrap">
                     <h1 className="text-2xl md:text-4xl font-bold">{collection.name}</h1>
                     {collection.verified && (
-                      <CheckCircle2 className="h-6 w-6 md:h-7 md:w-7 text-primary flex-shrink-0" />
+                      <CheckCircle2 className="h-6 w-6 md:h-7 md:w-7 text-green-500 flex-shrink-0" />
                     )}
                   </div>
-                  <p className="text-sm md:text-base text-zinc-300 mt-1">by {collection.creator}</p>
+                  <p className="text-sm md:text-base text-zinc-300 mt-1"> {collection.creator}</p>
                   <p className="text-xs md:text-sm text-zinc-400 mt-2 line-clamp-2">{collection.description}</p>
                 </div>
               </div>
@@ -225,11 +228,16 @@ export default function CollectionDetailPage() {
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-
+                
+                {/* 
                 <Button className="bg-primary hover:bg-primary/90">
                   <ExternalLink className="h-4 w-4 mr-2" />
                   License Assets
                 </Button>
+                */}
+
+
+
               </div>
             </div>
           </div>

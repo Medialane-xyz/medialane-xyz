@@ -56,7 +56,7 @@ export default function ExplorePage() {
   const [isSearching, setIsSearching] = useState(false)
   const [initialLoad, setInitialLoad] = useState(true)
 
-  // Categories derived from mock data
+  // Categories for filtering
   const categories = ["art", "music", "patent", "literature", "brand", "film"]
 
   // Reset initial load state after component mounts

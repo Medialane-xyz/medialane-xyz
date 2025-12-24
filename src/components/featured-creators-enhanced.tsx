@@ -12,7 +12,8 @@ interface FeaturedCreatorsProps {
 
 export default function FeaturedCreatorsEnhanced({ creators }: FeaturedCreatorsProps) {
   const router = useRouter()
-  const featuredCreators = creators.slice(0, 3)
+  
+  const featuredCreators = creators.slice(6, 9)
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -75,7 +76,7 @@ export default function FeaturedCreatorsEnhanced({ creators }: FeaturedCreatorsP
                     <AvatarImage src={creator.avatar || "/placeholder.svg"} alt={creator.name} />
                     <AvatarFallback>{creator.name.slice(0, 2)}</AvatarFallback>
                   </Avatar>
-                  {creator.verified && <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0 mb-1" />}
+                  {creator.verified && <CheckCircle2 className="h-5 w-5 text-green flex-shrink-0 mb-1" />}
                 </div>
 
                 {/* Creator Details */}

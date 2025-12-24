@@ -112,14 +112,14 @@ export default function UserProfilePage() {
       {/* Profile Header */}
       <div className="relative">
         {/* Banner */}
-        <div className="h-200 md:h-300 bg-gradient-to-r from-primary/20 to-purple-500/20 relative overflow-hidden">
-          {creator.banner && (
-            <img
-              src={creator.banner || "/placeholder.svg"}
-              alt={`${creator.name} banner`}
-              className="w-full h-full object-cover"
-            />
-          )}
+        <div
+          className="h-96 md:h-[32rem] relative overflow-hidden bg-gradient-to-r from-primary/20 to-purple-500/20"
+          style={{
+            backgroundImage: creator.banner ? `url(${creator.banner})` : "none",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
           <div className="absolute inset-0 bg-black/20" />
         </div>
 
@@ -155,6 +155,7 @@ export default function UserProfilePage() {
                     <Share2 className="w-4 h-4" />
                     {!isMobile && <span className="ml-2">Share</span>}
                   </Button>
+                  {/* Follow/Unfollow Button 
                   <Button
                     variant={isFollowing ? "outline" : "default"}
                     size="sm"
@@ -173,6 +174,7 @@ export default function UserProfilePage() {
                       </>
                     )}
                   </Button>
+                  */}
                   <Button variant="outline" size="sm">
                     <MoreHorizontal className="w-4 h-4" />
                   </Button>

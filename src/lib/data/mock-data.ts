@@ -5,7 +5,7 @@ export const mockCreators = [
     avatar: "/creator-avatar.png",
     banner: "/creator-banner.png",
     bio: "Digital artist specializing in pixel art and retro aesthetics. Creating unique NFTs since 2021.",
-    verified: true,
+    verified: false,
     followers: 15420,
     following: 892,
     totalAssets: 127,
@@ -25,7 +25,7 @@ export const mockCreators = [
     avatar: "/crypto-artist-avatar.png",
     banner: "/crypto-artist-banner.png",
     bio: "Exploring the intersection of technology and art through blockchain-based creations.",
-    verified: true,
+    verified: false,
     followers: 8930,
     following: 445,
     totalAssets: 89,
@@ -62,7 +62,7 @@ export const mockCreators = [
     avatar: "/innovatorx-avatar.png",
     banner: "/innovatorx-banner.png",
     bio: "Patent holder and tech innovator sharing breakthrough technologies and ideas.",
-    verified: true,
+    verified: false,
     followers: 12100,
     following: 567,
     totalAssets: 23,
@@ -80,7 +80,7 @@ export const mockCreators = [
     avatar: "/authorprime-avatar.png",
     banner: "/authorprime-banner.png",
     bio: "Bestselling author tokenizing literary works and creating interactive story experiences.",
-    verified: true,
+    verified: false,
     followers: 9870,
     following: 123,
     totalAssets: 34,
@@ -98,7 +98,7 @@ export const mockCreators = [
     avatar: "/designstudio-avatar.png",
     banner: "/creator-banner.png",
     bio: "Creative design studio specializing in brand identity and visual communication.",
-    verified: true,
+    verified: false,
     followers: 6540,
     following: 890,
     totalAssets: 78,
@@ -113,8 +113,8 @@ export const mockCreators = [
   {
     id: "7",
     name: "Starkz",
-    avatar: "/starkz-avatar.png",
-    banner: "/starkz-banner.png",
+    avatar: "/starkz-avatar.jpg",
+    banner: "/starkz-banner.jpg",
     bio: "From AI to ZK knowledge hub magazine.",
     verified: true,
     followers: 12100,
@@ -131,8 +131,8 @@ export const mockCreators = [
   {
     id: "8",
     name: "Ambrosia",
-    avatar: "/ambrosia.png",
-    banner: "/ambrosia-banner.png",
+    avatar: "/ambrosia-avatar.png",
+    banner: "/ambrosia-banner.jpg",
     bio: "Arts and culture curated content magazine",
     verified: true,
     followers: 8930,
@@ -147,11 +147,235 @@ export const mockCreators = [
     specialties: ["Arts", "Culture", "Magazine"],
     achievements: ["Rising Star", "Innovation Award"],
   },
+  {
+    id: "9",
+    name: "Kalamaha",
+    avatar: "/kalamaha.png",
+    banner: "/kalamaha-banner.png",
+    bio: "Kalamaha rock soundtrack. From Rio de Janeiro, Brazil",
+    verified: true,
+    followers: 7654,
+    following: 121,
+    totalAssets: 12,
+    totalSales: 5,
+    volumeTraded: "9,890 STRK",
+    joinedDate: "2025-11-22",
+    location: "Brazil",
+    website: "https://kalamaha.com",
+    twitter: "@kalamahamusic",
+    specialties: ["Music", "Rock", "Pop"],
+    achievements: ["Rising Star", "Innovation Award"],
+  },
+  {
+    id: "10",
+    name: "Mediolano",
+    avatar: "/mediolano.png",
+    banner: "/mediolano-banner.png",
+    bio: "Mediolano -- Programmable Intellectual Property for the Integrity Web",
+    verified: true,
+    followers: 7654,
+    following: 121,
+    totalAssets: 12,
+    totalSales: 5,
+    volumeTraded: "9,890 STRK",
+    joinedDate: "2025-11-22",
+    location: "Brazil",
+    website: "https://mediolano.xyz",
+    twitter: "@mediolanoapp",
+    specialties: ["ZK", "IP", "Starknet"],
+    achievements: ["Zero Fees", "Open Source"],
+  },
+  {
+    id: "11",
+    name: "Otacílio Câmara",
+    avatar: "/otacilio-imagem.jpg",
+    banner: "/otacilio-banner.jpg",
+    bio: "Otacílio Câmara, Painter from Brazil",
+    verified: true,
+    followers: 74,
+    following: 11,
+    totalAssets: 9,
+    totalSales: 1,
+    volumeTraded: "1,890 STRK",
+    joinedDate: "2025-08-03",
+    location: "Brazil",
+    website: "https://kalamaha.com.br",
+    twitter: "@camaraotacilio",
+    specialties: ["Art", "Paintings", "Illustrations"],
+    achievements: ["Brazil", "Rio de Janeiro"],
+  }
 ]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export const mockCollections = [
   {
     id: "1",
+    name: "Synthwave Glitch",
+    description: "Songs from Kalamaha's Synthwave Glitch Ep.",
+    image: "/synthwave-glitch.png",
+    banner: "/kalamaha-banner.png",
+    creator: "Kalamaha",
+    creatorId: "9",
+    creatorAvatar: "/kalamaha-avatar.png",
+    category: "Audio",
+    verified: true,
+    totalItems: 100,
+    owners: 67,
+    floorPrice: "0.5 STRK",
+    totalVolume: "450 STRK",
+    createdAt: "2025-11-15",
+    blockchain: "Starknet",
+    royalty: 2,
+    featured: true,
+    trending: true,
+  },
+{
+    id: "2",
+    name: "Indie Games Highlights by Ambrosia",
+    description: "A collection of the top independent games reviewed on Ambrosia.com.br",
+    image: "/ambrosia-avatar.png",
+    banner: "/ambrosia-banner.jpg",
+    creator: "Ambrosia",
+    creatorId: "8",
+    creatorAvatar: "/ambrosia-avatar.png",
+    category: "Posts",
+    verified: true,
+    totalItems: 100,
+    owners: 67,
+    floorPrice: "0.5 STRK",
+    totalVolume: "450 STRK",
+    createdAt: "2025-11-15",
+    blockchain: "Starknet",
+    royalty: 2,
+    featured: true,
+    trending: true,
+  },
+  {
+    id: "3",
+    name: "Otacílio Camara Paintings",
+    description: "A collection of authorial paintings by Otacílio Câmara.",
+    image: "/otacilio-imagem.jpg",
+    banner: "/otacilio-banner.jpg",
+    creator: "Otacílio Câmara",
+    creatorId: "11",
+    creatorAvatar: "/avatar-otacilio.jpg",
+    category: "Art",
+    verified: true,
+    totalItems: 100,
+    owners: 67,
+    floorPrice: "0.5 STRK",
+    totalVolume: "450 STRK",
+    createdAt: "2025-11-15",
+    blockchain: "Starknet",
+    royalty: 2,
+    featured: true,
+    trending: true,
+  },
+{
+    id: "4",
+    name: "Nó Samsara",
+    description: "Nó Samsara music album by Kalamaha.",
+    image: "/kalamaha.jpg",
+    banner: "/kalamaha-banner.png",
+    creator: "Kalamaha",
+    creatorId: "9",
+    creatorAvatar: "/kalamaha-avatar.png",
+    category: "Audio",
+    verified: true,
+    totalItems: 100,
+    owners: 67,
+    floorPrice: "0.5 STRK",
+    totalVolume: "450 STRK",
+    createdAt: "2025-11-15",
+    blockchain: "Starknet",
+    royalty: 2,
+    featured: true,
+    trending: true,
+  },
+{
+    id: "5",
+    name: "Kalamaha Behind the Scenes: Recordings.",
+    description: "Exclusive media from the backstage.",
+    image: "/kalamaha.jpg",
+    banner: "/kalamaha-banner.png",
+    creator: "Kalamaha",
+    creatorId: "9",
+    creatorAvatar: "/kalamaha-avatar.png",
+    category: "Vídeo",
+    verified: true,
+    totalItems: 100,
+    owners: 67,
+    floorPrice: "0.5 STRK",
+    totalVolume: "450 STRK",
+    createdAt: "2025-11-15",
+    blockchain: "Starknet",
+    royalty: 2,
+    featured: true,
+    trending: true,
+  },
+{
+    id: "6",
+    name: "Kalamaha AI",
+    description: "Experimental artistic conceptions about the Kalamaha universe. Generated with AI.",
+    image: "/kalamaha.jpg",
+    banner: "/CA-banner.jpg",
+    creator: "Kalamaha",
+    creatorId: "9",
+    creatorAvatar: "/kalamaha-avatar.png",
+    category: "Digital Art",
+    verified: true,
+    totalItems: 100,
+    owners: 67,
+    floorPrice: "0.5 STRK",
+    totalVolume: "450 STRK",
+    createdAt: "2025-11-15",
+    blockchain: "Starknet",
+    royalty: 2,
+    featured: true,
+    trending: true,
+  },
+
+  {
+    id: "7",
     name: "Pixel Legends",
     description: "A collection of legendary pixel art characters with unique abilities and stories.",
     image: "/pixel-legends-collection.png",
@@ -172,7 +396,7 @@ export const mockCollections = [
     trending: true,
   },
   {
-    id: "2",
+    id: "8",
     name: "Crypto Abstracts",
     description: "Abstract digital art exploring the beauty of mathematical patterns and blockchain concepts.",
     image: "/crypto-abstracts-collection.png",
@@ -193,7 +417,7 @@ export const mockCollections = [
     trending: false,
   },
   {
-    id: "3",
+    id: "9",
     name: "Sound Dimensions",
     description: "Immersive audio experiences that transport you to different dimensions of sound.",
     image: "/sound-dimensions-collection.png",
@@ -214,7 +438,7 @@ export const mockCollections = [
     trending: true,
   },
   {
-    id: "4",
+    id: "10",
     name: "Tech Patents 2024",
     description: "Revolutionary technology patents and innovations shaping the future.",
     image: "/iot-security-patent.png",
@@ -235,7 +459,7 @@ export const mockCollections = [
     trending: false,
   },
   {
-    id: "5",
+    id: "11",
     name: "Interactive Tales",
     description: "Choose-your-own-adventure stories with multiple endings and character paths.",
     image: "/interactive-tales-collection.png",
@@ -256,7 +480,7 @@ export const mockCollections = [
     trending: false,
   },
   {
-    id: "6",
+    id: "12",
     name: "Brand Essentials",
     description: "Complete brand identity packages including logos, color schemes, and style guides.",
     image: "/brand-essentials-collection.png",
@@ -276,7 +500,53 @@ export const mockCollections = [
     featured: true,
     trending: true,
   },
+
 ]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export const mockAssets = [
   {
@@ -537,7 +807,458 @@ export const mockAssets = [
       { trait_type: "Generation", value: "3rd Remix" },
     ],
   },
+  {
+    id: "9",
+    name: "Red Velvet",
+    description: "Synthesizer remixed version of Kalamaha's song Vermelha",
+    image: "/synthwave-glitch.png",
+    creator: "Kalamaha",
+    creatorId: "9",
+    creatorAvatar: "/kalamaha-avatar.png",
+    price: "10 STRK",
+    category: "Audio",
+    tags: ["abstract", "original soundtrack", "audio", "art"],
+    idCollection: "7",
+
+  },
+{
+    id: "10",
+    name: "The Revenge of Shiroi",
+    description: "Soundtrack composed by Kalamaha with synthesizer in honor of Shiroi.",
+    image: "/synthwave-glitch.png",
+    creator: "Kalamaha",
+    creatorId: "9",
+    creatorAvatar: "/kalamaha-avatar.png",
+    price: "10 STRK",
+    category: "Audio",
+    tags: ["abstract", "original soundtrack", "audio", "art"],
+    idCollection: "1",
+  },
+{
+    id: "11",
+    name: "Yasha: Legends of the Demon Blade — A surpresa que ninguém viu chegando.",
+    description: "Critical analysis of the game Yasha: Legends of the Demon Blade made for the Ambrosia website.",
+    image: "/Yasha-Legends-of-the-Demon-Blade.jpg",
+    creator: "Ambrosia",
+    creatorId: "9",
+    creatorAvatar: "/ambrosia-avatar.png",
+    price: "3.5 STRK",
+    category: "Posts",
+    tags: ["press", "Blog", "digital", "Post"],
+    idCollection: "2",
+  },
+{
+    id: "12",
+    name: "Colonização BR em MARS 2120.",
+    description: "Critical analysis of the game MARS 2120 made for the Ambrosia website.",
+    image: "/MARS-2120.jpg",
+    creator: "Ambrosia",
+    creatorId: "9",
+    creatorAvatar: "/ambrosia-avatar.png",
+    price: "3.5 STRK",
+    category: "Posts",
+    tags: ["press", "Blog", "digital", "Post"],
+    idCollection: "2",
+  },
+{
+    id: "13",
+    name: "Romance em Conflitos Históricos – The Legend of Tianding.",
+    description: "Critical analysis of the game The Legend of Tianding made for the Ambrosia website.",
+    image: "/The-Legend-of-Tianding.jpg",
+    creator: "Ambrosia",
+    creatorId: "9",
+    creatorAvatar: "/ambrosia-avatar.png",
+    price: "3.5 STRK",
+    category: "Posts",
+    tags: ["press", "Blog", "digital", "Post"],
+    idCollection: "2",
+  },
+{
+    id: "14",
+    name: "Deslumbrantes inimigos cor-de-rosa em From Space.",
+    description: "Critical analysis of the game From Space made for the Ambrosia website.",
+    image: "/From-Space.jpg",
+    creator: "Ambrosia",
+    creatorId: "9",
+    creatorAvatar: "/ambrosia-avatar.png",
+    price: "3.5 STRK",
+    category: "Posts",
+    tags: ["press", "Blog", "digital", "Post"],
+    idCollection: "2",
+  },
+{
+    id: "15",
+    name: "A Revolução da Salsicha em Dogfight: A Sausage Bomber Story.",
+    description: "Critical analysis of the game Dogfight: A Sausage Bomber Story made for the Ambrosia website.",
+    image: "/Dogfight.jpeg",
+    creator: "Ambrosia",
+    creatorId: "9",
+    creatorAvatar: "/ambrosia-avatar.png",
+    price: "3.5 STRK",
+    category: "Posts",
+    tags: ["press", "Blog", "digital", "Post"],
+    idCollection: "2",
+  },
+{
+    id: "16",
+    name: "Stencil in pink.",
+    description: "Abstract painting made with acrylic paint and stencil techniques by Otacílio Câmara.",
+    image: "/pink-stencil.jpg",
+    creator: "Otacílio Câmara",
+    creatorId: "9",
+    creatorAvatar: "/avatar-otacilio.png",
+    price: "300 STRK",
+    category: "art",
+    tags: ["acrylic painting", "abstract", "art", "authoral"],
+    idCollection: "3",
+  },
+{
+    id: "17",
+    name: "Black and gray relief.",
+    description: "Abstract painting made with acrylic paint by Otacílio Câmara.",
+    image: "/black-gray.jpg",
+    creator: "Otacílio Câmara",
+    creatorId: "9",
+    creatorAvatar: "/avatar-otacilio.jpg",
+    price: "300 STRK",
+    category: "art",
+    tags: ["acrylic painting", "abstract", "art", "authoral"],
+    idCollection: "3",
+  },
+{
+    id: "18",
+    name: "Baby Wyrm.",
+    description: "A playful painting depicting a baby wind dragon made with acrylic paint by Otacílio Câmara.",
+    image: "/baby-wyrm.jpg",
+    creator: "Otacílio Câmara",
+    creatorId: "9",
+    creatorAvatar: "/avatar-otacilio.jpg",
+    price: "300 STRK",
+    category: "art",
+    tags: ["acrylic painting", "playful", "art", "authoral"],
+    idCollection: "3",
+  },
+{
+    id: "19",
+    name: "Exclamation in blocks.",
+    description: "Abstract painting made with acrylic paint and stencil techniques by Otacílio Câmara.",
+    image: "/exclamation.jpg",
+    creator: "Otacílio Câmara",
+    creatorId: "9",
+    creatorAvatar: "/avatar-otacilio.jpg",
+    price: "300 STRK",
+    category: "art",
+    tags: ["acrylic painting", "abstract", "art", "authoral"],
+    idCollection: "3",
+  },
+{
+    id: "20",
+    name: "Grayscale Gradient.",
+    description: "Abstract painting made with acrylic paint techniques by Otacílio Câmara.",
+    image: "/grayscale.jpg",
+    creator: "Otacílio Câmara",
+    creatorId: "9",
+    creatorAvatar: "/avatar-otacilio.jpg",
+    price: "300 STRK",
+    category: "art",
+    tags: ["acrylic painting", "abstract", "art", "authoral"],
+    idCollection: "3",
+  },
+{
+    id: "21",
+    name: "Multicolored Gradient.",
+    description: "Abstract painting made with acrylic paint and stencil techniques by Otacílio Câmara.",
+    image: "/multicolored.jpg",
+    creator: "Otacílio Câmara",
+    creatorId: "9",
+    creatorAvatar: "/avatar-otacilio.jpg",
+    price: "300 STRK",
+    category: "art",
+    tags: ["acrylic painting", "abstract", "art", "authoral"],
+    idCollection: "3",
+  },
+{
+    id: "22",
+    name: "Chinese Alarm Clock",
+    description: "Chinese Alarm Clock. Music from the album Nó Samsara.",
+    image: "/chinese-alarm-clock.jpeg",
+    creator: "Kalamaha",
+    creatorId: "9",
+    creatorAvatar: "/kalamaha-avatar.png",
+    price: "500 STRK",
+    category: "Audio",
+    tags: ["music", "original soundtrack", "audio", "art"],
+    idCollection: "4",
+  },
+{
+    id: "23",
+    name: "Raphaella",
+    description: "Raphaella. Music from the album Nó Samsara.",
+    image: "/raphaella.jpeg",
+    creator: "Kalamaha",
+    creatorId: "9",
+    creatorAvatar: "/kalamaha-avatar.png",
+    price: "500 STRK",
+    category: "Audio",
+    tags: ["music", "original soundtrack", "audio", "art"],
+    idCollection: "4",
+  },
+{
+    id: "24",
+    name: "Night Drive",
+    description: "Night Drive. Music from the album Nó Samsara.",
+    image: "/night-drive.jpeg",
+    creator: "Kalamaha",
+    creatorId: "9",
+    creatorAvatar: "/kalamaha-avatar.png",
+    price: "500 STRK",
+    category: "Audio",
+    tags: ["music", "original soundtrack", "audio", "art"],
+    idCollection: "4",
+  },
+{
+    id: "25",
+    name: "Revés Blue",
+    description: "Revés Blue. Music from the album Nó Samsara.",
+    image: "/reves-blue.jpeg",
+    creator: "Kalamaha",
+    creatorId: "9",
+    creatorAvatar: "/kalamaha-avatar.png",
+    price: "500 STRK",
+    category: "Audio",
+    tags: ["music", "original soundtrack", "audio", "art"],
+    idCollection: "4",
+  },
+{
+    id: "26",
+    name: "À Tarde",
+    description: "À Tarde. Music from the album Nó Samsara.",
+    image: "/a-tarde.jpeg",
+    creator: "Kalamaha",
+    creatorId: "9",
+    creatorAvatar: "/kalamaha-avatar.png",
+    price: "500 STRK",
+    category: "Audio",
+    tags: ["music", "original soundtrack", "audio", "art"],
+    idCollection: "4",
+  },
+{
+    id: "27",
+    name: "Vegan",
+    description: "Vegan. Music from the album Nó Samsara.",
+    image: "/vegan.jpeg",
+    creator: "Kalamaha",
+    creatorId: "9",
+    creatorAvatar: "/kalamaha-avatar.png",
+    price: "500 STRK",
+    category: "Audio",
+    tags: ["music", "original soundtrack", "audio", "art"],
+    idCollection: "4",
+  },
+{
+    id: "28",
+    name: "Rising in Mars",
+    description: "Rising in Mars. Music from the album Nó Samsara.",
+    image: "/rising-in-mars.jpeg",
+    creator: "Kalamaha",
+    creatorId: "9",
+    creatorAvatar: "/kalamaha-avatar.png",
+    price: "500 STRK",
+    category: "Audio",
+    tags: ["music", "original soundtrack", "audio", "art"],
+    idCollection: "4",
+  },
+{
+    id: "29",
+    name: "That Bet",
+    description: "That Bet. Music from the album Nó Samsara.",
+    image: "/that-bet.jpeg",
+    creator: "Kalamaha",
+    creatorId: "9",
+    creatorAvatar: "/kalamaha-avatar.png",
+    price: "500 STRK",
+    category: "Audio",
+    tags: ["music", "original soundtrack", "audio", "art"],
+    idCollection: "4",
+  },
+{
+    id: "30",
+    name: "Shokubutsu No Boshi",
+    description: "Shokubutsu No Boshi. Music from the album Nó Samsara.",
+    image: "/shokubutsu.jpeg",
+    creator: "Kalamaha",
+    creatorId: "9",
+    creatorAvatar: "/kalamaha-avatar.png",
+    price: "500 STRK",
+    category: "Audio",
+    tags: ["music", "original soundtrack", "audio", "art"],
+    idCollection: "4",
+  },
+{
+    id: "31",
+    name: "Confortism",
+    description: "Confortism. Music from the album Nó Samsara.",
+    image: "/confortism.jpeg",
+    creator: "Kalamaha",
+    creatorId: "9",
+    creatorAvatar: "/kalamaha-avatar.png",
+    price: "500 STRK",
+    category: "Audio",
+    tags: ["music", "original soundtrack", "audio", "art"],
+    idCollection: "4",
+  },
+{
+    id: "32",
+    name: "Bass Recordings",
+    description: "Kalamaha bass line recordings in the studio.",
+    image: "/rodrigo-rec-01.jpg",
+    creator: "Kalamaha",
+    creatorId: "9",
+    creatorAvatar: "/kalamaha-avatar.png",
+    price: "500 STRK",
+    category: "Video",
+    tags: ["video", "recording", "studio", "production"],
+    idCollection: "5",
+  },
+{
+    id: "33",
+    name: "Folk guitar recordings",
+    description: "Kalamaha folk guitar recordings in the studio.",
+    image: "/rodrigo-rec.jpg",
+    creator: "Kalamaha",
+    creatorId: "9",
+    creatorAvatar: "/kalamaha-avatar.png",
+    price: "100 STRK",
+    category: "Video",
+    tags: ["video", "recording", "studio", "production"],
+    idCollection: "5",
+  },
+{
+    id: "34",
+    name: "Mixing Tracks",
+    description: "Mixing of Kalamaha's tracks in the studio.",
+    image: "/pistas-rec.jpg",
+    creator: "Kalamaha",
+    creatorId: "9",
+    creatorAvatar: "/kalamaha-avatar.png",
+    price: "100 STRK",
+    category: "Video",
+    tags: ["video", "recording", "studio", "production"],
+    idCollection: "5",
+  },
+{
+    id: "35",
+    name: "Equipment setup",
+    description: "Kalamaha equipment setup for studio recording.",
+    image: "/config-rec.jpg",
+    creator: "Kalamaha",
+    creatorId: "9",
+    creatorAvatar: "/kalamaha-avatar.png",
+    price: "100 STRK",
+    category: "Video",
+    tags: ["video", "recording", "studio", "production"],
+    idCollection: "5",
+  },
+{
+    id: "36",
+    name: "Mahakala in Purple",
+    description: "Mahakala's artistic concept for the Kalamaha universe.",
+    image: "/arte-01.jpeg",
+    creator: "Kalamaha",
+    creatorId: "9",
+    creatorAvatar: "/kalamaha-avatar.png",
+    price: "80 STRK",
+    category: "DIgital Art",
+    tags: ["concept art", "digital art", "AI", "multiverse"],
+    idCollection: "6",
+  },
+{
+    id: "37",
+    name: "Mahakala Totem",
+    description: "Mahakala's artistic concept for the Kalamaha universe.",
+    image: "/arte-02.jpeg",
+    creator: "Kalamaha",
+    creatorId: "9",
+    creatorAvatar: "/kalamaha-avatar.png",
+    price: "80 STRK",
+    category: "DIgital Art",
+    tags: ["concept art", "digital art", "AI", "multiverse"],
+    idCollection: "6",
+  },
+{
+    id: "39",
+    name: "Quetzal Warrior | Legendary Armor.",
+    description: "Quetzal's artistic concept for the Kalamaha universe.",
+    image: "/arte-03.jpeg",
+    creator: "Kalamaha",
+    creatorId: "9",
+    creatorAvatar: "/kalamaha-avatar.png",
+    price: "80 STRK",
+    category: "DIgital Art",
+    tags: ["concept art", "digital art", "AI", "multiverse"],
+    idCollection: "6",
+  },
+{
+    id: "41",
+    name: "Biomechanical Primate.",
+    description: "An artistic concept for the Kalamaha universe.",
+    image: "/arte-04.jpeg",
+    creator: "Kalamaha",
+    creatorId: "9",
+    creatorAvatar: "/kalamaha-avatar.png",
+    price: "80 STRK",
+    category: "DIgital Art",
+    tags: ["concept art", "digital art", "AI", "multiverse"],
+    idCollection: "6",
+  },
+{
+    id: "42",
+    name: "Biomechanical Harpy.",
+    description: "An artistic concept for the Kalamaha universe.",
+    image: "/arte-05.jpeg",
+    creator: "Kalamaha",
+    creatorId: "9",
+    creatorAvatar: "/kalamaha-avatar.png",
+    price: "80 STRK",
+    category: "DIgital Art",
+    tags: ["concept art", "digital art", "AI", "multiverse"],
+    idCollection: "6",
+  },
+{
+    id: "43",
+    name: "Alien Lizard.",
+    description: "An artistic concept for the Kalamaha universe.",
+    image: "/arte-06.jpg",
+    creator: "Kalamaha",
+    creatorId: "9",
+    creatorAvatar: "/kalamaha-avatar.png",
+    price: "80 STRK",
+    category: "DIgital Art",
+    tags: ["concept art", "digital art", "AI", "multiverse"],
+    idCollection: "6",
+  },
+
 ]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export const mockStats = {
   totalAssets: 12847,
