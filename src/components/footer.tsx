@@ -28,6 +28,8 @@ import {
   Code,
   Lightbulb,
   Flame,
+  Globe2,
+  Stars,
 } from "lucide-react"
 import { ThemeToggle } from "@/src/components/theme-toggle"
 import { useMobile } from "@/src/hooks/use-mobile"
@@ -59,11 +61,11 @@ export default function Footer() {
       icon: Search,
       color: "text-purple-400",
       links: [
-        { name: "All Assets", href: "/explore" },
+        { name: "All Assets", href: "/assets" },
         { name: "Collections", href: "/collections" },
         { name: "Trending", href: "/explore?sort=trending" },
-        { name: "New Releases", href: "/explore/new" },
-        { name: "Categories", href: "/explore?view=categories" },
+        { name: "New Releases", href: "/new-releases" },
+        { name: "Categories", href: "/categories" },
       ],
     },
     {
@@ -154,8 +156,8 @@ export default function Footer() {
     { icon: Shield, text: "IP Protection" },
     { icon: Globe, text: "Global Marketplace" },
     { icon: Users, text: "Creator Community" },
-    { icon: BarChart3, text: "Analytics Dashboard" },
-    { icon: Layers, text: "Multi-Chain Support" },
+    { icon: Layers, text: "NFT Support" },
+    { icon: Code, text: "Secondary Markets" },
   ]
 
   // Platform stats
@@ -167,7 +169,7 @@ export default function Footer() {
   ]
 
   return (
-    <footer className="relative bg-gradient-to-br from-black via-gray-900 to-black border-t border-gray-800/50 overflow-hidden">
+    <footer className="relative bg-gradient-to-br from-black via-gray-900 to-black border-t border-gray-800/50 overflow-hidden p-4">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-blue-500/5 to-cyan-500/5" />
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
@@ -175,21 +177,17 @@ export default function Footer() {
 
       {/* Main Navigation Section */}
       <div className="relative border-b border-gray-800/50">
+      
         <motion.div
-          className="container mx-auto px-4 py-12"
+          className="container mx-auto px-4 py-4"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
         >
-          <motion.h2
-            className="text-2xl font-bold mb-8 text-center bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent"
-            variants={itemVariants}
-          >
-            Explore
-          </motion.h2>
+          
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {mainNavigation.map((category, idx) => (
               <motion.div key={idx} className="space-y-4" variants={itemVariants}>
                 <h3 className={`text-lg font-semibold flex items-center ${category.color}`}>
@@ -224,7 +222,7 @@ export default function Footer() {
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {resourceLinks.map((category, idx) => (
               <motion.div key={idx} className="space-y-4" variants={itemVariants}>
                 <h3 className={`text-lg font-semibold flex items-center ${category.color}`}>
@@ -258,12 +256,7 @@ export default function Footer() {
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
       >
-        <motion.h2
-          className="text-xl font-bold mb-8 text-center bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent"
-          variants={itemVariants}
-        >
-          Platform Statistics
-        </motion.h2>
+        
 
         <motion.div className="grid grid-cols-2 md:grid-cols-4 gap-6" variants={itemVariants}>
           {stats.map((stat, index) => (
@@ -280,6 +273,22 @@ export default function Footer() {
           ))}
         </motion.div>
       </motion.div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
       {/* Brand and Features Section */}
       <motion.div
@@ -298,9 +307,8 @@ export default function Footer() {
               </div> 
             </div>
 
-            <p className="text-gray-300 text-lg leading-relaxed mb-6 max-w-md">
-              Monetization hub and low fee marketplace for creative content.<br></br>
-              Empowering creators to monetize their digital assets and intellectual property.
+            <p className="text-gray-300 text-sm leading-relaxed mb-6 max-w-md">
+              Monetization hub and low fee marketplace for creative content. Empowering creators to monetize and generate new revenuews from intellectual property.
             </p>
 
             {/* Feature Highlights */}
@@ -321,10 +329,9 @@ export default function Footer() {
             {/* Social Links */}
             <div className="flex space-x-4">
               {[
-                { icon: Twitter, href: "#", label: "X" },
-                { icon: Instagram, href: "#", label: "Instagram" },
-                { icon: Github, href: "#", label: "TikTok" },
-                { icon: Linkedin, href: "#", label: "LinkedIn" },
+                { icon: Twitter, href: "https://x.com/medialane_xyz", label: "X" },
+                { icon: Github, href: "https://github.com/medialane-xyz", label: "Github" },
+                { icon: Globe2, href: "https://mediolano.xyz/", label: "Mediolano" },
               ].map((social, index) => (
                 <motion.a
                   key={index}
@@ -342,27 +349,19 @@ export default function Footer() {
 
           {/* Quick Access Links */}
           <motion.div className="lg:col-span-4" variants={itemVariants}>
-            <h3 className="text-lg font-semibold mb-6 flex items-center text-white">
-              <Flame className="h-5 w-5 mr-2 text-orange-400" />
-              Features
-            </h3>
+            
 
             <div className="grid grid-cols-1 gap-3">
               {[
                 {
                   icon: Heart,
                   color: "from-pink-500 to-purple-500",
-                  text: "Favorite Collections",
+                  text: "Featured Collections",
                   href: "/collections?filter=popular",
                 },
-                { icon: Award, color: "from-amber-500 to-orange-500", text: "Top Creators", href: "/creators" },
-                {
-                  icon: Lightbulb,
-                  color: "from-blue-500 to-cyan-500",
-                  text: "IP Licensing Guide",
-                  href: "/guides/licensing",
-                },
-                { icon: Code, color: "from-green-500 to-emerald-500", text: "Developer API", href: "/developers/api" },
+                { icon: Award, color: "from-amber-500 to-orange-500", text: "Creators", href: "/creators" },
+                { icon: Stars, color: "from-green-400 to-blue-500", text: "New Releases", href: "/new-releases" },
+                
               ].map((feature, index) => (
                 <Link key={index} href={feature.href}>
                   <motion.div
@@ -384,8 +383,8 @@ export default function Footer() {
 
           {/* Theme and Language */}
           <motion.div className="lg:col-span-4" variants={itemVariants}>
-            <h3 className="text-lg font-semibold mb-6 flex items-center text-white">
-              <Settings className="h-5 w-5 mr-2 text-blue-400" />
+            <h3 className="text-sm mb-6 flex items-center text-white">
+              <Settings className="h-4 w-4 mr-2 text-blue-400" />
               Preferences
             </h3>
 
@@ -423,6 +422,18 @@ export default function Footer() {
           </motion.div>
         </div>
       </motion.div>
+
+
+
+
+
+
+
+
+
+
+
+
 
       {/* Bottom Section */}
       <motion.div
