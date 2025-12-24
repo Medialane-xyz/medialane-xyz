@@ -76,7 +76,7 @@ export default function FeaturedCreatorsEnhanced({ creators }: FeaturedCreatorsP
                     <AvatarImage src={creator.avatar || "/placeholder.svg"} alt={creator.name} />
                     <AvatarFallback>{creator.name.slice(0, 2)}</AvatarFallback>
                   </Avatar>
-                  {creator.verified && <CheckCircle2 className="h-5 w-5 text-green flex-shrink-0 mb-1" />}
+                  {creator.verified && <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0 mb-1" />}
                 </div>
 
                 {/* Creator Details */}
@@ -110,6 +110,7 @@ export default function FeaturedCreatorsEnhanced({ creators }: FeaturedCreatorsP
                 {/* CTA Button */}
                 <Button
                   size="sm"
+                  variant="outline"
                   className="w-full mt-4 h-9 rounded-lg"
                   onClick={(e) => {
                     e.stopPropagation()

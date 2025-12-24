@@ -15,6 +15,7 @@ interface Collection {
   banner?: string
   items: number
   volume: number
+  category?: string
 }
 
 interface HeroSliderProps {
@@ -94,7 +95,7 @@ export function HeroSlider({ collections, autoPlay = true, interval = 5000 }: He
                   transition={{ duration: 0.6, delay: 0.4 }}
                 >
                   <Badge className="mb-4 md:mb-6 bg-primary/20 text-primary-foreground border-primary/30 text-sm">
-                    Featured Collection
+                    {collections[currentSlide]?.category}
                   </Badge>
                 </motion.div>
 
@@ -123,17 +124,17 @@ export function HeroSlider({ collections, autoPlay = true, interval = 5000 }: He
                   transition={{ duration: 0.8, delay: 1 }}
                 >
                   <Button
-                    size="lg"
+                    size="sm"
                     onClick={() => router.push(`/collections/${collections[currentSlide]?.id}`)}
-                    className="gap-2 bg-primary hover:bg-primary/90 text-white px-8 py-3 text-lg"
+                    className="gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-3"
                   >
                     <Play className="h-5 w-5" />
                     Explore Collection
                   </Button>
                   <Button
-                    size="lg"
+                    size="sm"
                     variant="outline"
-                    className="bg-white/10 border-white/30 text-white hover:bg-white/20 px-8 py-3 text-lg"
+                    className="bg-white/10 border-white/30 text-white hover:bg-white/20 px-4 py-3lg"
                     onClick={() => router.push("/collections")}
                   >
                     View All
