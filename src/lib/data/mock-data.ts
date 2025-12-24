@@ -328,7 +328,7 @@ export const mockCollections = [
     createdAt: "2025-11-15",
     blockchain: "Starknet",
     royalty: 2,
-    featured: true,
+    featured: false,
     trending: true,
   },
 {
@@ -370,7 +370,7 @@ export const mockCollections = [
     createdAt: "2025-11-15",
     blockchain: "Starknet",
     royalty: 2,
-    featured: true,
+    featured: false,
     trending: true,
   },
 
@@ -392,7 +392,7 @@ export const mockCollections = [
     category: "Digital Art",
     blockchain: "Starknet",
     royalty: 5,
-    featured: true,
+    featured: false,
     trending: true,
   },
   {
@@ -413,7 +413,7 @@ export const mockCollections = [
     category: "Abstract",
     blockchain: "Starknet",
     royalty: 7.5,
-    featured: true,
+    featured: false,
     trending: false,
   },
   {
@@ -439,7 +439,7 @@ export const mockCollections = [
   },
   {
     id: "10",
-    name: "Tech Patents 2024",
+    name: "Tech Patents",
     description: "Revolutionary technology patents and innovations shaping the future.",
     image: "/iot-security-patent.png",
     banner: "/tech-patents-banner.png",
@@ -497,7 +497,7 @@ export const mockCollections = [
     category: "Branding",
     blockchain: "Starknet",
     royalty: 8,
-    featured: true,
+    featured: false,
     trending: true,
   },
 
