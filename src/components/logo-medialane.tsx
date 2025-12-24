@@ -8,8 +8,8 @@ export function LogoMedialane() {
         <Image
           src="/medialane-light-logo.png"
           alt="Medialane"
-          width={200}
-          height={35}
+          width={172}
+          height={30}
         />
     </Link>
     </div>

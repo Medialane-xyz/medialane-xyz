@@ -135,7 +135,7 @@ const FloatingNav = () => {
         >
           <div className="relative flex items-center justify-between h-12 md:h-14">
             {/* Logo */}
-            <div className="flex-shrink-0 flex items-center px-3 md:px-4">
+            <div className="flex-shrink-0 flex items-center">
               
             <LogoMedialane />
 
@@ -180,19 +180,11 @@ const FloatingNav = () => {
 
               {/* <NotificationsMenu /> */}
 
-              {/* Create Button - Desktop Only */}
-              {!isMobile && (
-                <Button
-                  size="sm"
-                  className="rounded-full bg-blue-700 hover:bg-primary/90"
-                  onClick={() => navigateTo("/create")}
-                >
-                  <Plus className="w-4 h-4 mr-1" />
-                  Create
-                </Button>
-              )}
 
-              {/* User Menu 
+
+
+
+            {/* User Menu  
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 md:h-9 md:w-9">
@@ -208,23 +200,39 @@ const FloatingNav = () => {
                 >
                   <DropdownMenuItem onClick={() => navigateTo("/portfolio")}>
                     <User className="w-4 h-4 mr-2" />
-                    Portfolio
+                    Sign In
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigateTo("/settings")}>
                     <Settings className="w-4 h-4 mr-2" />
-                    Settings
+                    Sign Up
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-white/20" />
-                  <DropdownMenuItem>
-                    <Wallet className="w-4 h-4 mr-2" />
-                    Connect Wallet
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Sign Out
-                  </DropdownMenuItem>
+                  
                 </DropdownMenuContent>
               </DropdownMenu>*/}
+
+
+
+
+
+
+
+              {/* Create Button - Desktop Only */}
+              {!isMobile && (
+                <Button
+                  size="sm"
+                  className="rounded-full bg-blue-700 hover:bg-primary/90"
+                  onClick={() => navigateTo("/create")}
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  Create
+                </Button>
+              )}
+
+              
+
+
+
+
 
               {/* Mobile Menu Button */}
               {isMobile && (
