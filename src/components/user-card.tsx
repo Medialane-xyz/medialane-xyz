@@ -196,7 +196,7 @@ export default function UserCard({ user }: { user: MarketplaceUser }) {
         <div className="mb-2">
           <div className="flex items-center gap-1 mb-1">
             <h4 className="font-semibold truncate text-lg">{name}</h4>
-            {isVerified && <CheckCircle2 className="h-4 w-4 text-blue-500 flex-shrink-0" />}
+            {isVerified && <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />}
           </div>
           <p className="text-sm text-muted-foreground">@{username}</p>
         </div>

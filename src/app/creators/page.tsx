@@ -297,7 +297,7 @@ export default function CreatorsPage() {
                   {/* Verified Only Toggle */}
                   <div className="flex items-center justify-between">
                     <Label htmlFor="verified-only" className="text-sm font-medium">
-                      Verified Only
+                      Verified
                     </Label>
                     <Switch id="verified-only" checked={verifiedOnly} onCheckedChange={setVerifiedOnly} />
                   </div>
@@ -328,7 +328,7 @@ export default function CreatorsPage() {
                         )}
                         {verifiedOnly && (
                           <Badge variant="secondary" className="cursor-pointer" onClick={() => setVerifiedOnly(false)}>
-                            Verified Only <X className="h-3 w-3 ml-1" />
+                            Verified <X className="h-3 w-3 ml-1" />
                           </Badge>
                         )}
                       </div>
@@ -338,7 +338,7 @@ export default function CreatorsPage() {
                   {/* Clear Filters */}
                   {hasActiveFilters && (
                     <Button variant="outline" onClick={clearAllFilters} className="w-full bg-transparent">
-                      Clear All Filters
+                      Clear Filters
                     </Button>
                   )}
                 </div>

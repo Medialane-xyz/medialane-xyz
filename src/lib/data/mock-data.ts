@@ -2,6 +2,7 @@ export const mockCreators = [
   {
     id: "1",
     name: "PixelMaster",
+    username: "pixelmaster",
     avatar: "/creator-avatar.png",
     banner: "/creator-banner.png",
     bio: "Digital artist specializing in pixel art and retro aesthetics. Creating unique NFTs since 2021.",
@@ -22,6 +23,7 @@ export const mockCreators = [
   {
     id: "2",
     name: "CryptoArtist",
+    username: "cryptoartist",
     avatar: "/crypto-artist-avatar.png",
     banner: "/crypto-artist-banner.png",
     bio: "Exploring the intersection of technology and art through blockchain-based creations.",
@@ -41,6 +43,7 @@ export const mockCreators = [
   {
     id: "3",
     name: "SoundWave",
+    username: "soundwave",
     avatar: "/soundwave-avatar.png",
     banner: "/abstract-soundwave-banner.png",
     bio: "Music producer and audio engineer creating immersive soundscapes and audio NFTs.",
@@ -59,6 +62,7 @@ export const mockCreators = [
   {
     id: "4",
     name: "InnovatorX",
+    username: "innovatorx",
     avatar: "/innovatorx-avatar.png",
     banner: "/innovatorx-banner.png",
     bio: "Patent holder and tech innovator sharing breakthrough technologies and ideas.",
@@ -77,6 +81,7 @@ export const mockCreators = [
   {
     id: "5",
     name: "AuthorPrime",
+    username: "authorprime",
     avatar: "/authorprime-avatar.png",
     banner: "/authorprime-banner.png",
     bio: "Bestselling author tokenizing literary works and creating interactive story experiences.",
@@ -95,6 +100,7 @@ export const mockCreators = [
   {
     id: "6",
     name: "DesignStudio",
+    username: "designstudio",
     avatar: "/designstudio-avatar.png",
     banner: "/creator-banner.png",
     bio: "Creative design studio specializing in brand identity and visual communication.",
@@ -113,6 +119,7 @@ export const mockCreators = [
   {
     id: "7",
     name: "Starkz",
+    username: "starkz",
     avatar: "/starkz-avatar.jpg",
     banner: "/starkz-banner.jpg",
     bio: "From AI to ZK knowledge hub magazine.",
@@ -131,6 +138,7 @@ export const mockCreators = [
   {
     id: "8",
     name: "Ambrosia",
+    username: "ambrosia",
     avatar: "/ambrosia-avatar.png",
     banner: "/ambrosia-banner.jpg",
     bio: "Arts and culture curated content magazine",
@@ -150,6 +158,7 @@ export const mockCreators = [
   {
     id: "9",
     name: "Kalamaha",
+    username: "kalamaha",
     avatar: "/kalamaha.jpg",
     banner: "/kalamaha-banner.jpg",
     bio: "Kalamaha rock soundtrack. From Rio de Janeiro, Brazil",
@@ -169,6 +178,7 @@ export const mockCreators = [
   {
     id: "10",
     name: "Mediolano",
+    username: "mediolano",
     avatar: "/mediolano.png",
     banner: "/mediolano-banner.png",
     bio: "Mediolano -- Programmable Intellectual Property for the Integrity Web",
@@ -188,6 +198,7 @@ export const mockCreators = [
   {
     id: "11",
     name: "Otacílio Câmara",
+    username: "otaciliocamara",
     avatar: "/otacilio-imagem.jpg",
     banner: "/otacilio-banner.jpg",
     bio: "Otacílio Câmara, Painter from Brazil",

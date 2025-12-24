@@ -132,11 +132,7 @@ export default function UserProfilePage() {
                 <AvatarImage src={creator.avatar || "/placeholder.svg"} alt={creator.name} />
                 <AvatarFallback className="text-2xl">{creator.name.charAt(0)}</AvatarFallback>
               </Avatar>
-              {creator.verified && (
-                <div className="absolute -bottom-1 -right-1 bg-primary rounded-full p-1">
-                  <Verified className="w-4 h-4 text-primary-foreground" />
-                </div>
-              )}
+              
             </div>
 
             {/* Name and Actions */}
@@ -145,7 +141,7 @@ export default function UserProfilePage() {
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <h1 className="text-2xl md:text-3xl font-bold">{creator.name}</h1>
-                    {creator.verified && <Verified className="w-6 h-6 text-primary" />}
+                    {creator.verified && <Verified className="w-6 h-6 text-green-500" />}
                   </div>
                   <p className="text-muted-foreground">@{creator.username}</p>
                 </div>

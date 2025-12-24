@@ -134,7 +134,12 @@ export default function AssetDetailPage({ params }: { params: { id: string } }) 
                     </div>
                   </div>
                 </div>
-                <Button variant="outline" size="sm" className="w-full mt-4 text-sm bg-transparent">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => router.push(`/creators/${asset.creator?.id || asset.creator}`)}
+                  className="w-full mt-4 text-sm bg-transparent"
+                >
                   View Creator
                 </Button>
               </CardContent>

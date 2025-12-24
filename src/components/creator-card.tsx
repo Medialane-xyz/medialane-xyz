@@ -76,7 +76,7 @@ export default function CreatorCard({ creator }: CreatorCardProps) {
             <Link href={`/users/${creator.id}`} className="block hover:text-primary transition-colors">
               <div className="flex items-center gap-1 mb-1">
                 <h3 className="font-semibold text-sm truncate">{creator.name}</h3>
-                {creator.verified && <CheckCircle2 className="h-4 w-4 text-primary fill-primary/20 flex-shrink-0" />}
+                {creator.verified && <CheckCircle2 className="h-4 w-4 text-green-500 fill-green-500/20 flex-shrink-0" />}
               </div>
             </Link>
 
