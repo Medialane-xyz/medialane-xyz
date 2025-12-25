@@ -32,7 +32,7 @@ export default function AssetDetailPage({ params }: { params: { id: string } }) 
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pt-20">
       <div
         className="absolute inset-x-0 top-0 h-96 md:h-[500px] -z-10 pointer-events-none"
         style={{
@@ -43,36 +43,13 @@ export default function AssetDetailPage({ params }: { params: { id: string } }) 
         }}
       ></div>
 
-      {/* Sticky header - kept at top for navigation */}
-      <div className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl border-b border-white/10">
-        <div className="container mx-auto px-3 md:px-6 py-3">
-          <div className="flex items-center justify-between">
-            <Button variant="ghost" size="sm" onClick={() => router.back()} className="h-10 w-10 p-0">
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <h2 className="text-sm font-semibold flex-1 text-center truncate mx-2">{asset.name}</h2>
-            <div className="flex items-center gap-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsFavorited(!isFavorited)}
-                className={`h-10 w-10 p-0 ${isFavorited ? "text-red-500" : ""}`}
-              >
-                <Heart className={`h-5 w-5 ${isFavorited ? "fill-current" : ""}`} />
-              </Button>
-              <Button variant="ghost" size="sm" className="h-10 w-10 p-0">
-                <Share2 className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="sm" className="h-10 w-10 p-0">
-                <Copy className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="sm" className="h-10 w-10 p-0 text-red-600">
-                <Flag className="h-5 w-5" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
+      
+      
+
+
+
+
+
 
       <div className="container mx-auto px-3 md:px-6 py-6 md:py-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
@@ -262,7 +239,7 @@ export default function AssetDetailPage({ params }: { params: { id: string } }) 
                   </div>
                 </div>
 
-                <div className="space-y-3 pt-3 border-t border-white/10">
+                <div className="space-y-3 pt-3">
                   {/* Buy Now - Full Property Rights */}
                   <div className="space-y-2">
                     <Button
@@ -361,6 +338,34 @@ export default function AssetDetailPage({ params }: { params: { id: string } }) 
           </div>
         </div>
       </div>
+
+
+                      {/* Sticky header - kept at top for navigation */}
+      <div className="flex bg-background/80 backdrop-blur-xl">
+        <div className="container mx-auto px-3 md:px-6 py-3">
+          <div className="flex items-center justify-between">
+            <Button variant="ghost" size="sm" onClick={() => router.back()} className="h-10 w-10 p-0">
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            
+            <div className="flex items-center gap-1">
+              
+              <Button variant="ghost" size="sm" className="h-10 w-10 p-0">
+                <Share2 className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="sm" className="h-10 w-10 p-0">
+                <Copy className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="sm" className="h-10 w-10 p-0 text-red-600">
+                <Flag className="h-5 w-5" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
     </div>
   )
 }
