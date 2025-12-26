@@ -60,7 +60,7 @@ export default function FeaturedCreatorsEnhanced({ creators }: FeaturedCreatorsP
               onClick={() => router.push(`/users/${creator.id}`)}
             >
               {/* Banner Image */}
-              <div className="relative h-32 overflow-hidden bg-muted/20">
+              <div className="relative h-48 overflow-hidden bg-muted/20">
                 <img
                   src={creator.banner || "/placeholder.svg?height=200&width=600&query=creator-banner"}
                   alt={creator.name}
