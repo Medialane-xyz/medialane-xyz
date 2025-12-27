@@ -370,7 +370,7 @@ export default function Footer() {
                 {
                   icon: Heart,
                   color: "from-pink-500 to-purple-500",
-                  text: "Featured Collections",
+                  text: "Collections",
                   href: "/collections?filter=popular",
                 },
                 { icon: Award, color: "from-amber-500 to-orange-500", text: "Creators", href: "/creators" },

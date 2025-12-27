@@ -16,6 +16,7 @@ import {
 } from "@/src/components/ui/drawer"
 import { NewReleasesShowcase } from "@/src/components/new-releases-showcase"
 import { useMobile } from "@/src/hooks/use-mobile"
+
 import { useMockData } from "@/src/lib/hooks/use-mock-data"
 
 const timeFilters = [
@@ -26,13 +27,13 @@ const timeFilters = [
 ]
 
 const categoryFilters = [
-  { id: "all", label: "All Categories", value: "all" },
-  { id: "digital-art", label: "Digital Art", value: "digital-art" },
-  { id: "music", label: "Music", value: "music" },
+  { id: "all", label: "All Media", value: "all" },
+  { id: "art", label: "Art", value: "art" },
+  { id: "audio", label: "Audio", value: "audio" },
   { id: "patents", label: "Patents", value: "patents" },
   { id: "literature", label: "Literature", value: "literature" },
   { id: "branding", label: "Branding", value: "branding" },
-  { id: "film-video", label: "Film & Video", value: "film-video" },
+  { id: "video", label: "Video", value: "video" },
 ]
 
 const sortOptions = [
@@ -59,8 +60,8 @@ export default function NewReleasesPage() {
     .filter((asset) => {
       const matchesSearch =
         searchQuery === "" ||
-        asset.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        asset.creator.name.toLowerCase().includes(searchQuery.toLowerCase())
+        asset.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        asset.creator.toLowerCase().includes(searchQuery.toLowerCase())
 
       const matchesCategory = categoryFilter === "all" || asset.category === categoryFilter
 
@@ -239,9 +240,9 @@ export default function NewReleasesPage() {
               <div>
                 <h1 className="text-3xl font-bold flex items-center gap-2">
                   <Sparkles className="h-8 w-8 text-primary" />
-                  New Releases
+                  New
                 </h1>
-                <p className="text-muted-foreground mt-1">Discover the latest IP assets on MediaLane</p>
+                <p className="text-muted-foreground mt-1">Discover the latest assets onchain</p>
               </div>
               <div className="flex items-center gap-3">
                 <Button variant="outline" onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}>

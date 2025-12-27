@@ -92,18 +92,12 @@ export default function FeaturedCreatorsEnhanced({ creators }: FeaturedCreatorsP
                       <p className="text-xs text-muted-foreground mb-1">Assets</p>
                       <p className="text-sm font-semibold">{creator.totalAssets}</p>
                     </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">Sales</p>
-                      <p className="text-sm font-semibold">{creator.totalSales.toLocaleString()}</p>
-                    </div>
+                    
                     <div>
                       <p className="text-xs text-muted-foreground mb-1">Volume</p>
                       <p className="text-sm font-semibold text-primary">{creator.volumeTraded}</p>
                     </div>
-                    <div className="flex items-end gap-1">
-                      <TrendingUp className="h-4 w-4 text-green-500" />
-                      <p className="text-xs font-semibold text-green-500">Active</p>
-                    </div>
+                    
                   </div>
                 </div>
 

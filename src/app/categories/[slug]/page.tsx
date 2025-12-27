@@ -33,7 +33,7 @@ export default function CategoryPage() {
       assetCount: 12,
       volume: "2,450 STRK",
       floorPrice: "0.5 STRK",
-      owners: 890,
+      owners: 90,
       subcategories: ["Abstract", "Portraits", "Landscapes", "Generative", "3D Art"],
       trending: true,
       growth: "+15.2%",
@@ -43,10 +43,10 @@ export default function CategoryPage() {
       description: "Original music compositions, beats, and audio content",
       image: "/diverse-music-genres.jpg",
       banner: "/diverse-music-genres.jpg",
-      assetCount: 890,
+      assetCount: 80,
       volume: "1,890 STRK",
       floorPrice: "0.3 STRK",
-      owners: 650,
+      owners: 60,
       subcategories: ["Electronic", "Hip Hop", "Classical", "Ambient", "Sound Effects"],
       trending: true,
       growth: "+22.8%",
@@ -56,10 +56,10 @@ export default function CategoryPage() {
       description: "Games and gaming digital assets",
       image: "/games-category.jpg",
       banner: "/games-category.jpg",
-      assetCount: 156,
+      assetCount: 15,
       volume: "890 STRK",
       floorPrice: "5.0 STRK",
-      owners: 120,
+      owners: 12,
       subcategories: ["Action", "Sports", "Fight", "Adventure", "RPG"],
       trending: false,
       growth: "+8.1%",
@@ -69,10 +69,10 @@ export default function CategoryPage() {
       description: "Books, stories, character rights, and literary works",
       image: "/literature-category.jpg",
       banner: "/literature-category.jpg",
-      assetCount: 234,
+      assetCount: 24,
       volume: "567 STRK",
       floorPrice: "1.2 STRK",
-      owners: 180,
+      owners: 18,
       subcategories: ["Fiction", "Non-Fiction", "Poetry", "Scripts", "Character Rights"],
       trending: false,
       growth: "+5.4%",
@@ -82,10 +82,10 @@ export default function CategoryPage() {
       description: "Photography assets, logos, and visual identity systems",
       image: "/photography-category.jpg",
       banner: "/photography-category.jpg",
-      assetCount: 445,
+      assetCount: 45,
       volume: "1,234 STRK",
       floorPrice: "0.8 STRK",
-      owners: 320,
+      owners: 32,
       subcategories: ["Logos", "Brand Guidelines", "Typography", "Color Palettes", "Icons"],
       trending: true,
       growth: "+18.7%",
@@ -98,7 +98,7 @@ export default function CategoryPage() {
       assetCount: 67,
       volume: "345 STRK",
       floorPrice: "1.0 STRK",
-      owners: 95,
+      owners: 9,
       subcategories: ["Magazines", "Journals", "Newspapers", "E-books", "Zines"],
       trending: true,
       growth: "+9.6%",
@@ -108,10 +108,10 @@ export default function CategoryPage() {
       description: "Film rights, video content, and entertainment IP",
       image: "/video-category.jpg",
       banner: "/video-category.jpg",
-      assetCount: 178,
+      assetCount: 17,
       volume: "2,100 STRK",
       floorPrice: "2.5 STRK",
-      owners: 140,
+      owners: 14,
       subcategories: ["Film Rights", "Video Content", "Animation", "Documentaries", "Short Films"],
       trending: false,
       growth: "+12.3%",
@@ -124,7 +124,7 @@ export default function CategoryPage() {
       assetCount: 56,
       volume: "3,450 STRK",
       floorPrice: "0.9 STRK",
-      owners: 410,
+      owners: 41,
       subcategories: ["Collectibles", "Art NFTs", "Music NFTs", "Virtual Real Estate", "Gaming NFTs"],
       trending: true,
       growth: "+25.4%",
@@ -137,7 +137,7 @@ export default function CategoryPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">Category Not Found</h1>
+          <h1 className="text-2xl font-bold mb-2">Media Not Found</h1>
           <p className="text-muted-foreground mb-4">The category you're looking for doesn't exist.</p>
           <Button onClick={() => router.push("/categories")}>Browse Categories</Button>
         </div>
@@ -184,24 +184,24 @@ export default function CategoryPage() {
   })
 
   return (
-    <div className="min-h-screen bg-background pt-20 pb-40">
+    <div className="min-h-screen bg-background pb-40">
       {/* Category Header */}
       <div className="relative">
         {/* Banner */}
-        <div className="h-64 md:h-72 bg-gradient-to-r from-primary/20 to-purple-500/20 relative overflow-hidden">
+        <div className="h-96 bg-gradient-to-r from-primary/20 to-purple-500/20 relative overflow-hidden">
           <img src={category.banner || "/placeholder.svg"} alt={category.name} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-black/40" />
 
-          {/* Back Button */}
+          {/* Back Button 
           <Button
             variant="ghost"
             size="sm"
-            className="absolute top-8 right-8 text-white hover:bg-white/20"
+            className="absolute top-20 right-8 text-white hover:bg-white/20"
             onClick={() => router.back()}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
-          </Button>
+          </Button>*/}
 
           {/* Category Info Overlay */}
           <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent">
@@ -223,7 +223,7 @@ export default function CategoryPage() {
         {/* Stats Bar */}
         <div className="bg-background border-b">
           <div className="max-w-7xl mx-auto px-4 py-4">
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="text-center">
                 <div className="text-2xl font-bold">{category.assetCount.toLocaleString()}</div>
                 <div className="text-sm text-muted-foreground">Assets</div>
@@ -240,10 +240,7 @@ export default function CategoryPage() {
                 <div className="text-2xl font-bold">{category.floorPrice}</div>
                 <div className="text-sm text-muted-foreground">Floor Price</div>
               </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-green-500">{category.growth}</div>
-                <div className="text-sm text-muted-foreground">24h Growth</div>
-              </div>
+              
             </div>
           </div>
         </div>
@@ -253,7 +250,7 @@ export default function CategoryPage() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Subcategories */}
         <div className="mb-8">
-          <h3 className="text-lg font-medium mb-4">Subcategories</h3>
+          
           <div className="flex flex-wrap gap-2">
             <Badge
               variant={subcategoryFilter === "all" ? "default" : "outline"}

@@ -128,7 +128,7 @@ export default function UserProfilePage() {
           <div className="flex flex-col md:flex-row items-start md:items-end gap-4 -mt-16 md:-mt-20">
             {/* Avatar */}
             <div className="relative">
-              <Avatar className="w-24 h-24 md:w-32 md:h-32 border-4 border-background">
+              <Avatar className="w-24 h-24 md:w-32 md:h-32 border-2 border-background">
                 <AvatarImage src={creator.avatar || "/placeholder.svg"} alt={creator.name} />
                 <AvatarFallback className="text-2xl">{creator.name.charAt(0)}</AvatarFallback>
               </Avatar>
