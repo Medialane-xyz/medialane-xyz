@@ -190,7 +190,7 @@ export default function CollectionDetailPage() {
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-8">
               {/* Collection Info */}
               <div className="flex items-center gap-4 flex-1">
-                <Avatar className="h-20 w-20 md:h-24 md:w-24 border-4 border-background flex-shrink-0">
+                <Avatar className="h-20 w-20 md:h-24 md:w-24 border-2 border-background flex-shrink-0">
                   <AvatarImage
                     src={collection.image || "/placeholder.svg?height=100&width=100"}
                     alt={collection.name}

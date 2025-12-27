@@ -42,14 +42,14 @@ const CollectionStats = ({ collections }: { collections: any[] }) => {
           <Eye className="w-3 h-3 sm:w-4 sm:h-4 text-primary mr-1" />
         </div>
         <div className="text-lg sm:text-xl font-bold">{totalItems.toLocaleString()}</div>
-        <div className="text-xs sm:text-sm text-zinc-400">Total Items</div>
+        <div className="text-xs sm:text-sm text-zinc-400">Assets</div>
       </div>
       <div className="glass-effect rounded-lg p-3 sm:p-4 text-center">
         <div className="flex items-center justify-center mb-1">
           <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-primary mr-1" />
         </div>
-        <div className="text-lg sm:text-xl font-bold">{totalVolume.toFixed(1)}Ξ</div>
-        <div className="text-xs sm:text-sm text-zinc-400">Total Volume</div>
+        <div className="text-lg sm:text-xl font-bold">{totalVolume.toFixed(1)}</div>
+        <div className="text-xs sm:text-sm text-zinc-400">Volume</div>
       </div>
     </div>
   )
@@ -160,17 +160,15 @@ export default function CollectionsPage() {
             <div className="flex-1">
               <div className="inline-flex items-center justify-center p-2 bg-primary/10 rounded-full mb-3 sm:mb-4">
                 <Grid3X3 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-primary" />
-                <span className="text-xs sm:text-sm font-medium">Intellectual Property</span>
+                <h1 className="font-medium">Collections</h1>
               </div>
-              <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-2 sm:mb-3 md:mb-4 gradient-text">
-                Collections
-              </h1>
+              
               
             </div>
             <Link href="/create/collection">
-              <Button className="whitespace-nowrap bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 hover:from-purple-600 hover:via-blue-600 hover:to-cyan-600 text-white px-6 sm:px-8 py-5 sm:py-6 font-semibold">
+              <Button className="whitespace-nowrap">
                 <Plus className="w-4 h-4 mr-2" />
-                Create
+                Create Collection
               </Button>
             </Link>
           </motion.div>

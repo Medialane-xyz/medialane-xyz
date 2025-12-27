@@ -29,7 +29,7 @@ export function CollectionCard({ collection, index }: CollectionCardProps) {
       variants={item}
       onClick={handleCollectionClick}
     >
-      <div className="relative h-32 overflow-hidden">
+      <div className="relative h-48 overflow-hidden">
         <img
           src={collection.banner || "/placeholder.svg"}
           alt={collection.name}
@@ -39,7 +39,7 @@ export function CollectionCard({ collection, index }: CollectionCardProps) {
       </div>
 
       <div className="relative -mt-10 px-4 pb-4">
-        <Avatar className="h-16 w-16 border-4 border-background">
+        <Avatar className="h-16 w-16 border-2 border-background">
           <AvatarImage src={collection.image || "/placeholder.svg"} alt={collection.name} />
           <AvatarFallback>{collection.name.substring(0, 2)}</AvatarFallback>
         </Avatar>
@@ -47,10 +47,10 @@ export function CollectionCard({ collection, index }: CollectionCardProps) {
         <div className="mt-2">
           <div className="flex items-center">
             <h4 className="font-medium truncate">{collection.name}</h4>
-            {collection.verified && <CheckCircle2 className="h-4 w-4 ml-1 text-blue-500 fill-background" />}
+            {collection.verified && <CheckCircle2 className="h-4 w-4 ml-1 text-green-500 fill-background" />}
           </div>
 
-          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">by {collection.creator}</p>
+          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{collection.creator}</p>
 
           <div className="flex items-center justify-between mt-3">
             <div className="text-sm">
@@ -63,7 +63,7 @@ export function CollectionCard({ collection, index }: CollectionCardProps) {
               <div className="text-xs text-muted-foreground">Volume</div>
             </div>
 
-            <Button size="sm">View</Button>
+            <Button variant="outline" size="sm">Open</Button>
           </div>
         </div>
       </div>

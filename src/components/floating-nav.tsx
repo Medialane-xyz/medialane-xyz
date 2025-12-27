@@ -220,7 +220,7 @@ const FloatingNav = () => {
               {!isMobile && (
                 <Button
                   size="sm"
-                  className="rounded-full bg-blue-700 hover:bg-primary/90"
+                  className="rounded-full bg-gradient-to-r from-blue-600 via-purple-500 to-rose-400 hover:from-blue-600 hover:via-purple-600 hover:to-rose-500"
                   onClick={() => navigateTo("/create")}
                 >
                   <Plus className="w-4 h-4 mr-1" />

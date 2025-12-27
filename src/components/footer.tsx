@@ -64,18 +64,26 @@ export default function Footer() {
         { name: "All Assets", href: "/assets" },
         { name: "Collections", href: "/collections" },
         { name: "Trending", href: "/explore?sort=trending" },
-        { name: "New Releases", href: "/new-releases" },
         { name: "Categories", href: "/categories" },
+        { name: "Creators", href: "/creators" },
+        { name: "Activities", href: "/activities" },
       ],
     },
     {
-      title: "Create",
+      title: "Media",
       icon: PlusCircle,
       color: "text-blue-400",
       links: [
-        { name: "New Asset", href: "/create" },
-        { name: "New Collection", href: "/create?type=collection" },
-        { name: "Templates", href: "/create?view=templates" },
+        { name: "Art", href: "/categories/art" },
+        { name: "Audio", href: "/categories/audio" },
+        { name: "Games", href: "/categories/games" },
+        { name: "Literature", href: "/categories/literature" },
+        { name: "Photography", href: "/categories/photography" },
+        { name: "Publications", href: "/categories/publications" },
+        { name: "Software", href: "/categories/software" },
+        { name: "Videos", href: "/categories/videos" },
+        { name: "NFTs", href: "/categories/nft" },
+        
       ],
     },
     {
@@ -83,6 +91,10 @@ export default function Footer() {
       icon: LayoutGrid,
       color: "text-cyan-400",
       links: [
+        { name: "New Releases", href: "/new-releases" },
+        { name: "Top Creators", href: "/creators" },
+        { name: "Top Collectors", href: "#" },
+        { name: "Top Collections", href: "#" },
         { name: "Buy", href: "/marketplace?type=buy" },
         { name: "Sell", href: "/marketplace?type=sell" },
         { name: "Auctions", href: "/marketplace?type=auctions" },
@@ -94,6 +106,9 @@ export default function Footer() {
       icon: Wallet,
       color: "text-green-400",
       links: [
+        { name: "New Asset", href: "/create" },
+        { name: "New Collection", href: "/create?type=collection" },
+        { name: "Templates", href: "/create?view=templates" },
         { name: "Dashboard", href: "/portfolio/dashboard" },
         { name: "My Assets", href: "/portfolio?tab=assets" },
         { name: "My Collections", href: "/portfolio?tab=collections" },
@@ -186,7 +201,6 @@ export default function Footer() {
           viewport={{ once: true, margin: "-100px" }}
         >
           
-
           <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {mainNavigation.map((category, idx) => (
               <motion.div key={idx} className="space-y-4" variants={itemVariants}>
@@ -415,7 +429,7 @@ export default function Footer() {
               <div className="p-4 rounded-xl border border-gray-800/50 bg-gray-900/30">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">App Version</span>
-                  <span className="text-white font-mono bg-gray-800 px-2 py-1 rounded text-xs">v0.0.1-beta</span>
+                  <span className="text-white font-mono bg-gray-800 px-2 py-1 rounded text-xs">Preview v0.2</span>
                 </div>
               </div>
             </div>
