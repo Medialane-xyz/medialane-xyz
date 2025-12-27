@@ -54,9 +54,14 @@ export default function AssetDetailPage({ params }: { params: { id: string } }) 
       <div className="container mx-auto px-3 md:px-6 py-6 md:py-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
           <div className="lg:col-span-2 space-y-6">
+            
+
+            
+            
+            
             {/* Asset image - single display only */}
             <div className="rounded-2xl overflow-hidden bg-muted border border-white/10 shadow-2xl">
-              <div className="relative aspect-square md:aspect-video">
+              <div className="relative aspect-square">
                 <Image
                   src={asset.image || "/placeholder.svg?height=600&width=600&query=digital+asset"}
                   alt={asset.name}
@@ -84,18 +89,171 @@ export default function AssetDetailPage({ params }: { params: { id: string } }) 
               </div>
             </div>
 
-            {/* Asset header and description */}
+            
+
+            
+            
+            
+            
+            
+            
+            
+            
+
+
+
+
+          </div>
+
+          {/* Right column - Marketplace & Actions - NO sticky positioning */}
+          <div className="space-y-5 lg:max-h-fit">
+
+
+                  {/* Asset header and description */}
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="text-xs">
                   {asset.category}
                 </Badge>
               </div>
-              <h1 className="text-3xl md:text-4xl font-bold">{asset.name}</h1>
+              <h1 className="text-3xl font-bold">{asset.name}</h1>
               <p className="text-base text-muted-foreground leading-relaxed">{asset.description}</p>
             </div>
 
-            {/* Creator card */}
+
+
+            <Card className="border-primary/30 bg-gradient-to-br from-primary/15 to-primary/5">
+              <CardContent className="p-6 md:p-5 space-y-5">
+                
+
+                {/* Auction Timer */}
+                <div className="p-4 bg-black/20 rounded-lg border border-white/10">
+                  <div className="flex items-center gap-2 text-xs md:text-sm mb-2.5">
+                    <Zap className="h-4 w-4 text-yellow-400 flex-shrink-0" />
+                    <span className="text-muted-foreground">Auction</span>
+                  </div>
+                  <div className="font-mono text-sm md:text-base font-semibold text-white">
+                    {asset.timeLeft?.days || 0}d {asset.timeLeft?.hours || 0}h {asset.timeLeft?.minutes || 0}m{" "}
+                    {asset.timeLeft?.seconds || 0}s
+                  </div>
+                </div>
+
+                <div className="space-y-3 pt-3">
+                  {/* Buy Now - Full Property Rights */}
+                  <div className="space-y-2">
+                    <Button
+                      onClick={() => router.push(`/checkout/${asset.id}`)}
+                      className="w-full h-12 text-base font-semibold bg-green-600 hover:bg-green-700"
+                    >
+                      <ShoppingCart className="h-5 w-5 mr-2 flex-shrink-0" />
+                      Buy Now - {asset.price}
+                    </Button>
+                    <p className="text-xs text-muted-foreground text-center px-1">
+                      Acquire complete property rights and ownership
+                    </p>
+                  </div>
+
+                  {/* Make Offer - Property Rights */}
+                  <div className="space-y-2 pt-2 border-t border-white/10">
+                    <Button
+                      variant="outline"
+                      onClick={() => router.push(`/make-offer/${asset.id}`)}
+                      className="w-full h-11 text-sm font-medium bg-transparent"
+                    >
+                      <HandshakeIcon className="h-4 w-4 mr-2 flex-shrink-0" />
+                      Make an Offer
+                    </Button>
+                    <p className="text-xs text-muted-foreground text-center px-1">
+                      Propose a price to acquire property rights
+                    </p>
+                  </div>
+
+                  {/* Remix - Create Derivative */}
+                  <div className="space-y-2 pt-2 border-t border-white/10 bg-purple-500/10 rounded-lg p-3 -mx-6 px-3">
+                    <Button
+                      onClick={() => router.push(`/remix/${asset.id}`)}
+                      className="w-full h-11 text-sm font-medium bg-purple-600 hover:bg-purple-700"
+                    >
+                      <GitBranch className="h-4 w-4 mr-2 flex-shrink-0" />
+                      Remix This Asset
+                    </Button>
+                    <p className="text-xs text-muted-foreground text-center px-1">
+                      Create a derivative work with new license. Price auto-calculated with {asset.royalty}% royalty to
+                      creator.
+                    </p>
+                    <div className="bg-purple-500/20 rounded p-2 mt-2">
+                      <p className="text-xs text-purple-200">
+                        <span className="font-semibold">💡 Monetization:</span> Earn from your creations while
+                        supporting original creators
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+
+
+
+
+
+            
+
+            {/* Stats grid */}
+            <div className="grid grid-cols-2 gap-3">
+              <Card className="border-white/10 bg-muted/30">
+                <CardContent className="p-4 text-center">
+                  <div className="font-bold text-xl">{asset.remixCount || 0}</div>
+                  <div className="text-xs text-muted-foreground mt-1">Remixes</div>
+                </CardContent>
+              </Card>
+              <Card className="border-white/10 bg-muted/30">
+                <CardContent className="p-4 text-center">
+                  <div className="font-bold text-xl">{asset.holders || 24}</div>
+                  <div className="text-xs text-muted-foreground mt-1">Holders</div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Licensing Info */}
+            <Card className="border-white/10">
+              <CardContent className="space-y-3 pt-6">
+                <div className="flex items-start gap-3">
+                  <div className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0">✓</div>
+                  <div className="text-sm">
+                    <div className="font-medium">Commercial Use</div>
+                    <div className="text-xs text-muted-foreground mt-0.5">Yes, with attribution</div>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0">✓</div>
+                  <div className="text-sm">
+                    <div className="font-medium">Remix Rights</div>
+                    <div className="text-xs text-muted-foreground mt-0.5">Create derivatives</div>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0">✓</div>
+                  <div className="text-sm">
+                    <div className="font-medium">Royalty Rate</div>
+                    <div className="text-xs text-muted-foreground mt-0.5">{asset.royalty || 10}% on resale</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+
+
+
+
+        </div>
+
+
+
+
+
+      {/* Creator card */}
             <Card className="border-white/10 bg-gradient-to-br from-muted/40 to-muted/20 backdrop-blur">
               <CardContent className="p-5 md:p-6">
                 <div className="flex items-center justify-between">
@@ -124,13 +282,17 @@ export default function AssetDetailPage({ params }: { params: { id: string } }) 
 
             {/* Tabs - no sticky elements */}
             <Tabs defaultValue="details" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6 bg-muted/50 h-11 md:h-10">
+              <TabsList className="grid w-full grid-cols-3 mb-6 bg-muted/50 h-11 md:h-10">
                 <TabsTrigger value="details" className="text-xs md:text-sm">
                   Details
                 </TabsTrigger>
                 <TabsTrigger value="lineage" className="text-xs md:text-sm">
-                  Lineage & History
+                  Provenance
                 </TabsTrigger>
+                <TabsTrigger value="collection" className="text-xs md:text-sm">
+                  Collection
+                </TabsTrigger>
+
               </TabsList>
 
               <TabsContent value="details" className="space-y-6">
@@ -213,130 +375,17 @@ export default function AssetDetailPage({ params }: { params: { id: string } }) 
                 <RemixGenealogyTree assetId={asset.id} />
               </TabsContent>
             </Tabs>
-          </div>
 
-          {/* Right column - Marketplace & Actions - NO sticky positioning */}
-          <div className="space-y-5 lg:max-h-fit">
-            <Card className="border-primary/30 bg-gradient-to-br from-primary/15 to-primary/5">
-              <CardContent className="p-6 md:p-5 space-y-5">
-                {/* Current Price */}
-                <div>
-                  <div className="text-xs md:text-sm text-muted-foreground mb-2 uppercase tracking-wide font-semibold">
-                    Current Price
-                  </div>
-                  <div className="text-3xl md:text-2xl font-bold">{asset.price}</div>
-                </div>
 
-                {/* Auction Timer */}
-                <div className="p-4 bg-black/20 rounded-lg border border-white/10">
-                  <div className="flex items-center gap-2 text-xs md:text-sm mb-2.5">
-                    <Zap className="h-4 w-4 text-yellow-400 flex-shrink-0" />
-                    <span className="text-muted-foreground">Auction ends in</span>
-                  </div>
-                  <div className="font-mono text-sm md:text-base font-semibold text-white">
-                    {asset.timeLeft?.days || 0}d {asset.timeLeft?.hours || 0}h {asset.timeLeft?.minutes || 0}m{" "}
-                    {asset.timeLeft?.seconds || 0}s
-                  </div>
-                </div>
 
-                <div className="space-y-3 pt-3">
-                  {/* Buy Now - Full Property Rights */}
-                  <div className="space-y-2">
-                    <Button
-                      onClick={() => router.push(`/checkout/${asset.id}`)}
-                      className="w-full h-12 text-base font-semibold bg-green-600 hover:bg-green-700"
-                    >
-                      <ShoppingCart className="h-5 w-5 mr-2 flex-shrink-0" />
-                      Buy Now - {asset.price}
-                    </Button>
-                    <p className="text-xs text-muted-foreground text-center px-1">
-                      Acquire complete property rights and ownership
-                    </p>
-                  </div>
 
-                  {/* Make Offer - Property Rights */}
-                  <div className="space-y-2 pt-2 border-t border-white/10">
-                    <Button
-                      variant="outline"
-                      onClick={() => router.push(`/make-offer/${asset.id}`)}
-                      className="w-full h-11 text-sm font-medium bg-transparent"
-                    >
-                      <HandshakeIcon className="h-4 w-4 mr-2 flex-shrink-0" />
-                      Make an Offer
-                    </Button>
-                    <p className="text-xs text-muted-foreground text-center px-1">
-                      Propose a price to acquire property rights
-                    </p>
-                  </div>
 
-                  {/* Remix - Create Derivative */}
-                  <div className="space-y-2 pt-2 border-t border-white/10 bg-purple-500/10 rounded-lg p-3 -mx-6 px-3">
-                    <Button
-                      onClick={() => router.push(`/remix/${asset.id}`)}
-                      className="w-full h-11 text-sm font-medium bg-purple-600 hover:bg-purple-700"
-                    >
-                      <GitBranch className="h-4 w-4 mr-2 flex-shrink-0" />
-                      Remix This Asset
-                    </Button>
-                    <p className="text-xs text-muted-foreground text-center px-1">
-                      Create a derivative work with new license. Price auto-calculated with {asset.royalty}% royalty to
-                      creator.
-                    </p>
-                    <div className="bg-purple-500/20 rounded p-2 mt-2">
-                      <p className="text-xs text-purple-200">
-                        <span className="font-semibold">💡 Monetization:</span> Earn from your creations while
-                        supporting original creators
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
 
-            {/* Stats grid */}
-            <div className="grid grid-cols-2 gap-3">
-              <Card className="border-white/10 bg-muted/30">
-                <CardContent className="p-4 text-center">
-                  <div className="font-bold text-xl">{asset.remixCount || 0}</div>
-                  <div className="text-xs text-muted-foreground mt-1">Remixes</div>
-                </CardContent>
-              </Card>
-              <Card className="border-white/10 bg-muted/30">
-                <CardContent className="p-4 text-center">
-                  <div className="font-bold text-xl">{asset.holders || 24}</div>
-                  <div className="text-xs text-muted-foreground mt-1">Holders</div>
-                </CardContent>
-              </Card>
-            </div>
 
-            {/* Licensing Info */}
-            <Card className="border-white/10">
-              <CardContent className="space-y-3 pt-6">
-                <div className="flex items-start gap-3">
-                  <div className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0">✓</div>
-                  <div className="text-sm">
-                    <div className="font-medium">Commercial Use</div>
-                    <div className="text-xs text-muted-foreground mt-0.5">Yes, with attribution</div>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0">✓</div>
-                  <div className="text-sm">
-                    <div className="font-medium">Remix Rights</div>
-                    <div className="text-xs text-muted-foreground mt-0.5">Create derivatives</div>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0">✓</div>
-                  <div className="text-sm">
-                    <div className="font-medium">Royalty Rate</div>
-                    <div className="text-xs text-muted-foreground mt-0.5">{asset.royalty || 10}% on resale</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+
+
+
+
       </div>
 
 

@@ -118,7 +118,7 @@ export default function AssetCard({ asset, minimal = false }: AssetCardProps) {
           {!minimal && (
             <div className="space-y-2 pt-2 border-t border-border/20">
               
-               <div className="flex gap-2">
+               <div className="flex gap-1">
 
                 <Button
                   size="sm"
@@ -127,7 +127,7 @@ export default function AssetCard({ asset, minimal = false }: AssetCardProps) {
                   onClick={handleBuyNow}
                   title="Buy now property rights"
                 >
-                  <span>{asset.price}</span>
+                  <span className="text-xs">{asset.price}</span>
                 </Button>
 
                 <Button
