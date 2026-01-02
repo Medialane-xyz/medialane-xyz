@@ -180,7 +180,7 @@ export const mockCreators = [
     name: "Mediolano",
     username: "mediolano",
     avatar: "/mediolano.png",
-    banner: "/mediolano-banner.png",
+    banner: "/mediolano-banner.jpg",
     bio: "Mediolano -- Programmable Intellectual Property for the Integrity Web",
     verified: true,
     followers: 7654,
