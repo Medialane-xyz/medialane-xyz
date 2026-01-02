@@ -9,7 +9,7 @@ import { useMockData } from "@/src/lib/hooks/use-mock-data"
 import { useRouter } from "next/navigation"
 import AssetCard from "@/src/components/asset-card"
 import { HeroSlider } from "@/src/components/hero-slider"
-import FeaturedCreatorsEnhanced from "@/src/components/featured-creators-enhanced"
+import FeaturedCreatorsCards from "@/src/components/featured-creators"
 import LatestActivities from "@/src/components/latest-activities"
 
 export default function Home() {
@@ -87,7 +87,7 @@ export default function Home() {
         </motion.section>
 
         {/* Featured Creators - Enhanced */}
-        <FeaturedCreatorsEnhanced creators={creators} />
+        <FeaturedCreatorsCards creators={creators} />
 
         <LatestActivities activities={activities} />
       </div>
