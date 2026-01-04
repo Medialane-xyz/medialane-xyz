@@ -13,7 +13,7 @@ interface FeaturedCreatorsProps {
 
 export default function FeaturedCreatorsCards({ creators }: FeaturedCreatorsProps) {
   const router = useRouter()
-  const featuredCreators = creators.slice(6, 9)
+  const featuredCreators = creators.slice(10, 14)
 
   return (
     <section className="py-12 md:py-16">
