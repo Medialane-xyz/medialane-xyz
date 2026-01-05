@@ -35,6 +35,8 @@ import { cn } from "@/src/lib/utils"
 import NotificationsMenu from "@/src/components/notifications-menu"
 import { useToast } from "@/src/components/ui/use-toast"
 import { LogoMedialane } from "./logo-medialane"
+import { AccountButton } from "@/src/components/account-button"
+
 
 const FloatingNav = () => {
   const pathname = usePathname()
@@ -181,40 +183,11 @@ const FloatingNav = () => {
               {/* <NotificationsMenu /> */}
 
 
+            
+            
 
 
-
-            {/* User Menu  
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 md:h-9 md:w-9">
-                    <Avatar className="w-6 h-6 md:w-7 md:h-7">
-                      <AvatarImage src="/placeholder.svg?height=32&width=32" />
-                      <AvatarFallback className="text-xs">U</AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="end"
-                  className="w-48 bg-black/90 backdrop-blur-md border border-white/20 text-white"
-                >
-                  <DropdownMenuItem onClick={() => navigateTo("/portfolio")}>
-                    <User className="w-4 h-4 mr-2" />
-                    Sign In
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigateTo("/settings")}>
-                    <Settings className="w-4 h-4 mr-2" />
-                    Sign Up
-                  </DropdownMenuItem>
-                  
-                </DropdownMenuContent>
-              </DropdownMenu>*/}
-
-
-
-
-
-
+        
 
               {/* Create Button - Desktop Only */}
               {!isMobile && (
@@ -245,6 +218,18 @@ const FloatingNav = () => {
                   {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
                 </Button>
               )}
+
+
+
+
+
+              <AccountButton />
+
+
+
+
+
+
             </div>
           </div>
 
