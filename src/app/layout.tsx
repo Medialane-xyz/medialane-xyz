@@ -7,6 +7,16 @@ import { MockDataProvider } from "@/src/lib/context/mock-data-context"
 import FloatingNav from "@/src/components/floating-nav"
 import Footer from "@/src/components/footer"
 import FramerMotionProvider from "@/src/lib/framer-motion-provider"
+import {
+  ClerkProvider,
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from '@clerk/nextjs'
+import { ChipiProvider } from "@chipi-stack/nextjs";
+
 
 const inter = Inter({ subsets: ["latin"], display: "swap" })
 
@@ -21,6 +31,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
+    <ClerkProvider>
+      <ChipiProvider>
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} bg-black text-white`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
@@ -37,5 +49,7 @@ export default function RootLayout({
         </ThemeProvider>
       </body>
     </html>
+    </ChipiProvider>
+    </ClerkProvider>
   )
 }

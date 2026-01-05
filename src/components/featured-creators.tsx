@@ -114,7 +114,7 @@ export default function FeaturedCreatorsCards({ creators }: FeaturedCreatorsProp
                   {/* View Profile CTA */}
                   <div className="flex items-center justify-between pt-2">
                     <span className="text-sm font-medium text-white/80 group-hover:text-primary transition-colors">
-                      View Profile
+                      Open
                     </span>
                     <ArrowRight className="h-4 w-4 text-white/60 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                   </div>

@@ -1,6 +1,6 @@
 {
-  "name": "my-v0-project",
-  "version": "0.1.0",
+  "name": "medialane-xyz",
+  "version": "0.0.2",
   "private": true,
   "scripts": {
     "build": "next build",
@@ -9,6 +9,8 @@
     "start": "next start"
   },
   "dependencies": {
+    "@chipi-stack/nextjs": "^11.22.0",
+    "@clerk/nextjs": "^6.36.5",
     "@emotion/is-prop-valid": "latest",
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-accordion": "latest",
