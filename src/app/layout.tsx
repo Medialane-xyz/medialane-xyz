@@ -17,7 +17,6 @@ import {
 } from '@clerk/nextjs'
 import { ChipiProvider } from "@chipi-stack/nextjs";
 
-
 const inter = Inter({ subsets: ["latin"], display: "swap" })
 
 export const metadata = {
