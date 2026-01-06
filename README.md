@@ -1,8 +1,5 @@
 <img width="1920" height="1080" alt="Medialane" src="https://mediolano.xyz/wp-content/uploads/2026/01/medialane-monetization-hub-programmable-ip.jpg" />
 
-
-# medialave.xyz  
-
 ### Creative works marketplace, powered with Mediolano’s permissionless licensing primitives, enabling creators to explore and monetize IP with full sovereignty
 
 Medialane is a monetization hub where creators, autonomous agents, and businesses own, license, and trade intellectual property with full transparency, control, and sovereignty.
@@ -15,7 +12,9 @@ MediaLane supports multiple types of creative works: music, posts, photos, video
 
 Every creator has complete ownership over their assets, decentralized identity, and reputation systems. Licensing actions are transparent, traceable, and immutable. MediaLane is designed to serve creators, businesses, and AI agents — without intermediaries, without friction, and without compromise.
 
-Discover Medialane:  [https://medialane.xyz](https://medialane.xyz)
+Discover Medialane (Dapp Preview): [https://medialane.xyz](https://medialane.xyz)
+
+#### Powered by Starknet, Mediolano Protocol, Chipi Pay SDK.
 
 
 ## Roadmap
@@ -24,9 +23,11 @@ Discover Medialane:  [https://medialane.xyz](https://medialane.xyz)
 
 - [X] Medialane Dapp @ Starknet Sepolia **25.11**
 
-- [X] Medialane Dapp @ Starknet Mainnet **26.01**
+- [X] Medialane Onboarding @ Starknet Mainnet **26.01**
 
 - [ ] Medialane Protocol @ Starknet Mainnet **26.01**
+
+- [ ] Medialane Creator Launchpad @ Starknet Mainnet **26.02**
 
 - [ ] Medialane Marketplace @ Starknet Mainnet **26.03**
 
