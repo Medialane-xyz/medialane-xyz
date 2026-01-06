@@ -7,15 +7,9 @@ import { MockDataProvider } from "@/src/lib/context/mock-data-context"
 import FloatingNav from "@/src/components/floating-nav"
 import Footer from "@/src/components/footer"
 import FramerMotionProvider from "@/src/lib/framer-motion-provider"
-import {
-  ClerkProvider,
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from '@clerk/nextjs'
-import { ChipiProvider } from "@chipi-stack/nextjs";
+import { ClerkProvider } from '@clerk/nextjs'
+import { Providers } from "./providers";
+import StarknetProviderWrapper from "./starknet-provider-wrapper";
 
 const inter = Inter({ subsets: ["latin"], display: "swap" })
 
@@ -30,8 +24,14 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <ClerkProvider>
-      <ChipiProvider>
+    <ClerkProvider
+      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY!}
+      signInFallbackRedirectUrl="/"
+      signUpFallbackRedirectUrl="/"
+      afterSignOutUrl="/"
+    >
+      <Providers>
+          <StarknetProviderWrapper>
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} bg-black text-white`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
@@ -48,7 +48,8 @@ export default function RootLayout({
         </ThemeProvider>
       </body>
     </html>
-    </ChipiProvider>
+    </StarknetProviderWrapper>
+        </Providers>
     </ClerkProvider>
   )
 }
