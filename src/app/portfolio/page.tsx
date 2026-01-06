@@ -214,9 +214,8 @@ export default function PortfolioPage() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                My Portfolio
+                Portfolio
               </h1>
-              <p className="text-muted-foreground text-lg mt-2">Manage your intellectual property assets</p>
             </div>
             <div className="flex items-center gap-3">
               <Button onClick={() => (window.location.href = "/create")} className="gap-2">

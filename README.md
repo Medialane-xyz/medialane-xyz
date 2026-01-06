@@ -1,5 +1,4 @@
-<img width="1600" height="900" alt="image" src="https://github.com/user-attachments/assets/bb4ce556-109f-42e8-85e6-c90a0feade51" />
-
+<img width="1920" height="1080" alt="Medialane" src="https://mediolano.xyz/wp-content/uploads/2026/01/medialane-monetization-hub-programmable-ip.jpg" />
 
 
 # medialave.xyz  
@@ -21,13 +20,15 @@ Discover Medialane:  [https://medialane.xyz](https://medialane.xyz)
 
 ## Roadmap
 
-- [ ] Medialane Protocol @ Starknet Sepolia **25.11**
+- [X] Medialane Protocol @ Starknet Sepolia **25.11**
 
-- [ ] Medialane Dapp @ Starknet Sepolia **25.11**
+- [X] Medialane Dapp @ Starknet Sepolia **25.11**
 
-- [ ] Medialane Protocol @ Starknet Mainnet **25.12**
+- [X] Medialane Dapp @ Starknet Mainnet **26.01**
 
-- [ ] Medialane Dapp @ Starknet Mainnet **26.01**
+- [ ] Medialane Protocol @ Starknet Mainnet **26.01**
+
+- [ ] Medialane Marketplace @ Starknet Mainnet **26.03**
 
 
 ## Contributing
