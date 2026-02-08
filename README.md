@@ -14,25 +14,64 @@ Discover Medialane (Dapp Preview): [https://medialane.xyz](https://medialane.xyz
 
 #### Powered by Starknet, Mediolano Protocol, Chipi Pay SDK.
 
+## Key Features
+
+- **Creator Launchpad**: Tools for capital structuring and creating financial assets like IP Coins and Creator Coins.
+- **IP Marketplace**: A high-integrity secondary market for licensing and trading tokenized assets.
+- **Programmable Licensing**: Smart contracts that automatically enforce usage and remix terms.
+- **Sovereign Capital**: Complete ownership for creators over their assets and decentralized identity.
+- **Interactive UI**: Rich animations, floating navigation, and a responsive design optimized for mobile and desktop.
+- **Wallet Integration**: Seamless connection with Starknet wallets throughout the application.
+
+## Tech Stack
+
+- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Blockchain**: [Starknet](https://www.starknet.io/) (via `@starknet-react/core`)
+- **Authentication**: [Clerk](https://clerk.com/)
+- **Invisible Wallet/Payments**: [Chipi Pay](https://chipipay.com/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) & [Radix UI](https://www.radix-ui.com/)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- **Validation**: [Zod](https://zod.dev/) & [React Hook Form](https://react-hook-form.com/)
+
+## Project Structure
+
+```bash
+src/
+├── app/                  # Application routes and pages (App Router)
+│   ├── layout.tsx        # Global layout and providers
+│   ├── page.tsx          # Landing page
+│   └── [features]/       # Feature-based route directories (assets, creators, etc.)
+├── components/           # React components
+│   ├── ui/               # Reusable atomic UI components (Button, Card, etc.)
+│   └── [feature].tsx     # Feature-specific components
+├── lib/                  # Utilities, contexts, and helper functions
+├── hooks/                # Custom React hooks
+└── styles/               # Global styles
+```
+
+## Environment Variables
+
+To run this project, you will need to add the following environment variables to your `.env.local` file:
+
+```bash
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+NEXT_PUBLIC_CHIPI_API_KEY=your_chipi_api_key
+```
 
 ## Roadmap
 
 - [X] Medialane Protocol @ Starknet Sepolia **25.11**
-
 - [X] Medialane Dapp @ Starknet Sepolia **25.11**
-
 - [X] Medialane Onboarding @ Starknet Mainnet **26.01**
-
-- [ ] Medialane Protocol @ Starknet Mainnet **26.01**
-
-- [ ] Medialane Creator Launchpad @ Starknet Mainnet **26.02**
-
+- [ ] Medialane Protocol @ Starknet Mainnet **26.02**
+- [ ] Medialane Creator Launchpad @ Starknet Mainnet **26.03**
 - [ ] Medialane Marketplace @ Starknet Mainnet **26.03**
 
 
 ## Contributing
 
-Ccontributions are **greatly appreciated**. If you have a feature or suggestion that would our plattform better, please fork the repo and create a pull request with the tag "enhancement".
+Contributions are **greatly appreciated**. If you have a feature or suggestion that would our platform better, please fork the repo and create a pull request with the tag "enhancement".
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/Feature`)
@@ -45,43 +84,48 @@ Ccontributions are **greatly appreciated**. If you have a feature or suggestion 
 
 ### Running locally
 
-Dapp requirements:
-- Next.js 15
-- React 19
-- Node.js 18.18 or later.
-- macOS, Windows (including WSL), and Linux are supported.
+**Prerequisites:**
+- Node.js 18.18 or later
+- npm or pnpm or yarn
 
-Clone the repository to your local machine:
+1. **Clone the repository:**
 
-```bash
-git clone https://github.com/medialane-xyz/medialane-xyz.git
-```
-Install dependencies for Next.js 15 + React 19:
+   ```bash
+   git clone https://github.com/medialane-xyz/medialane-xyz.git
+   cd medialane-xyz
+   ```
 
-```bash
-npm install --force
-```
+2. **Install dependencies:**
 
-Run the development server:
+   ```bash
+   npm install --force
+   ```
 
-```bash
-npm run dev
-```
+3. **Set up environment variables:**
+   
+   Create a `.env.local` file in the root directory and add the required keys (see [Environment Variables](#environment-variables)).
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. **Run the development server:**
+
+   ```bash
+   npm run dev
+   ```
+
+   Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 
 ### Running via Docker
 
-To run the containerized application, there is no dependencies requirement. 
-Clone the repository, and run:
+To run the containerized application, there is no dependencies requirement other than Docker. 
 
-```bash
- docker build -t medialane-xyz .     
-```
+1. **Build the image:**
 
-To build the image. Then, start the container:
+   ```bash
+   docker build -t medialane-xyz .     
+   ```
 
-```bash
-docker run -p 8080:8080 medialane-xyz
-```
+2. **Start the container:**
+
+   ```bash
+   docker run -p 8080:8080 medialane-xyz
+   ```
