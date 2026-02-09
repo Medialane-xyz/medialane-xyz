@@ -42,7 +42,7 @@ import {
 } from "@/src/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar"
 import { ThemeToggle } from "@/src/components/theme-toggle"
-import { NotificationsPopover } from "@/src/components/notifications-popover"
+import NotificationsPopover from "@/src/components/notifications-popover"
 import { useMobile } from "@/src/hooks/use-mobile"
 
 const categories = [
@@ -97,9 +97,8 @@ export function Navbar() {
     <>
       {/* Desktop Navbar */}
       <motion.nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled ? "bg-background/95 backdrop-blur-md border-b shadow-sm" : "bg-background/80 backdrop-blur-sm"
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-background/95 backdrop-blur-md border-b shadow-sm" : "bg-background/80 backdrop-blur-sm"
+          }`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.3 }}
@@ -196,6 +195,13 @@ export function Navbar() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
+                  <DropdownMenuItem asChild>
+                    <Link href="/creator">
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      Creator Launchpad
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link href="/create">
                       <Plus className="w-4 h-4 mr-2" />
@@ -349,6 +355,12 @@ export function Navbar() {
 
                   <div className="py-2 border-t">
                     <div className="text-sm font-medium text-muted-foreground px-3 py-2">Create</div>
+                    <Link href="/creator" onClick={() => setIsOpen(false)}>
+                      <Button variant="ghost" size="lg" className="w-full justify-start">
+                        <Sparkles className="w-5 h-5 mr-3" />
+                        Creator Launchpad
+                      </Button>
+                    </Link>
                     <Link href="/create" onClick={() => setIsOpen(false)}>
                       <Button variant="ghost" size="lg" className="w-full justify-start">
                         <Plus className="w-5 h-5 mr-3" />

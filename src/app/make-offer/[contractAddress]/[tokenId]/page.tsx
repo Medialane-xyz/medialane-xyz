@@ -9,7 +9,8 @@ import { MakeOfferComponent } from "@/src/components/make-offer-component"
 export default function MakeOfferPage() {
   const params = useParams()
   const router = useRouter()
-  const assetId = params.id as string
+  // const contractAddress = params.contractAddress as string
+  const assetId = params.tokenId as string
 
   return (
     <div className="min-h-screen pt-16 md:pt-20 pb-20 md:pb-24">

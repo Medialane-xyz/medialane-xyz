@@ -22,8 +22,10 @@ import {
   DrawerClose,
 } from "@/src/components/ui/drawer"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { useAllAssets } from "@/src/lib/hooks/use-all-assets"
 import AssetCard from "@/src/components/asset-card"
+import { AssetsSkeleton } from "@/src/components/assets-skeleton"
 
 type ViewMode = "grid" | "list"
 
@@ -272,13 +274,12 @@ export default function AssetsPage() {
 
   const shownAssets = useMemo(() => sortedAssets.slice(0, visibleCount), [sortedAssets, visibleCount])
 
+  if (isLoading) {
+    return <AssetsSkeleton />
+  }
+
   return (
     <div className="min-h-screen pt-20 md:pt-24 pb-24 md:pb-32 px-4 md:px-8">
-      {isLoading && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/50 backdrop-blur-sm">
-          <Loader2 className="h-12 w-12 animate-spin text-primary" />
-        </div>
-      )}
 
       {/* Hero */}
       <motion.div

@@ -195,17 +195,19 @@ export default function CollectionDetailPage() {
     <div className="min-h-screen bg-background relative">
 
       {/* Fixed Background Image with Blur Effect */}
+      {/* Fixed Background Image with Blur Effect - YouTube Ambient Mode Style */}
       {backgroundImage && (
-        <div className="fixed inset-0 z-0 overflow-hidden">
-          <img
-            src={backgroundImage}
-            alt=""
-            className="w-full h-full object-cover scale-110"
-          />
-          {/* Heavy blur and dark overlay for integration */}
-          <div className="absolute inset-0 backdrop-blur-3xl" />
-          <div className="absolute inset-0 bg-background/85" />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background" />
+        <div className="fixed inset-0 z-0 pointer-events-none">
+          {/* Ambient Glow */}
+          <div className="absolute inset-0 overflow-hidden">
+            <img
+              src={backgroundImage}
+              alt=""
+              className="w-full h-full object-cover scale-150 blur-[100px] opacity-50 saturate-200"
+            />
+          </div>
+          {/* subtle gradient overlay to ensure text readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/80 to-background" />
         </div>
       )}
 

@@ -139,7 +139,7 @@ export default function CollectionsPage() {
 
   return (
     <PageTransition>
-      <div className="min-h-screen pt-16 sm:pt-24 pb-20 sm:pb-24 md:pb-32">
+      <div className="min-h-screen py-20">
         <div className="px-4 sm:px-6 md:px-8 max-w-7xl mx-auto">
           {/* Header */}
           <motion.div
