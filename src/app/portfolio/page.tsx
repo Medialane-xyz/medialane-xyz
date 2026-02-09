@@ -39,7 +39,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/src/components/ui/drawer"
 import { Checkbox } from "@/src/components/ui/checkbox"
 import { Label } from "@/src/components/ui/label"
-import { useMockData } from "@/src/lib/hooks/use-mock-data"
+import { useAccount } from "@starknet-react/core"
+import { useUserCollections } from "@/src/lib/hooks/use-all-collections"
+import { useUserAssets } from "@/src/lib/hooks/use-collection-tokens"
 import { useMobile } from "@/src/hooks/use-mobile"
 
 const CATEGORIES = [
@@ -62,8 +64,13 @@ const SORT_OPTIONS = [
 ]
 
 export default function PortfolioPage() {
-  const { assets, collections, creators } = useMockData()
+  const { address } = useAccount()
   const isMobile = useMobile()
+
+  // Fetch real data
+  const { collections: userCollections, isLoading: isLoadingCollections } = useUserCollections(address)
+  const { assets: rawAssets, isLoading: isLoadingAssets } = useUserAssets(address)
+
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [sortBy, setSortBy] = useState("newest")
@@ -71,17 +78,24 @@ export default function PortfolioPage() {
   const [showFilters, setShowFilters] = useState(false)
   const [selectedFilters, setSelectedFilters] = useState<string[]>([])
 
-  // Get current user's assets (mock - in real app, filter by user ID)
+  // Map raw assets to UI model
   const userAssets = useMemo(() => {
-    if (!assets) return []
-    return assets.slice(0, 12) // Mock user assets
-  }, [assets])
+    return rawAssets.map(token => ({
+      id: token.identifier,
+      name: token.name || `Token #${token.token_id}`,
+      image: token.image || "/placeholder.svg",
+      category: "Digital Art", // TODO: fetch from metadata
+      price: "Not Listed",
+      views: 0,
+      likes: 0,
+      createdAt: new Date().toISOString(), // Mock date as blockchain doesn't give timestamp easily without events
+      status: "Owned"
+    }))
+  }, [rawAssets])
 
-  // Get current user's collections (mock)
-  const userCollections = useMemo(() => {
-    if (!collections) return []
-    return collections.slice(0, 6) // Mock user collections
-  }, [collections])
+  // Context: userCollections is OnChainCollection[]
+  // UI expects: id, name, image, itemCount, floorPrice, volume
+  // OnChainCollection has: id, name, image, items, volume
 
   // Filter and sort assets
   const filteredAssets = useMemo(() => {
@@ -109,9 +123,9 @@ export default function PortfolioPage() {
         case "oldest":
           return new Date(a.createdAt || "").getTime() - new Date(b.createdAt || "").getTime()
         case "price-high":
-          return Number.parseFloat(b.price.replace(/[^\d.]/g, "")) - Number.parseFloat(a.price.replace(/[^\d.]/g, ""))
+          return 0 // No price data yet
         case "price-low":
-          return Number.parseFloat(a.price.replace(/[^\d.]/g, "")) - Number.parseFloat(b.price.replace(/[^\d.]/g, ""))
+          return 0
         case "most-liked":
           return (b.likes || 0) - (a.likes || 0)
         case "most-viewed":
@@ -414,7 +428,7 @@ export default function PortfolioPage() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <h3 className="font-semibold truncate">{collection.name}</h3>
-                            <p className="text-sm text-muted-foreground">{collection.itemCount} items</p>
+                            <p className="text-sm text-muted-foreground">{collection.items} items</p>
                           </div>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -439,9 +453,10 @@ export default function PortfolioPage() {
                           </DropdownMenu>
                         </div>
                         <div className="flex items-center justify-between text-sm text-muted-foreground">
-                          <span>Floor: {collection.floorPrice}</span>
+                          <span>Floor: 0 ETH</span>
                           <span>Volume: {collection.volume}</span>
                         </div>
+                        <Badge variant="outline">{collection.symbol || "NFT"}</Badge>
                       </CardContent>
                     </Card>
                   ))}
@@ -831,14 +846,14 @@ export default function PortfolioPage() {
                             {collection.description || "No description available"}
                           </p>
                           <div className="flex items-center justify-between mb-3">
-                            <span className="text-sm text-muted-foreground">{collection.itemCount} items</span>
+                            <span className="text-sm text-muted-foreground">{collection.items} items</span>
                             <div className="flex items-center gap-2">
-                              <span className="text-sm font-medium">Floor: {collection.floorPrice}</span>
+                              <span className="text-sm font-medium">Floor: 0 ETH</span>
                             </div>
                           </div>
                           <div className="flex items-center justify-between">
                             <Badge variant="outline" className="text-xs">
-                              {collection.category || "Mixed"}
+                              {collection.symbol || "Mixed"}
                             </Badge>
                             <span className="text-xs text-muted-foreground">Volume: {collection.volume}</span>
                           </div>

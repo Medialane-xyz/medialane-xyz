@@ -1,59 +1,45 @@
 "use client"
 
-import { useState, Suspense } from "react"
+import { useState, Suspense, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Grid3X3, Search, Filter, SortAsc, Eye, TrendingUp, Plus } from "lucide-react"
+import { Grid3X3, Search, Filter, SortAsc, Plus, Loader2 } from "lucide-react"
 import { Input } from "@/src/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
 import { Button } from "@/src/components/ui/button"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/src/components/ui/sheet"
 import { Badge } from "@/src/components/ui/badge"
-import { useMockData } from "@/src/lib/hooks/use-mock-data"
+import { useAllCollections } from "@/src/lib/hooks/use-all-collections"
 import CollectionCard from "@/src/components/collection-card"
 import PageTransition from "@/src/components/page-transition"
 import { useMobile } from "@/src/hooks/use-mobile"
 import Link from "next/link"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/src/components/ui/pagination"
+import { Skeleton } from "@/src/components/ui/skeleton"
 
-// Mobile-optimized loading fallback
+// Constants
+const ITEMS_PER_PAGE = 12
+
+// Improved Loading Skeleton
 const LoadingFallback = () => (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
     {Array.from({ length: 6 }).map((_, i) => (
-      <div key={i} className="h-64 sm:h-72 bg-zinc-800/20 rounded-xl animate-pulse" />
+      <div key={i} className="flex flex-col space-y-3">
+        <Skeleton className="h-48 w-full rounded-xl" />
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-3/4" />
+          <Skeleton className="h-4 w-1/2" />
+        </div>
+      </div>
     ))}
   </div>
 )
-
-// Mobile-first stats component
-const CollectionStats = ({ collections }: { collections: any[] }) => {
-  const totalItems = collections.reduce((sum, col) => sum + (col.items || 0), 0)
-  const totalVolume = collections.reduce((sum, col) => sum + Number.parseFloat(col.volume || "0"), 0)
-
-  return (
-    <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-6">
-      <div className="glass-effect rounded-lg p-3 sm:p-4 text-center">
-        <div className="flex items-center justify-center mb-1">
-          <Grid3X3 className="w-3 h-3 sm:w-4 sm:h-4 text-primary mr-1" />
-        </div>
-        <div className="text-lg sm:text-xl font-bold">{collections.length}</div>
-        <div className="text-xs sm:text-sm text-zinc-400">Collections</div>
-      </div>
-      <div className="glass-effect rounded-lg p-3 sm:p-4 text-center">
-        <div className="flex items-center justify-center mb-1">
-          <Eye className="w-3 h-3 sm:w-4 sm:h-4 text-primary mr-1" />
-        </div>
-        <div className="text-lg sm:text-xl font-bold">{totalItems.toLocaleString()}</div>
-        <div className="text-xs sm:text-sm text-zinc-400">Assets</div>
-      </div>
-      <div className="glass-effect rounded-lg p-3 sm:p-4 text-center">
-        <div className="flex items-center justify-center mb-1">
-          <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-primary mr-1" />
-        </div>
-        <div className="text-lg sm:text-xl font-bold">{totalVolume.toFixed(1)}</div>
-        <div className="text-xs sm:text-sm text-zinc-400">Volume</div>
-      </div>
-    </div>
-  )
-}
 
 // Mobile-optimized filter sheet
 const FilterSheet = ({ sortBy, setSortBy, filterBy, setFilterBy }: any) => (
@@ -87,29 +73,16 @@ const FilterSheet = ({ sortBy, setSortBy, filterBy, setFilterBy }: any) => (
 
         <div>
           <label className="text-sm font-medium mb-3 block">Filter By</label>
-          <div className="flex flex-wrap gap-2">
-            <Badge
-              variant={filterBy === "all" ? "default" : "outline"}
-              className="cursor-pointer"
-              onClick={() => setFilterBy("all")}
-            >
-              All
-            </Badge>
-            <Badge
-              variant={filterBy === "verified" ? "default" : "outline"}
-              className="cursor-pointer"
-              onClick={() => setFilterBy("verified")}
-            >
-              Verified
-            </Badge>
-            <Badge
-              variant={filterBy === "trending" ? "default" : "outline"}
-              className="cursor-pointer"
-              onClick={() => setFilterBy("trending")}
-            >
-              Trending
-            </Badge>
-          </div>
+          <Select value={filterBy} onValueChange={setFilterBy}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Collections</SelectItem>
+              <SelectItem value="verified">Verified Only</SelectItem>
+              <SelectItem value="trending">Trending</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
     </SheetContent>
@@ -117,11 +90,12 @@ const FilterSheet = ({ sortBy, setSortBy, filterBy, setFilterBy }: any) => (
 )
 
 export default function CollectionsPage() {
-  const { collections } = useMockData()
+  const { collections, isLoading, error } = useAllCollections()
   const isMobile = useMobile()
   const [searchQuery, setSearchQuery] = useState("")
   const [sortBy, setSortBy] = useState("items")
   const [filterBy, setFilterBy] = useState("all")
+  const [currentPage, setCurrentPage] = useState(1)
 
   // Filter collections
   let filteredCollections = collections.filter(
@@ -134,7 +108,7 @@ export default function CollectionsPage() {
   if (filterBy === "verified") {
     filteredCollections = filteredCollections.filter((col) => col.verified)
   } else if (filterBy === "trending") {
-    filteredCollections = filteredCollections.filter((col) => Number.parseFloat(col.volume || "0") > 10)
+    filteredCollections = filteredCollections.filter((col) => col.items > 10)
   }
 
   // Sort collections
@@ -142,73 +116,95 @@ export default function CollectionsPage() {
     if (sortBy === "items") return b.items - a.items
     if (sortBy === "volume") return Number.parseFloat(b.volume || "0") - Number.parseFloat(a.volume || "0")
     if (sortBy === "verified") return (b.verified ? 1 : 0) - (a.verified ? 1 : 0)
-    if (sortBy === "newest") return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
     return a.name.localeCompare(b.name)
   })
 
+  // Pagination Logic
+  const totalPages = Math.ceil(sortedCollections.length / ITEMS_PER_PAGE)
+  const paginatedCollections = sortedCollections.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  )
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchQuery, filterBy, sortBy])
+
+  // Scroll to top on page change
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   return (
     <PageTransition>
-      <div className="min-h-screen pt-16 sm:pt-20 md:pt-24 pb-20 sm:pb-24 md:pb-32">
-        {/* Mobile-first header */}
-        <div className="px-3 sm:px-4 md:px-8">
+      <div className="min-h-screen pt-16 sm:pt-24 pb-20 sm:pb-24 md:pb-32">
+        <div className="px-4 sm:px-6 md:px-8 max-w-7xl mx-auto">
+          {/* Header */}
           <motion.div
-            className="text-center lg:text-left mb-4 sm:mb-6 md:mb-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4"
+            className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="flex-1">
-              <div className="inline-flex items-center justify-center p-2 bg-primary/10 rounded-full mb-3 sm:mb-4">
-                <Grid3X3 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-primary" />
-                <h1 className="font-medium">Collections</h1>
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <Grid3X3 className="w-5 h-5 text-primary" />
+                </div>
+                <h1 className="text-2xl font-bold tracking-tight">Collections</h1>
               </div>
-              
-              
+              <p className="text-zinc-400 text-sm">
+                Discover and explore unique digital collections
+              </p>
             </div>
+
             <Link href="/create/collection">
-              <Button className="whitespace-nowrap">
+              <Button>
                 <Plus className="w-4 h-4 mr-2" />
                 Create Collection
               </Button>
             </Link>
           </motion.div>
 
-          {/* Stats */}
+          {/* Search and Filters */}
           <motion.div
+            className="mb-8 space-y-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <CollectionStats collections={collections} />
-          </motion.div>
-
-          {/* Mobile-optimized search and filters */}
-          <motion.div
-            className="mb-4 sm:mb-6 md:mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <div className="glass-effect p-3 sm:p-4 rounded-xl space-y-3 sm:space-y-0 sm:flex sm:items-center sm:gap-3">
-              {/* Search */}
+            <div className="flex flex-col sm:flex-row gap-4">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-400" />
                 <Input
                   type="search"
                   placeholder="Search collections..."
-                  className="pl-10 h-9 sm:h-10 bg-transparent border-white/10 focus-visible:ring-primary text-sm"
+                  className="pl-10 bg-zinc-900/50 border-zinc-800 focus-visible:ring-primary"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
 
-              {/* Desktop filters */}
-              {!isMobile && (
+              {!isMobile ? (
                 <div className="flex items-center gap-3">
+                  <Select value={filterBy} onValueChange={setFilterBy}>
+                    <SelectTrigger className="w-[180px] bg-zinc-900/50 border-zinc-800">
+                      <Filter className="w-4 h-4 mr-2" />
+                      <SelectValue placeholder="Filter By" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Collections</SelectItem>
+                      <SelectItem value="verified">Verified Only</SelectItem>
+                      <SelectItem value="trending">Trending</SelectItem>
+                    </SelectContent>
+                  </Select>
+
                   <Select value={sortBy} onValueChange={setSortBy}>
-                    <SelectTrigger className="w-[140px] h-10 bg-transparent border-white/10">
+                    <SelectTrigger className="w-[180px] bg-zinc-900/50 border-zinc-800">
                       <SortAsc className="w-4 h-4 mr-2" />
-                      <SelectValue />
+                      <SelectValue placeholder="Sort By" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="items">Most Items</SelectItem>
@@ -218,65 +214,49 @@ export default function CollectionsPage() {
                       <SelectItem value="newest">Newest First</SelectItem>
                     </SelectContent>
                   </Select>
-
-                  <div className="flex items-center gap-2">
-                    <Badge
-                      variant={filterBy === "all" ? "default" : "outline"}
-                      className="cursor-pointer text-xs"
-                      onClick={() => setFilterBy("all")}
-                    >
-                      All
-                    </Badge>
-                    <Badge
-                      variant={filterBy === "verified" ? "default" : "outline"}
-                      className="cursor-pointer text-xs"
-                      onClick={() => setFilterBy("verified")}
-                    >
-                      Verified
-                    </Badge>
-                    <Badge
-                      variant={filterBy === "trending" ? "default" : "outline"}
-                      className="cursor-pointer text-xs"
-                      onClick={() => setFilterBy("trending")}
-                    >
-                      Trending
-                    </Badge>
-                  </div>
                 </div>
-              )}
-
-              {/* Mobile filter sheet */}
-              {isMobile && (
+              ) : (
                 <FilterSheet sortBy={sortBy} setSortBy={setSortBy} filterBy={filterBy} setFilterBy={setFilterBy} />
               )}
             </div>
+
+            {/* Results count */}
+            {!isLoading && (
+              <div className="flex items-center justify-between text-sm text-zinc-400">
+                <p>
+                  Showing {paginatedCollections.length > 0 ? (currentPage - 1) * ITEMS_PER_PAGE + 1 : 0}-
+                  {Math.min(currentPage * ITEMS_PER_PAGE, sortedCollections.length)} of {sortedCollections.length} collections
+                </p>
+                {(searchQuery || filterBy !== 'all') && (
+                  <Button
+                    variant="link"
+                    size="sm"
+                    onClick={() => {
+                      setSearchQuery("")
+                      setFilterBy("all")
+                    }}
+                    className="text-primary hover:text-primary/80 px-0"
+                  >
+                    Clear filters
+                  </Button>
+                )}
+              </div>
+            )}
           </motion.div>
 
-          {/* Results count */}
+          {/* Collections Grid */}
           <motion.div
-            className="mb-4 sm:mb-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="min-h-[400px]"
           >
-            <div className="flex items-center justify-between">
-              <p className="text-xs sm:text-sm text-zinc-400">
-                {sortedCollections.length} collection{sortedCollections.length !== 1 ? "s" : ""} found
-              </p>
-              {searchQuery && (
-                <Button variant="ghost" size="sm" onClick={() => setSearchQuery("")} className="text-xs h-7">
-                  Clear search
-                </Button>
-              )}
-            </div>
-          </motion.div>
-
-          {/* Collections grid */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.4 }}>
-            <Suspense fallback={<LoadingFallback />}>
-              {sortedCollections.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
-                  {sortedCollections.map((collection, index) => (
+            {isLoading ? (
+              <LoadingFallback />
+            ) : paginatedCollections.length > 0 ? (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
+                  {paginatedCollections.map((collection, index) => (
                     <motion.div
                       key={collection.id}
                       initial={{ opacity: 0, y: 20 }}
@@ -287,31 +267,75 @@ export default function CollectionsPage() {
                     </motion.div>
                   ))}
                 </div>
-              ) : (
-                <div className="text-center py-12 sm:py-16">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 rounded-full bg-zinc-800/50 flex items-center justify-center">
-                    <Grid3X3 className="w-6 h-6 sm:w-8 sm:h-8 text-zinc-400" />
-                  </div>
-                  <h3 className="text-lg sm:text-xl font-semibold mb-2">No collections found</h3>
-                  <p className="text-sm sm:text-base text-zinc-400 mb-4">
-                    Try adjusting your search or filter criteria
-                  </p>
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setSearchQuery("")
-                      setFilterBy("all")
-                    }}
-                    className="text-sm"
-                  >
-                    Reset filters
-                  </Button>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <Pagination className="mt-8">
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            if (currentPage > 1) handlePageChange(currentPage - 1);
+                          }}
+                          className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        />
+                      </PaginationItem>
+
+                      {/* Simplified pagination logic for demonstration - can be enhanced for many pages */}
+                      {Array.from({ length: totalPages }).map((_, i) => (
+                        <PaginationItem key={i}>
+                          <PaginationLink
+                            href="#"
+                            isActive={currentPage === i + 1}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handlePageChange(i + 1);
+                            }}
+                          >
+                            {i + 1}
+                          </PaginationLink>
+                        </PaginationItem>
+                      ))}
+
+                      <PaginationItem>
+                        <PaginationNext
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            if (currentPage < totalPages) handlePageChange(currentPage + 1);
+                          }}
+                          className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                )}
+              </>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-20 text-center">
+                <div className="w-20 h-20 bg-zinc-800/50 rounded-full flex items-center justify-center mb-6">
+                  <Grid3X3 className="w-10 h-10 text-zinc-500" />
                 </div>
-              )}
-            </Suspense>
+                <h3 className="text-xl font-bold mb-2">No collections found</h3>
+                <p className="text-zinc-400 max-w-sm mx-auto mb-6">
+                  We couldn't find any collections matching your criteria. Try adjusting your filters or search query.
+                </p>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setSearchQuery("")
+                    setFilterBy("all")
+                  }}
+                >
+                  Clear all filters
+                </Button>
+              </div>
+            )}
           </motion.div>
         </div>
       </div>
-    </PageTransition>
+    </PageTransition >
   )
 }

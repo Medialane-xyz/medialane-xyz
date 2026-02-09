@@ -9,8 +9,8 @@
     "start": "next start"
   },
   "dependencies": {
-    "@chipi-stack/nextjs": "^11.22.0",
-    "@clerk/nextjs": "^6.36.5",
+    "@chipi-stack/nextjs": "^13.0.0",
+    "@clerk/nextjs": "^6.37.3",
     "@emotion/is-prop-valid": "latest",
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-accordion": "latest",
@@ -52,8 +52,9 @@
     "framer-motion": "latest",
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",
-    "next": "^15.5.7",
+    "next": "^15.5.12",
     "next-themes": "latest",
+    "radix-ui": "^1.4.3",
     "react": "19.2.0",
     "react-day-picker": "9.8.0",
     "react-dom": "19.2.0",

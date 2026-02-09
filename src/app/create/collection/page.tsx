@@ -36,13 +36,36 @@ import { Slider } from "@/src/components/ui/slider"
 import { Badge } from "@/src/components/ui/badge"
 import { useToast } from "@/src/components/ui/use-toast"
 import { useMobile } from "@/src/hooks/use-mobile"
+import { useCreateCollection } from "@/src/lib/hooks/use-create-collection"
 import { cn } from "@/src/lib/utils"
+
+// Define types
+interface CollectionFormData {
+  name: string
+  description: string
+  category: string
+  tags: string[]
+  coverImage: { file: File; url: string; name: string; type: string; size: number } | null
+  bannerImage: { file: File; url: string; name: string; type: string; size: number } | null
+  royaltyPercentage: number
+  mintPrice: number
+  currency: string
+  enableRemixing: boolean
+  remixRoyalty: number
+  allowCommercialUse: boolean
+  requireAttribution: boolean
+  licenseType: string
+  website: string
+  twitter: string
+  discord: string
+}
 
 export default function CreateCollectionPage() {
   const { toast } = useToast()
   const isMobile = useMobile()
+  const { createCollection, isProcessing, step } = useCreateCollection()
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<CollectionFormData>({
     // Basic Information
     name: "",
     description: "",
@@ -83,11 +106,10 @@ export default function CreateCollectionPage() {
   })
 
   const [dragActive, setDragActive] = useState(false)
-  const [uploadProgress, setUploadProgress] = useState({})
+  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({})
   const [isUploading, setIsUploading] = useState(false)
   const [currentTag, setCurrentTag] = useState("")
-  const [validationErrors, setValidationErrors] = useState({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
   const [previewMode, setPreviewMode] = useState("card")
 
   // Calculate completion percentage based on essential fields only
@@ -104,7 +126,7 @@ export default function CreateCollectionPage() {
 
   // Validation - only essential fields
   const validateForm = useCallback(() => {
-    const errors = {}
+    const errors: Record<string, string> = {}
     if (!formData.name.trim()) errors.name = "Collection name is required"
     if (!formData.description.trim()) errors.description = "Description is required"
     if (!formData.category) errors.category = "Category is required"
@@ -116,7 +138,7 @@ export default function CreateCollectionPage() {
   }, [formData])
 
   // Handle file upload
-  const handleFileUpload = async (file, type) => {
+  const handleFileUpload = async (file: File, type: "coverImage" | "bannerImage") => {
     setIsUploading(true)
     setUploadProgress((prev) => ({ ...prev, [type]: 0 }))
 
@@ -140,6 +162,7 @@ export default function CreateCollectionPage() {
       return
     }
 
+    // Simulate upload progress
     const interval = setInterval(() => {
       setUploadProgress((prev) => {
         const currentProgress = prev[type] || 0
@@ -149,6 +172,7 @@ export default function CreateCollectionPage() {
           setFormData((prev) => ({
             ...prev,
             [type]: {
+              file: file,
               name: file.name,
               size: file.size,
               type: file.type,
@@ -163,10 +187,10 @@ export default function CreateCollectionPage() {
         }
         return { ...prev, [type]: currentProgress + 10 }
       })
-    }, 200)
+    }, 100)
   }
 
-  const handleDrag = (e) => {
+  const handleDrag = (e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
     if (e.type === "dragenter" || e.type === "dragover") {
@@ -176,7 +200,7 @@ export default function CreateCollectionPage() {
     }
   }
 
-  const handleDrop = (e, type) => {
+  const handleDrop = (e: React.DragEvent, type: "coverImage" | "bannerImage") => {
     e.preventDefault()
     e.stopPropagation()
     setDragActive(false)
@@ -195,14 +219,14 @@ export default function CreateCollectionPage() {
     }
   }
 
-  const removeTag = (tagToRemove) => {
+  const removeTag = (tagToRemove: string) => {
     setFormData((prev) => ({
       ...prev,
       tags: prev.tags.filter((tag) => tag !== tagToRemove),
     }))
   }
 
-  const toggleSection = (section) => {
+  const toggleSection = (section: keyof typeof expandedSections) => {
     setExpandedSections((prev) => ({
       ...prev,
       [section]: !prev[section],
@@ -219,16 +243,29 @@ export default function CreateCollectionPage() {
       return
     }
 
-    setIsSubmitting(true)
-    await new Promise((resolve) => setTimeout(resolve, 3000))
+    // Prepare params
+    if (!formData.coverImage || !formData.bannerImage) return
 
-    toast({
-      title: "Collection Created Successfully! 🎉",
-      description: "Your collection is now live and ready for minting",
-      duration: 5000,
+    await createCollection({
+      name: formData.name,
+      description: formData.description,
+      category: formData.category,
+      coverImage: formData.coverImage.file,
+      bannerImage: formData.bannerImage.file,
+      symbol: formData.name.substring(0, 3).toUpperCase(),
+      tags: formData.tags,
+      royaltyPercentage: formData.royaltyPercentage,
+      mintPrice: formData.mintPrice,
+      currency: formData.currency,
+      enableRemixing: formData.enableRemixing,
+      remixRoyalty: formData.remixRoyalty,
+      allowCommercialUse: formData.allowCommercialUse,
+      requireAttribution: formData.requireAttribution,
+      licenseType: formData.licenseType,
+      website: formData.website,
+      twitter: formData.twitter,
+      discord: formData.discord
     })
-
-    setIsSubmitting(false)
   }
 
   const categories = [
@@ -658,9 +695,9 @@ export default function CreateCollectionPage() {
               <Button
                 onClick={handleSubmit}
                 className="flex-1 bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 hover:from-purple-600 hover:via-blue-600 hover:to-cyan-600 text-white py-6 text-lg font-semibold disabled:opacity-50"
-                disabled={completionPercentage < 100 || isSubmitting}
+                disabled={completionPercentage < 100 || isProcessing}
               >
-                {isSubmitting ? (
+                {isProcessing ? (
                   <>
                     <Loader2 className="h-5 w-5 mr-2 animate-spin" />
                     Creating...
@@ -672,7 +709,7 @@ export default function CreateCollectionPage() {
                   </>
                 )}
               </Button>
-              <Button variant="outline" className="px-8 py-6 bg-transparent" disabled={isSubmitting}>
+              <Button variant="outline" className="px-8 py-6 bg-transparent" disabled={isProcessing}>
                 Save Draft
               </Button>
             </motion.div>
@@ -701,7 +738,18 @@ export default function CreateCollectionPage() {
   )
 }
 
-const CollectionSection = ({ title, icon: Icon, isExpanded, onToggle, isCompleted, color, description, children }) => (
+interface CollectionSectionProps {
+  title: string
+  icon: any
+  isExpanded: boolean
+  onToggle: () => void
+  isCompleted: any
+  color: string
+  description?: string
+  children: React.ReactNode
+}
+
+const CollectionSection = ({ title, icon: Icon, isExpanded, onToggle, isCompleted, color, description, children }: CollectionSectionProps) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
@@ -740,6 +788,19 @@ const CollectionSection = ({ title, icon: Icon, isExpanded, onToggle, isComplete
   </motion.div>
 )
 
+interface FileUploadAreaProps {
+  title: string
+  description: string
+  file: { url: string; name: string } | null
+  onFileUpload: (file: File) => void
+  dragActive: boolean
+  onDrag: (e: React.DragEvent) => void
+  onDrop: (e: React.DragEvent) => void
+  required?: boolean
+  uploadProgress?: number
+  error?: string
+}
+
 const FileUploadArea = ({
   title,
   description,
@@ -751,7 +812,7 @@ const FileUploadArea = ({
   required = false,
   uploadProgress = 0,
   error,
-}) => (
+}: FileUploadAreaProps) => (
   <div className="space-y-2">
     <Label className="flex items-center gap-1">
       {title}
@@ -797,7 +858,14 @@ const FileUploadArea = ({
   </div>
 )
 
-const CollectionPreview = ({ formData, completionPercentage, previewMode, setPreviewMode }) => (
+interface CollectionPreviewProps {
+  formData: CollectionFormData
+  completionPercentage: number
+  previewMode: string
+  setPreviewMode: (mode: string) => void
+}
+
+const CollectionPreview = ({ formData, completionPercentage, previewMode, setPreviewMode }: CollectionPreviewProps) => (
   <motion.div
     initial={{ opacity: 0, x: 20 }}
     animate={{ opacity: 1, x: 0 }}

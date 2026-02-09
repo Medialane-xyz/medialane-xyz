@@ -22,33 +22,54 @@ interface AssetCardProps {
 export default function AssetCard({ asset, minimal = false }: AssetCardProps) {
   const router = useRouter()
 
+  // Build asset URL using on-chain address format (industry standard)
+  // Format: /assets/{collectionAddress}/{tokenId}
+  // Falls back to old format /assets/{id} for backward compatibility
+  const getAssetUrl = () => {
+    if (asset.collectionAddress && asset.tokenId) {
+      return `/assets/${asset.collectionAddress}/${asset.tokenId}`
+    }
+    // Fallback for legacy/mock data
+    return `/assets/${asset.id}`
+  }
+
+  const assetUrl = getAssetUrl()
+
   const handleCardClick = () => {
-    router.push(`/assets/${asset.id}`)
+    router.push(assetUrl)
   }
 
   const handleCreatorClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    router.push(`/users/${asset.creatorId || "1"}`)
+    router.push(`/creators/${asset.creatorId || "1"}`)
   }
 
   const handleRemixClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    router.push(`/remix/${asset.id}`)
+    router.push(`/remix${assetUrl.replace('/assets', '')}`)
   }
 
   const handleBuyNow = (e: React.MouseEvent) => {
     e.stopPropagation()
-    router.push(`/assets/${asset.id}?action=buy`)
+    if (asset.collectionAddress && asset.tokenId) {
+      router.push(`/checkout/${asset.collectionAddress}/${asset.tokenId}`)
+    } else {
+      router.push(`/checkout/${asset.id}`)
+    }
   }
 
   const handleMakeOffer = (e: React.MouseEvent) => {
     e.stopPropagation()
-    router.push(`/assets/${asset.id}?action=offer`)
+    if (asset.collectionAddress && asset.tokenId) {
+      router.push(`/make-offer/${asset.collectionAddress}/${asset.tokenId}`)
+    } else {
+      router.push(`/make-offer/${asset.id}`)
+    }
   }
 
   const handleViewAsset = (e: React.MouseEvent) => {
     e.stopPropagation()
-    router.push(`/assets/${asset.id}`)
+    router.push(assetUrl)
   }
 
   const handleShareLink = (e: React.MouseEvent) => {
@@ -57,16 +78,16 @@ export default function AssetCard({ asset, minimal = false }: AssetCardProps) {
       navigator.share({
         title: `${asset.name} on MediaLane`,
         text: `Check out ${asset.name} by ${asset.creator}`,
-        url: `${window.location.origin}/assets/${asset.id}`,
+        url: `${window.location.origin}${assetUrl}`,
       })
     } else {
-      navigator.clipboard.writeText(`${window.location.origin}/assets/${asset.id}`)
+      navigator.clipboard.writeText(`${window.location.origin}${assetUrl}`)
     }
   }
 
   const handleReportAsset = (e: React.MouseEvent) => {
     e.stopPropagation()
-    router.push(`/assets/${asset.id}?action=report`)
+    router.push(`${assetUrl}?action=report`)
   }
 
   return (
@@ -117,8 +138,8 @@ export default function AssetCard({ asset, minimal = false }: AssetCardProps) {
 
           {!minimal && (
             <div className="space-y-2 pt-2 border-t border-border/20">
-              
-               <div className="flex gap-1">
+
+              <div className="flex gap-1">
 
                 <Button
                   size="sm"
@@ -160,47 +181,47 @@ export default function AssetCard({ asset, minimal = false }: AssetCardProps) {
                   <Handshake className="h-4 w-4" />
                 </Button>
 
-                
 
 
-              
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-9 rounded-lg flex items-center justify-center gap-2 bg-transparent hover:bg-accent/50 font-medium"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <MoreVertical className="h-4 w-4" />
-                    
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-44">
-                  <DropdownMenuItem onClick={handleViewAsset} className="cursor-pointer flex items-center gap-2">
-                    <Link className="h-4 w-4" />
-                    <span>View Details</span>
-                  </DropdownMenuItem>
-                  
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleShareLink} className="cursor-pointer flex items-center gap-2">
-                    <Share2 className="h-4 w-4" />
-                    <span>Share</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={handleReportAsset}
-                    className="cursor-pointer flex items-center gap-2 text-red-500"
-                  >
-                    <Flag className="h-4 w-4" />
-                    <span>Report</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
 
 
-            </div>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-9 rounded-lg flex items-center justify-center gap-2 bg-transparent hover:bg-accent/50 font-medium"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <MoreVertical className="h-4 w-4" />
+
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-44">
+                    <DropdownMenuItem onClick={handleViewAsset} className="cursor-pointer flex items-center gap-2">
+                      <Link className="h-4 w-4" />
+                      <span>View Details</span>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleShareLink} className="cursor-pointer flex items-center gap-2">
+                      <Share2 className="h-4 w-4" />
+                      <span>Share</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={handleReportAsset}
+                      className="cursor-pointer flex items-center gap-2 text-red-500"
+                    >
+                      <Flag className="h-4 w-4" />
+                      <span>Report</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+
+              </div>
 
 
             </div>

@@ -22,7 +22,7 @@ import {
   DrawerClose,
 } from "@/src/components/ui/drawer"
 import { useRouter } from "next/navigation"
-import { useMockData } from "@/src/lib/hooks/use-mock-data"
+import { useAllAssets } from "@/src/lib/hooks/use-all-assets"
 import AssetCard from "@/src/components/asset-card"
 
 type ViewMode = "grid" | "list"
@@ -45,7 +45,7 @@ function parsePrice(input: string | number | undefined): number {
 
 export default function AssetsPage() {
   const router = useRouter()
-  const { assets } = useMockData()
+  const { assets, isLoading } = useAllAssets()
 
   const maxPrice = useMemo(() => Math.max(0, ...assets.map((a: any) => parsePrice(a.price))), [assets])
 
@@ -274,6 +274,12 @@ export default function AssetsPage() {
 
   return (
     <div className="min-h-screen pt-20 md:pt-24 pb-24 md:pb-32 px-4 md:px-8">
+      {isLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/50 backdrop-blur-sm">
+          <Loader2 className="h-12 w-12 animate-spin text-primary" />
+        </div>
+      )}
+
       {/* Hero */}
       <motion.div
         className="flex flex-col items-center text-center mb-6 md:mb-10"
@@ -405,11 +411,10 @@ export default function AssetsPage() {
                                   active ? prev.filter((x) => x.toLowerCase() !== c.toLowerCase()) : [...prev, c],
                                 )
                               }}
-                              className={`text-sm px-3 py-1.5 rounded-full border transition-colors ${
-                                active
-                                  ? "bg-primary text-primary-foreground border-primary"
-                                  : "bg-transparent border-white/15 hover:bg-white/5"
-                              }`}
+                              className={`text-sm px-3 py-1.5 rounded-full border transition-colors ${active
+                                ? "bg-primary text-primary-foreground border-primary"
+                                : "bg-transparent border-white/15 hover:bg-white/5"
+                                }`}
                               aria-pressed={active}
                             >
                               {c}

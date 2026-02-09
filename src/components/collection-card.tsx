@@ -1,9 +1,10 @@
 "use client"
 
+import { useState } from "react"
 import { motion } from "framer-motion"
-import { CheckCircle2 } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar"
+import { CheckCircle2, ArrowRight } from "lucide-react"
 import { Button } from "@/src/components/ui/button"
+import { Badge } from "@/src/components/ui/badge"
 import { useRouter } from "next/navigation"
 
 interface CollectionCardProps {
@@ -15,7 +16,7 @@ export function CollectionCard({ collection, index }: CollectionCardProps) {
   const router = useRouter()
 
   const handleCollectionClick = () => {
-    router.push(`/collections/${collection.id}`)
+    router.push(`/collections/${collection.ipNft || collection.id}`)
   }
 
   const item = {
@@ -23,47 +24,78 @@ export function CollectionCard({ collection, index }: CollectionCardProps) {
     show: { opacity: 1, y: 0, transition: { duration: 0.3 } },
   }
 
+  const [imageError, setImageError] = useState(false)
+  const [imgSrc, setImgSrc] = useState(collection.banner || collection.image)
+
+  // Generate deterministic gradient based on collection ID
+  const getGradient = (id: string) => {
+    const gradients = [
+      "from-pink-500 via-purple-500 to-indigo-500",
+      "from-cyan-500 via-blue-500 to-indigo-500",
+      "from-green-400 via-teal-500 to-blue-500",
+      "from-orange-400 via-red-500 to-pink-500",
+      "from-purple-500 via-indigo-500 to-blue-500"
+    ]
+    const index = Number(id) % gradients.length || 0
+    return gradients[index]
+  }
+
   return (
     <motion.div
-      className="group relative overflow-hidden rounded-xl border bg-background transition-all hover:shadow-md"
+      className="group flex flex-col overflow-hidden rounded-xl border bg-background/50 backdrop-blur-xl text-foreground shadow-sm transition-all hover:shadow-lg hover:-translate-y-1 cursor-pointer"
       variants={item}
       onClick={handleCollectionClick}
     >
-      <div className="relative h-48 overflow-hidden">
-        <img
-          src={collection.banner || "/placeholder.svg"}
-          alt={collection.name}
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+      {/* Header Image */}
+      <div className="relative aspect-video overflow-hidden bg-transparent">
+        {imageError || !imgSrc ? (
+          <div className={`h-full w-full bg-gradient-to-br ${getGradient(collection.id)}`} />
+        ) : (
+          <img
+            src={imgSrc}
+            alt={collection.name}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            onError={() => {
+              // If we failed on banner and have an image, try that next
+              if (imgSrc === collection.banner && collection.image) {
+                setImgSrc(collection.image)
+              } else {
+                setImageError(true)
+              }
+            }}
+          />
+        )}
+        {/* Subtle overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
       </div>
 
-      <div className="relative -mt-10 px-4 pb-4">
-        <Avatar className="h-16 w-16 border-2 border-background">
-          <AvatarImage src={collection.image || "/placeholder.svg"} alt={collection.name} />
-          <AvatarFallback>{collection.name.substring(0, 2)}</AvatarFallback>
-        </Avatar>
+      {/* Body */}
+      <div className="flex flex-col flex-1 p-5">
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <h3 className="font-semibold truncate text-lg leading-tight">{collection.name}</h3>
+            {collection.verified && (
+              <CheckCircle2 className="h-4 w-4 text-blue-500 shrink-0" />
+            )}
+          </div>
+        </div>
 
-        <div className="mt-2">
-          <div className="flex items-center">
-            <h4 className="font-medium truncate">{collection.name}</h4>
-            {collection.verified && <CheckCircle2 className="h-4 w-4 ml-1 text-green-500 fill-background" />}
+        {/* Description */}
+        <p className="text-sm text-muted-foreground line-clamp-2 mb-4 h-10 leading-relaxed">
+          {collection.description || "No description available for this collection."}
+        </p>
+
+        <div className="mt-auto pt-4 border-t border-border/50 flex items-center justify-between">
+          {/* Items Count */}
+          <div>
+            <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Items</p>
+            <p className="font-semibold">{collection.items || 0}</p>
           </div>
 
-          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{collection.creator}</p>
-
-          <div className="flex items-center justify-between mt-3">
-            <div className="text-sm">
-              <div className="font-medium">{collection.items || collection.totalItems || 0}</div>
-              <div className="text-xs text-muted-foreground">Items</div>
-            </div>
-
-            <div className="text-sm">
-              <div className="font-medium">{collection.volume || collection.totalVolume || "0 ETH"}</div>
-              <div className="text-xs text-muted-foreground">Volume</div>
-            </div>
-
-            <Button variant="outline" size="sm">Open</Button>
+          {/* Collection Type - Replacing Volume */}
+          <div className="text-right">
+            <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Type</p>
+            <p className="font-semibold">IP Collection</p>
           </div>
         </div>
       </div>

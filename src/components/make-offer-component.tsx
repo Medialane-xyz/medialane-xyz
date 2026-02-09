@@ -15,6 +15,13 @@ import { Textarea } from "@/src/components/ui/textarea"
 import { Separator } from "@/src/components/ui/separator"
 import { toast } from "@/src/hooks/use-toast"
 import { useMockData } from "@/src/lib/hooks/use-mock-data"
+import { useAccount } from "@starknet-react/core"
+import { useRegisterOrder } from "@/src/lib/hooks/use-marketplace"
+import { ItemType, OrderParameters } from "@/src/abis/medialane"
+import { cairo, uint256 } from "starknet"
+
+const STRK_ADDRESS = "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d"
+const COLLECTION_ADDRESS = process.env.NEXT_PUBLIC_COLLECTION_CONTRACT_ADDRESS || ""
 
 const EXPIRY_OPTIONS = [
   { value: "1", label: "1 day" },
@@ -30,15 +37,17 @@ interface MakeOfferComponentProps {
 
 export function MakeOfferComponent({ assetId }: MakeOfferComponentProps) {
   const router = useRouter()
+  const { account } = useAccount()
+  const { registerOrder, isPending: isSubmitting, error: submitError } = useRegisterOrder()
+
   const { assets, creators } = useMockData()
-  const [asset, setAsset] = useState(null)
-  const [creator, setCreator] = useState(null)
+  const [asset, setAsset] = useState<any>(null)
+  const [creator, setCreator] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
   const [offerAmount, setOfferAmount] = useState("")
   const [expiryDays, setExpiryDays] = useState("7")
   const [message, setMessage] = useState("")
-  const [submitting, setSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
 
   useEffect(() => {
@@ -79,6 +88,15 @@ export function MakeOfferComponent({ assetId }: MakeOfferComponentProps) {
   const percentageOfListing = basePrice > 0 ? (offerValue / basePrice) * 100 : 0
 
   const handleSubmitOffer = async () => {
+    if (!account) {
+      toast({
+        title: "Wallet Not Connected",
+        description: "Please connect your wallet to make an offer.",
+        variant: "destructive",
+      })
+      return
+    }
+
     if (!offerAmount || offerValue <= 0) {
       toast({
         title: "Invalid Offer",
@@ -88,27 +106,62 @@ export function MakeOfferComponent({ assetId }: MakeOfferComponentProps) {
       return
     }
 
-    if (offerValue >= basePrice) {
-      toast({
-        title: "Offer Too High",
-        description: "Your offer should be lower than the listing price. Consider buying directly instead.",
-        variant: "destructive",
-      })
-      return
-    }
+    try {
+      const now = Math.floor(Date.now() / 1000)
+      const expiry = now + (parseInt(expiryDays) * 24 * 60 * 60)
 
-    setSubmitting(true)
+      // Amount to uint256 (assuming 18 decimals for STRK)
+      const amountBigInt = BigInt(Math.floor(offerValue * 1e18))
+      const amountUint256 = uint256.bnToUint256(amountBigInt)
 
-    // Simulate offer submission
-    setTimeout(() => {
-      setSubmitting(false)
+      // Use string representation for u256 as mandated by our SNIP-12 type approach in use-marketplace
+      // Note safely: The use-marketplace hook expects OrderParameters which has OfferItem which has start_amount as string.
+      // Starknet.js usually wants {low: string, high: string} for u256 in types generally, but let's see.
+      // If our type definition in use-marketplace says 'u256', then we need {low, high}.
+
+      const amountStruct = { low: amountUint256.low.toString(), high: amountUint256.high.toString() }
+      const tokenIdStruct = { low: assetId, high: "0" } // Simple assumption for ID
+
+      const params: any = {
+        offerer: account.address,
+        offer: {
+          item_type: ItemType.ERC20, // STRK
+          token: STRK_ADDRESS,
+          identifier_or_criteria: { low: "0", high: "0" },
+          start_amount: amountStruct,
+          end_amount: amountStruct,
+        },
+        consideration: {
+          item_type: ItemType.ERC721, // Asset
+          token: COLLECTION_ADDRESS,
+          identifier_or_criteria: tokenIdStruct,
+          start_amount: { low: "1", high: "0" },
+          end_amount: { low: "1", high: "0" },
+          recipient: account.address,
+        },
+        start_time: now.toString(),
+        end_time: expiry.toString(),
+        salt: Math.floor(Math.random() * 1000000).toString(),
+        nonce: Date.now().toString(),
+      }
+
+      await registerOrder(params)
+
       setSuccess(true)
-
       toast({
         title: "Offer Submitted!",
-        description: `Your offer of ${offerValue} STRK has been sent to the creator.`,
+        description: `Your offer of ${offerValue} STRK has been sent.`,
       })
-    }, 2000)
+
+    } catch (e) {
+      console.error(e)
+      // If user rejected, show that
+      toast({
+        title: "Offer Failed",
+        description: "Failed to submit offer. See console for details.",
+        variant: "destructive"
+      })
+    }
   }
 
   if (success) {
@@ -311,8 +364,8 @@ export function MakeOfferComponent({ assetId }: MakeOfferComponentProps) {
             </div>
 
             {/* Submit Button */}
-            <Button onClick={handleSubmitOffer} disabled={!offerAmount || submitting} className="w-full h-12" size="lg">
-              {submitting ? (
+            <Button onClick={handleSubmitOffer} disabled={!offerAmount || isSubmitting} className="w-full h-12" size="lg">
+              {isSubmitting ? (
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
                   Submitting Offer...

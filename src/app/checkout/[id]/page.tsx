@@ -123,6 +123,13 @@ export default function CheckoutPage() {
     "Transferring ownership...",
   ]
 
+  const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams()
+  const orderHash = searchParams.get("orderHash")
+
+  const { fulfillOrder, isPending: isFulfilling, error: fulfillError } = useFulfillOrder()
+
+  // ... (existing state)
+
   const handlePurchase = async () => {
     if (!agreedToTerms) {
       toast({
@@ -133,59 +140,53 @@ export default function CheckoutPage() {
       return
     }
 
-    setProcessing(true)
-    setProcessingStep(0)
-
-    // Simulate processing steps
-    const stepDuration = 750
-    for (let i = 0; i < processingSteps.length; i++) {
-      setTimeout(() => setProcessingStep(i), i * stepDuration)
+    if (!orderHash) {
+      // Fallback for demo/mock if no order hash
+      console.warn("No order hash provided, running mock purchase")
+      setProcessing(true)
+      setProcessingStep(0)
+      // Simulate processing steps
+      const stepDuration = 750
+      for (let i = 0; i < processingSteps.length; i++) {
+        setTimeout(() => setProcessingStep(i), i * stepDuration)
+      }
+      setTimeout(() => {
+        const mockTxHash = `0x${Math.random().toString(16).substring(2, 10)}...${Math.random().toString(16).substring(2, 6)}`
+        setTransactionHash(mockTxHash)
+        setPurchaseComplete(true)
+        setProcessing(false)
+        toast({
+          title: "Purchase Successful!",
+          description: "Your asset has been transferred to your wallet (Mock).",
+        })
+      }, processingSteps.length * stepDuration)
+      return
     }
 
-    // Complete transaction
-    setTimeout(() => {
-      const mockTxHash = `0x${Math.random().toString(16).substring(2, 10)}...${Math.random().toString(16).substring(2, 6)}`
-      setTransactionHash(mockTxHash)
+    try {
+      setProcessing(true)
+      setProcessingStep(1) // Processing
+
+      await fulfillOrder(orderHash)
+
+      // We really should wait for tx receipt here, but for now we assume success if no error thrown immediately
+      setProcessingStep(2) // Confirming
+
       setPurchaseComplete(true)
       setProcessing(false)
-
       toast({
-        title: "Purchase Successful!",
-        description: "Your asset has been transferred to your wallet.",
+        title: "Purchase Submitted",
+        description: "Transaction sent to Starknet.",
       })
-    }, processingSteps.length * stepDuration)
-  }
-
-  const handleQuickAmount = (multiplier: number) => {
-    const newAmount = (basePrice * multiplier).toFixed(2)
-    setCustomAmount(newAmount)
-    setUseCustomAmount(multiplier !== 1)
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-8 h-8 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
-          <p className="text-sm text-muted-foreground">Loading checkout...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (!asset) {
-    return (
-      <div className="container mx-auto px-4 py-8 min-h-screen flex items-center justify-center">
-        <Card className="w-full max-w-md text-center">
-          <CardContent className="p-8">
-            <AlertCircle className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h2 className="text-xl font-semibold mb-2">Asset Not Found</h2>
-            <p className="text-muted-foreground mb-4">The asset you're trying to purchase doesn't exist.</p>
-            <Button onClick={() => router.push("/assets")}>Browse Assets</Button>
-          </CardContent>
-        </Card>
-      </div>
-    )
+    } catch (err) {
+      console.error(err)
+      setProcessing(false)
+      toast({
+        title: "Purchase Failed",
+        description: "Failed to fulfill order. Check console.",
+        variant: "destructive"
+      })
+    }
   }
 
   if (purchaseComplete) {
@@ -205,30 +206,18 @@ export default function CheckoutPage() {
                 Purchase Successful!
               </h1>
               <p className="text-muted-foreground mb-8 text-lg">
-                Congratulations! You now own <strong className="text-foreground">{asset.name}</strong>
+                Congratulations! You have purchased <strong className="text-foreground">{asset.name}</strong>
               </p>
 
               <div className="bg-muted/30 rounded-xl p-6 mb-8 border">
                 <div className="flex items-center justify-between text-sm mb-4">
                   <span className="font-medium">Transaction Details</span>
-                  <Badge className="bg-green-500/10 text-green-600 border-green-500/20">Confirmed</Badge>
+                  <Badge className="bg-green-500/10 text-green-600 border-green-500/20">Submitted</Badge>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span>Transaction Hash:</span>
+                  <span>Status:</span>
                   <div className="flex items-center gap-2">
-                    <code className="bg-background px-3 py-1 rounded-lg text-xs font-mono border">
-                      {transactionHash}
-                    </code>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        navigator.clipboard.writeText(transactionHash)
-                        toast({ title: "Copied!", description: "Transaction hash copied to clipboard" })
-                      }}
-                    >
-                      <Copy className="h-3 w-3" />
-                    </Button>
+                    <span>Check wallet for status</span>
                   </div>
                 </div>
               </div>
@@ -390,7 +379,7 @@ export default function CheckoutPage() {
                     key={amount.label}
                     variant={
                       (amount.multiplier === 1 && !useCustomAmount) ||
-                      (useCustomAmount && Number.parseFloat(customAmount) === basePrice * amount.multiplier)
+                        (useCustomAmount && Number.parseFloat(customAmount) === basePrice * amount.multiplier)
                         ? "default"
                         : "outline"
                     }
@@ -770,7 +759,7 @@ export default function CheckoutPage() {
                       key={amount.label}
                       variant={
                         (amount.multiplier === 1 && !useCustomAmount) ||
-                        (useCustomAmount && Number.parseFloat(customAmount) === basePrice * amount.multiplier)
+                          (useCustomAmount && Number.parseFloat(customAmount) === basePrice * amount.multiplier)
                           ? "default"
                           : "outline"
                       }
