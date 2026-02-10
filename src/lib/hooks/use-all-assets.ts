@@ -67,11 +67,12 @@ export function useAllAssets() {
                     }))
 
                     allTokens.push(...mappedTokens)
+                    // Update UI incrementally after each batch for better perceived performance
+                    setAssets([...allTokens])
                 }
             }
 
-            setAssets(allTokens)
-            console.log(`[useAllAssets] Loaded ${allTokens.length} assets`)
+            console.log(`[useAllAssets] Finished loading all tokens`)
 
         } catch (e) {
             console.error("[useAllAssets] Error:", e)
