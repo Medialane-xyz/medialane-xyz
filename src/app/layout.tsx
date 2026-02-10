@@ -31,25 +31,25 @@ export default function RootLayout({
       afterSignOutUrl="/"
     >
       <Providers>
-          <StarknetProviderWrapper>
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} bg-black text-white`}>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          <MockDataProvider>
-            <FramerMotionProvider>
-              <div className="relative min-h-screen flex flex-col">
-                <FloatingNav />
-                <main className="flex-1">{children}</main>
-                <Footer />
-                <Toaster />
-              </div>
-            </FramerMotionProvider>
-          </MockDataProvider>
-        </ThemeProvider>
-      </body>
-    </html>
-    </StarknetProviderWrapper>
-        </Providers>
+        <StarknetProviderWrapper>
+          <html lang="en" suppressHydrationWarning>
+            <body className={`${inter.className} bg-black text-white`}>
+              <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+
+                <FramerMotionProvider>
+                  <div className="relative min-h-screen flex flex-col">
+                    <FloatingNav />
+                    <main className="flex-1">{children}</main>
+                    {/* <Footer /> */}
+                    <Toaster />
+                  </div>
+                </FramerMotionProvider>
+
+              </ThemeProvider>
+            </body>
+          </html>
+        </StarknetProviderWrapper>
+      </Providers>
     </ClerkProvider>
   )
 }

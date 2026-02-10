@@ -45,7 +45,7 @@ export function SendUsdcDialog() {
     const [formData, setFormData] = useState<FormValues | null>(null);
 
     const { data: wallet } = useGetWallet({
-        getBearerToken: getToken,
+        getBearerToken: () => getToken({ template: "chipipay" }).then(t => t || ""),
         params: {
             externalUserId: clerkUserId || "",
         },
@@ -74,7 +74,7 @@ export function SendUsdcDialog() {
             return;
         }
 
-        const token = await getToken();
+        const token = await getToken({ template: "chipipay" });
         if (!token) {
             toast.error("Authentication failed");
             return;

@@ -23,7 +23,7 @@ export function PayWithChipiButton({ usdAmount }: { usdAmount: number }) {
         useRecordSendTransaction();
 
     const { data: customerWallet } = useGetWallet({
-        getBearerToken: getToken,
+        getBearerToken: () => getToken({ template: "chipipay" }).then(t => t || ""),
         params: {
             externalUserId: clerkUserId || "",
         },
@@ -43,7 +43,7 @@ export function PayWithChipiButton({ usdAmount }: { usdAmount: number }) {
             }
 
             try {
-                const jwtToken = await getToken();
+                const jwtToken = await getToken({ template: "chipipay" });
                 if (!jwtToken) {
                     toast.error("No token found");
                     return;

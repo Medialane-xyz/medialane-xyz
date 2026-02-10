@@ -11,7 +11,7 @@ export function UsdcBalance({ walletPublicKey }: { walletPublicKey: string }) {
             chainToken: "USDC" as ChainToken,
             walletPublicKey,
         },
-        getBearerToken: getToken,
+        getBearerToken: () => getToken({ template: "chipipay" }).then(t => t || ""),
     });
 
     return (

@@ -41,7 +41,7 @@ export function useCreateCollection() {
     // Chipipay hooks
     const { getToken, userId: clerkUserId } = useAuth()
     const { data: customerWallet } = useGetWallet({
-        getBearerToken: getToken,
+        getBearerToken: () => getToken({ template: "chipipay" }).then(t => t || ""),
         params: { externalUserId: clerkUserId || "" },
     })
     const { callAnyContractAsync } = useCallAnyContract()

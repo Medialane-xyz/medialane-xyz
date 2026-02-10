@@ -64,7 +64,7 @@ export function CreateWalletDialog({ open, onOpenChange }: { open?: boolean; onO
     });
 
     const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-        const token = await getToken();
+        const token = await getToken({ template: "chipipay" });
         if (!token || !clerkUserId) {
             toast.error("Authentication failed");
             return;

@@ -44,7 +44,7 @@ export function BuySkuDialog({ sku }: { sku: Sku }) {
     const [formData, setFormData] = useState<FormValues | null>(null);
 
     const { data: wallet } = useGetWallet({
-        getBearerToken: getToken,
+        getBearerToken: () => getToken({ template: "chipipay" }).then(t => t || ""),
         params: {
             externalUserId: clerkUserId || "",
         },
@@ -67,7 +67,7 @@ export function BuySkuDialog({ sku }: { sku: Sku }) {
     const handlePinSubmit = async (pin: string) => {
         setPinOpen(false);
 
-        const token = await getToken();
+        const token = await getToken({ template: "chipipay" });
         if (!token || !clerkUserId || !wallet) {
             toast.error("Authentication failed");
             return;

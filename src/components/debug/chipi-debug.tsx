@@ -13,7 +13,7 @@ export function ChipiDebug() {
     const [apiKey, setApiKey] = useState<string | null>(null);
 
     const { data: wallet, error, isLoading, refetch } = useGetWallet({
-        getBearerToken: getToken,
+        getBearerToken: () => getToken({ template: "chipipay" }).then(t => t || ""),
         params: { externalUserId: userId || "" },
         queryOptions: {
             enabled: !!userId,
