@@ -14,7 +14,7 @@ export default function Home() {
   const router = useRouter()
 
   // Optimized data fetching
-  const { assets: recentAssets, loading: isLoading } = useRecentAssets(12)
+  const { assets: recentAssets, loading: isLoading } = useRecentAssets(4)
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -42,7 +42,7 @@ export default function Home() {
         <div className="py-12 md:py-16 max-w-7xl mx-auto">
           <div className="flex items-end justify-between mb-8">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Recent Assets</h2>
+              <h2 className="text-3xl tracking-tight">Recent Assets</h2>
               {/* <p className="text-base text-muted-foreground mt-2">Discover the latest drops in our marketplace</p> */}
             </div>
             <Button variant="outline" size="sm" onClick={() => router.push("/assets")} className="gap-2">
@@ -70,7 +70,7 @@ export default function Home() {
               {/* Fallback if no assets found */}
               {!isLoading && recentAssets.length === 0 && (
                 <div className="text-center py-12 text-muted-foreground">
-                  <p>No assets found onchain yet.</p>
+                  <p>No assets found.</p>
                 </div>
               )}
             </motion.section>
@@ -84,7 +84,7 @@ export default function Home() {
 function RecentAssetsSkeleton() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {Array.from({ length: 8 }).map((_, i) => (
+      {Array.from({ length: 4 }).map((_, i) => (
         <div key={i} className="space-y-3">
           <Skeleton className="h-[300px] w-full rounded-xl" />
           <div className="space-y-2">
