@@ -92,12 +92,12 @@ export default function AssetDetailPage() {
         const effectiveCollectionAddress = collectionAddress || collection?.ipNft || ""
         return {
             id: token.identifier,
-            name: token.name || `Token #${token.token_id.toString()}`,
+            name: token.name || `${token.token_id.toString()}`,
             image: token.image || "/placeholder.svg",
             description: token.description || "No description provided.",
             category: token.attributes?.find((a: any) => a.trait_type === "type")?.value ||
                 token.attributes?.find((a: any) => a.trait_type === "category")?.value ||
-                "Digital Asset",
+                "IP",
             rarity: "Unique",
             verified: false,
             views: 0,
@@ -115,7 +115,7 @@ export default function AssetDetailPage() {
             ownerAddress: token.owner,
             timeLeft: null,
             isRemix: false,
-            collectionName: collection?.name || "Unknown Collection",
+            collectionName: collection?.name || "Unknown",
             collectionImage: collection?.image
         }
     }, [token, collection, collectionAddress])
@@ -157,7 +157,7 @@ export default function AssetDetailPage() {
     const handleExplorer = () => {
         if (asset?.collectionAddress && asset?.tokenId) {
             // Default to Starkscan for now
-            window.open(`https://starkscan.co/nft/${asset.collectionAddress}/${asset.tokenId}`, "_blank")
+            window.open(`https://voyager.online/nft/${asset.collectionAddress}/${asset.tokenId}`, "_blank")
         }
     }
 
@@ -170,7 +170,7 @@ export default function AssetDetailPage() {
             <div className="min-h-screen flex items-center justify-center pt-20">
                 <Card className="w-full max-w-md border-white/10 bg-black/40 backdrop-blur">
                     <CardContent className="p-8 text-center">
-                        <h2 className="text-xl font-semibold mb-2">Asset Not Found</h2>
+                        <h2 className="text-xl font-semibold mb-2">Not Found</h2>
                         <p className="text-muted-foreground mb-6">
                             {error ? error.message : "The asset you're looking for doesn't exist or hasn't been indexed yet."}
                         </p>

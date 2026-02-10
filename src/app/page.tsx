@@ -1,28 +1,20 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { motion, useScroll, useTransform } from "framer-motion"
-import { ArrowRight } from "lucide-react"
+import { motion } from "framer-motion"
+import { ArrowRight, Loader2 } from "lucide-react" // Added Loader2
 import { Button } from "@/src/components/ui/button"
-import { useMobile } from "@/src/hooks/use-mobile"
 import { useRouter } from "next/navigation"
 import AssetCard from "@/src/components/asset-card"
 import { FeaturedSlider } from "@/src/components/featured-slider"
 import { Skeleton } from "@/src/components/ui/skeleton"
-import { useAllAssets } from "@/src/lib/hooks/use-all-assets"
+import { useRecentAssets } from "@/src/lib/hooks/use-recent-assets" // Use new hook
 import { FEATURED_DATA } from "@/src/lib/featured-data"
 
 export default function Home() {
-  const isMobile = useMobile()
   const router = useRouter()
-  const { scrollY } = useScroll()
-  const heroY = useTransform(scrollY, [0, 500], [0, 150])
 
-  // Real data fetching
-  const { assets, isLoading } = useAllAssets()
-
-  // Get recent assets (first 12)
-  const recentAssets = assets.slice(0, 12)
+  // Optimized data fetching
+  const { assets: recentAssets, loading: isLoading } = useRecentAssets(12)
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -59,7 +51,7 @@ export default function Home() {
             </Button>
           </div>
 
-          {isLoading ? (
+          {isLoading && recentAssets.length === 0 ? (
             <RecentAssetsSkeleton />
           ) : (
             <motion.section
@@ -74,6 +66,13 @@ export default function Home() {
                   </motion.div>
                 ))}
               </div>
+
+              {/* Fallback if no assets found */}
+              {!isLoading && recentAssets.length === 0 && (
+                <div className="text-center py-12 text-muted-foreground">
+                  <p>No assets found onchain yet.</p>
+                </div>
+              )}
             </motion.section>
           )}
         </div>
