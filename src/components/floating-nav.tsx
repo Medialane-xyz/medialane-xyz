@@ -100,6 +100,12 @@ const FloatingNav = () => {
       href: "/collections",
       isActive: pathname.startsWith("/collections"),
     },
+    {
+      icon: <Plus className="w-4 h-4" />,
+      label: "Launchpad",
+      href: "/creator",
+      isActive: pathname.startsWith("/creator"),
+    },
   ]
 
   return (
@@ -162,16 +168,7 @@ const FloatingNav = () => {
                 <Search className="w-4 h-4" />
               </Button>
 
-              {/* <NotificationsMenu /> */}
-
-
-
-
-
-
-
-
-              {/* Create Button - Desktop Only */}
+              {/* Create Button - Desktop Only 
               {!isMobile && (
                 <Button
                   size="sm"
@@ -181,7 +178,7 @@ const FloatingNav = () => {
                   <Plus className="w-4 h-4 mr-1" />
                   Launchpad
                 </Button>
-              )}
+              )}*/}
 
 
 

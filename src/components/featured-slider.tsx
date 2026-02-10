@@ -84,6 +84,7 @@ export function FeaturedSlider({ items, autoPlay = true, interval = 5000 }: Feat
                                 transition={{ duration: 0.8, delay: 0.2 }}
                                 className="text-white"
                             >
+                                {/* Tag 
                                 <motion.div
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
@@ -92,7 +93,7 @@ export function FeaturedSlider({ items, autoPlay = true, interval = 5000 }: Feat
                                     <Badge className="mb-4 md:mb-6 bg-cyan-500/20 text-cyan-300 border-cyan-500/30 text-sm backdrop-blur-md">
                                         {items[currentSlide]?.tag}
                                     </Badge>
-                                </motion.div>
+                                </motion.div>*/}
 
                                 <motion.h1
                                     className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 md:mb-6 leading-tight"
@@ -104,7 +105,7 @@ export function FeaturedSlider({ items, autoPlay = true, interval = 5000 }: Feat
                                 </motion.h1>
 
                                 <motion.p
-                                    className="text-lg md:text-xl lg:text-2xl text-zinc-300 mb-8 md:mb-10 leading-relaxed max-w-2xl"
+                                    className="text-lg text-zinc-300 mb-8 md:mb-10 leading-relaxed max-w-2xl"
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, delay: 0.8 }}
@@ -121,7 +122,7 @@ export function FeaturedSlider({ items, autoPlay = true, interval = 5000 }: Feat
                                     <Button
                                         size="lg"
                                         onClick={() => router.push(items[currentSlide].link)}
-                                        className="gap-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white px-8 py-6 text-lg border-0 shadow-lg shadow-cyan-900/20"
+                                        className="gap-2 bg-cyan-500/30 border border-cyan-500/60 backdrop-blur-2xl text-foreground p-6 text-lg rounded-full shadow-lg shadow-cyan-900/20"
                                     >
                                         <Play className="h-5 w-5 fill-current" />
                                         {items[currentSlide]?.ctaText}
