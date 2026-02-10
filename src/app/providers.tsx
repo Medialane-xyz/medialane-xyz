@@ -12,13 +12,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
   // }
 
   return (
-    <ChipiProvider
-    
-      // config={{
-      //   apiPublicKey: CHIPI_PUBLIC_KEY,
-      // }}
+    {/* @ts-ignore - Config prop might be missing in type defs but required for SDK */ }
+    < ChipiProvider
+      config = {{
+    apiPublicKey: CHIPI_PUBLIC_KEY,
+      }
+}
     >
-      {children}
-    </ChipiProvider>
+  { children }
+    </ChipiProvider >
   );
 }

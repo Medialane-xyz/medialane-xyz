@@ -42,6 +42,8 @@ import { useAccount } from "@starknet-react/core"
 import { useAuth } from "@clerk/nextjs"
 import { useGetWallet } from "@chipi-stack/nextjs"
 import { WalletPinDialog } from "@/src/components/chipi/wallet-pin-dialog"
+import { CreateWalletDialog } from "@/src/components/chipi/create-wallet-dialog"
+import { ChipiDebug } from "@/src/components/debug/chipi-debug"
 
 // Define types
 interface CollectionFormData {
@@ -76,6 +78,7 @@ export default function CreateCollectionPage() {
     params: { externalUserId: clerkUserId || "" },
   })
   const [pinOpen, setPinOpen] = useState(false)
+  const [createWalletOpen, setCreateWalletOpen] = useState(false)
 
   const [formData, setFormData] = useState<CollectionFormData>({
     // Basic Information
@@ -261,6 +264,10 @@ export default function CreateCollectionPage() {
     if (!address) {
       if (customerWallet) {
         setPinOpen(true)
+        return
+      } else if (clerkUserId) {
+        // Logged in but no wallet -> create wallet
+        setCreateWalletOpen(true)
         return
       }
       // If neither, let logic flow to createCollection which will show toast
@@ -532,6 +539,14 @@ export default function CreateCollectionPage() {
                 }
               }}
             />
+            <CreateWalletDialog
+              open={createWalletOpen}
+              onOpenChange={setCreateWalletOpen}
+            />
+
+            <div className="mt-8">
+              <ChipiDebug />
+            </div>
           </div>
 
           {/* Preview Panel */}

@@ -45,7 +45,7 @@ const FormSchema = z
         path: ["confirmPin"],
     });
 
-export function CreateWalletDialog() {
+export function CreateWalletDialog({ open, onOpenChange }: { open?: boolean; onOpenChange?: (open: boolean) => void }) {
     const { getToken, userId: clerkUserId } = useAuth();
     const {
         createWalletAsync,
@@ -86,10 +86,10 @@ export function CreateWalletDialog() {
         }
     };
     return (
-        <Dialog>
-            <DialogTrigger asChild>
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            {/* <DialogTrigger asChild>
                 <Button variant="outline">Create Wallet</Button>
-            </DialogTrigger>
+            </DialogTrigger> */}
 
             <DialogContent>
                 <DialogHeader>
