@@ -100,12 +100,6 @@ const FloatingNav = () => {
       href: "/collections",
       isActive: pathname.startsWith("/collections"),
     },
-    {
-      icon: <Stars className="w-4 h-4" />,
-      label: "Launchpad",
-      href: "/creator",
-      isActive: pathname.startsWith("/creator"),
-    },
   ]
 
   return (
@@ -182,10 +176,10 @@ const FloatingNav = () => {
                 <Button
                   size="sm"
                   className="rounded-full bg-gradient-to-r from-blue-600 via-purple-500 to-rose-400 hover:from-blue-600 hover:via-purple-600 hover:to-rose-500"
-                  onClick={() => navigateTo("/create")}
+                  onClick={() => navigateTo("/creator")}
                 >
                   <Plus className="w-4 h-4 mr-1" />
-                  Create
+                  Launchpad
                 </Button>
               )}
 
