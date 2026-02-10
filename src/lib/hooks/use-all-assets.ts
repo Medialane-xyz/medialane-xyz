@@ -22,56 +22,54 @@ export function useAllAssets() {
                 return
             }
 
-            // For now, let's limit to the last 10 collections to ensure we have enough assets
-            // and fetch up to 20 tokens from each
             const recentCollections = collections.sort((a, b) => Number(b.id) - Number(a.id)).slice(0, 10)
+            const allTokens: any[] = []
 
-            // Fetch tokens from all collections in parallel
-            const collectionPromises = recentCollections.map(async (col) => {
+            // Process collections sequentially to avoid overwhelming the network
+            for (const col of recentCollections) {
                 console.log(`[useAllAssets] Fetching tokens for collection ${col.id} (${col.name})`)
                 const startTokenId = 0
                 const endTokenId = Math.min(col.items || 0, 20) // Limit to 20 items per collection
 
-                if (endTokenId === 0) return []
+                if (endTokenId === 0) continue
 
-                const tokenPromises = []
-                for (let i = startTokenId; i < endTokenId; i++) {
-                    // identifier = collectionId:tokenId
-                    const identifier = `${col.id}:${i}`
-                    tokenPromises.push(fetchTokenData(identifier, col.baseUri))
+                // Process tokens in small batches within each collection
+                const TOKEN_BATCH_SIZE = 5
+                for (let i = startTokenId; i < endTokenId; i += TOKEN_BATCH_SIZE) {
+                    const batchPromises = []
+                    for (let j = 0; j < TOKEN_BATCH_SIZE && (i + j) < endTokenId; j++) {
+                        const tokenId = i + j
+                        const identifier = `${col.id}:${tokenId}`
+                        batchPromises.push(fetchTokenData(identifier, col.baseUri))
+                    }
+
+                    const batchResults = await Promise.all(batchPromises)
+                    const validTokens = batchResults.filter((t): t is ExtendedTokenData => t !== null)
+
+                    const mappedTokens = validTokens.map(t => ({
+                        id: t.identifier,
+                        tokenId: t.token_id.toString(),
+                        collectionAddress: col.ipNft,
+                        collectionName: col.name,
+                        name: t.name || `Token #${t.token_id}`,
+                        description: t.description,
+                        image: t.image || "/placeholder.svg",
+                        creator: t.owner ? (t.owner.length > 10 ? `${t.owner.slice(0, 6)}...${t.owner.slice(-4)}` : t.owner) : "Unknown",
+                        creatorId: t.owner,
+                        creatorAvatar: "/placeholder-avatar.png",
+                        price: "Not Listed",
+                        likes: 0,
+                        views: 0,
+                        category: t.attributes?.find((a: any) => a.trait_type === "type")?.value || "Digital Asset",
+                        isRemix: false,
+                        verified: col.verified,
+                        programmable: true
+                    }))
+
+                    allTokens.push(...mappedTokens)
                 }
+            }
 
-                // Wait for all tokens in this collection
-                const tokens = await Promise.all(tokenPromises)
-                const validTokens = tokens.filter((t): t is ExtendedTokenData => t !== null)
-
-                // Map to Asset Card format immediately
-                return validTokens.map(t => ({
-                    id: t.identifier,
-                    tokenId: t.token_id.toString(),
-                    collectionAddress: col.ipNft, // Important for addressing
-                    collectionName: col.name,
-                    name: t.name || `Token #${t.token_id}`,
-                    description: t.description,
-                    image: t.image || "/placeholder.svg",
-                    creator: t.owner ? (t.owner.length > 10 ? `${t.owner.slice(0, 6)}...${t.owner.slice(-4)}` : t.owner) : "Unknown",
-                    creatorId: t.owner, // Address as ID
-                    creatorAvatar: "/placeholder-avatar.png", // Mock for now
-                    price: "Not Listed", // Would need marketplace data
-                    likes: 0,
-                    views: 0,
-                    category: t.attributes?.find((a: any) => a.trait_type === "type")?.value || "Digital Asset",
-                    isRemix: false, // Would need remix check
-                    verified: col.verified,
-                    programmable: true // Default for IP assets
-                }))
-            })
-
-            const collectionsResults = await Promise.all(collectionPromises)
-            const allTokens = collectionsResults.flat()
-
-            // Shuffle or sort? Let's sort by "newest" implicitly (by collection ID then token ID)
-            // Actually, let's just reverse them so newest collections are first
             setAssets(allTokens)
             console.log(`[useAllAssets] Loaded ${allTokens.length} assets`)
 

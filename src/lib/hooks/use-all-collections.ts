@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react"
 import { RpcProvider, Contract, shortString, num } from "starknet"
 import { ipCollectionAbi } from "@/src/abis/ip_collection"
 // Utility imports
-import { fetchIpfsJson, resolveIpfsUrl } from "@/src/lib/ipfs"
+import { fetchIpfsJson, resolveIpfsUrl, resolveMediaUrl } from "@/src/lib/ipfs"
 
 // Contract configuration
 const COLLECTION_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_COLLECTION_CONTRACT_ADDRESS || ""
@@ -135,30 +135,6 @@ export async function fetchCollectionById(collectionId: number | bigint): Promis
 
         console.log(`[Collection #${collectionId}] Metadata:`, offChainMetadata, "BaseURI:", baseUri)
 
-        // Helper to resolve image/banner URI
-        const resolveMetaUri = (uri: string | undefined) => {
-            if (!uri) return undefined
-
-            // If it's a direct IPFS CID (starts with Qm... or bafy... and has no slashes)
-            // or explicitly starts with ipfs://
-            if (uri.startsWith("ipfs://") || (!uri.includes("/") && (uri.startsWith("Qm") || uri.startsWith("bafy")))) {
-                return `/api/proxy?url=${encodeURIComponent(resolveIpfsUrl(uri))}`
-            }
-
-            if (uri.startsWith("http")) {
-                return `/api/proxy?url=${encodeURIComponent(uri)}`
-            }
-
-            // If relative path, try to append to baseUri
-            if (baseUri) {
-                const cleanBase = baseUri.endsWith('/') ? baseUri : `${baseUri}/`
-                // If the relative path starts with /, remove it to avoid double slashes
-                const cleanUri = uri.startsWith('/') ? uri.slice(1) : uri
-                return `/api/proxy?url=${encodeURIComponent(resolveIpfsUrl(`${cleanBase}${cleanUri}`))}`
-            }
-            return undefined
-        }
-
         return {
             id: String(collectionId),
             collectionId: BigInt(collectionId),
@@ -173,8 +149,8 @@ export async function fetchCollectionById(collectionId: number | bigint): Promis
             items: Number(stats.total_minted) - Number(stats.total_burned),
             volume: "0 ETH", // Volume would need marketplace integration
             verified: false, // Would need verification system
-            image: resolveMetaUri(offChainMetadata.image),
-            banner: resolveMetaUri(offChainMetadata.banner),
+            image: resolveMediaUrl(offChainMetadata.image),
+            banner: resolveMediaUrl(offChainMetadata.banner),
             description: offChainMetadata.description,
         }
     } catch (error) {

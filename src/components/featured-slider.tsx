@@ -74,7 +74,7 @@ export function FeaturedSlider({ items, autoPlay = true, interval = 5000 }: Feat
             {/* Content */}
             <div className="relative z-10 h-full flex items-center">
                 <div className="container mx-auto px-4 md:px-6">
-                    <div className="max-w-3xl">
+                    <div className="max-w-3xl mx-auto text-center">
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={currentSlide}
@@ -96,7 +96,7 @@ export function FeaturedSlider({ items, autoPlay = true, interval = 5000 }: Feat
                                 </motion.div>*/}
 
                                 <motion.h1
-                                    className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 md:mb-6 leading-tight"
+                                    className="text-6xl lg:text-7xl font-bold mb-4 md:mb-6 leading-tight"
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, delay: 0.6 }}
@@ -105,7 +105,7 @@ export function FeaturedSlider({ items, autoPlay = true, interval = 5000 }: Feat
                                 </motion.h1>
 
                                 <motion.p
-                                    className="text-lg text-zinc-300 mb-8 md:mb-10 leading-relaxed max-w-2xl"
+                                    className="text-lg text-zinc-300 mb-8 md:mb-10 leading-relaxed max-w-2xl mx-auto"
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, delay: 0.8 }}
@@ -114,7 +114,7 @@ export function FeaturedSlider({ items, autoPlay = true, interval = 5000 }: Feat
                                 </motion.p>
 
                                 <motion.div
-                                    className="flex flex-col sm:flex-row gap-4"
+                                    className="flex flex-col sm:flex-row gap-4 justify-center"
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, delay: 1 }}
@@ -122,9 +122,8 @@ export function FeaturedSlider({ items, autoPlay = true, interval = 5000 }: Feat
                                     <Button
                                         size="lg"
                                         onClick={() => router.push(items[currentSlide].link)}
-                                        className="gap-2 bg-cyan-500/30 border border-cyan-500/60 backdrop-blur-2xl text-foreground p-6 text-lg rounded-full shadow-lg shadow-cyan-900/20"
+                                        className="gap-2 bg-gradient-to-r from-cyan-400/50 to-blue-500/50 hover:from-cyan-300 hover:to-blue-400 text-foreground p-6 px-10 rounded-full shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all duration-300 hover:scale-105"
                                     >
-                                        <Play className="h-5 w-5 fill-current" />
                                         {items[currentSlide]?.ctaText}
                                     </Button>
 

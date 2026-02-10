@@ -7,25 +7,25 @@ export function LogoMedialane() {
   const isMobile = useMobile()
   return (
     <div className="flex items-center space-x-2 ml-4">
-     
-    <Link href="/">
-        {!isMobile && ( 
-        <Image
-          src="/medialane-light-logo.png"
-          alt="Medialane"
-          width={172}
-          height={30}
-        />
+
+      <Link href="/">
+        {!isMobile && (
+          <Image
+            src="/medialane-light-logo.png"
+            alt="Medialane"
+            width={172}
+            height={30}
+          />
         )}
-        {isMobile && ( 
-        <Image
-          src="/medialane-icon.png"
-          alt="Medialane"
-          width={30}
-          height={30}
-        />
+        {isMobile && (
+          <Image
+            src="/medialane-light-logo.png"
+            alt="Medialane"
+            width={144}
+            height={25}
+          />
         )}
-    </Link>
+      </Link>
     </div>
   )
 }

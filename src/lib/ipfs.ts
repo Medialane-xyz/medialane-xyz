@@ -32,6 +32,11 @@ export async function fetchIpfsJson<T = any>(uri: string): Promise<T | null> {
 
     try {
         const ipfsUrl = resolveIpfsUrl(uri)
+        if (!ipfsUrl || !ipfsUrl.startsWith("http")) {
+            console.warn(`[IPFS] Invalid resolved URL for URI: ${uri} -> ${ipfsUrl}`)
+            return null
+        }
+
         // Use local proxy to bypass CORS
         const proxyUrl = `/api/proxy?url=${encodeURIComponent(ipfsUrl)}`
 
@@ -39,22 +44,54 @@ export async function fetchIpfsJson<T = any>(uri: string): Promise<T | null> {
         const timeoutId = setTimeout(() => controller.abort(), 30000) // 30s timeout
 
         try {
-            const response = await fetch(proxyUrl, { signal: controller.signal })
+            const response = await fetch(proxyUrl, {
+                signal: controller.signal,
+                headers: {
+                    "Accept": "application/json"
+                }
+            })
             clearTimeout(timeoutId)
 
             if (!response.ok) {
-                console.warn(`Failed to fetch IPFS metadata from ${ipfsUrl} via proxy: ${response.statusText}`)
+                console.warn(`[IPFS] Failed to fetch metadata from ${ipfsUrl} via proxy: ${response.status} ${response.statusText}`)
                 return null
             }
 
             const data = await response.json()
             return data as T
-        } catch (error) {
+        } catch (error: any) {
             clearTimeout(timeoutId)
-            throw error
+            if (error.name === 'AbortError') {
+                console.warn(`[IPFS] Fetch timeout for ${ipfsUrl}`)
+            } else {
+                console.error(`[IPFS] Fetch error for ${ipfsUrl} via proxy ${proxyUrl}:`, error.message)
+            }
+            return null
         }
     } catch (error) {
-        console.error(`Error fetching IPFS metadata from ${uri}:`, error)
+        console.error(`[IPFS] Unexpected error fetching metadata from ${uri}:`, error)
         return null
     }
+}
+
+/**
+ * Resolves a media URI (image, video, etc.) to a proxied HTTP URL.
+ * Handles IPFS URIs, HTTP URLs, and CIDs.
+ */
+export function resolveMediaUrl(uri: string | undefined): string | undefined {
+    if (!uri) return undefined
+
+    // If it's a direct IPFS CID (starts with Qm... or bafy... and has no slashes)
+    // or explicitly starts with ipfs://
+    if (uri.startsWith("ipfs://") || (!uri.includes("/") && (uri.startsWith("Qm") || uri.startsWith("bafy")))) {
+        return resolveIpfsUrl(uri)
+    }
+
+    // For HTTP(S) URLs, return as is. 
+    // next/image will handle optimization if the hostname is whitelisted.
+    if (uri.startsWith("http")) {
+        return uri
+    }
+
+    return uri
 }

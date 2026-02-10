@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react"
 import { ipCollectionAbi } from "@/src/abis/ip_collection"
 import { type TokenData } from "./use-collection-contract"
 import { Contract, RpcProvider, shortString } from "starknet"
+import { fetchIpfsJson, resolveMediaUrl } from "@/src/lib/ipfs"
 
 const COLLECTION_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_COLLECTION_CONTRACT_ADDRESS || ""
 const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || "https://starknet-mainnet.public.blastapi.io"
@@ -113,36 +114,28 @@ export async function fetchTokenData(identifier: string, collectionBaseUri?: str
             image: "/placeholder.svg"
         }
 
-        // Attempt to fetch off-chain metadata
-        if (metadataUri && (metadataUri.startsWith("http") || metadataUri.startsWith("ipfs"))) {
+        // Attempt to fetch off-chain metadata using fetchIpfsJson (which uses proxy)
+        if (metadataUri) {
             try {
-                // Handle IPFS URLs
-                let url = metadataUri
-                if (metadataUri.startsWith("ipfs://")) {
-                    url = metadataUri.replace("ipfs://", "https://ipfs.io/ipfs/")
-                }
-                console.log(`[fetchTokenData] Fetching metadata from: ${url}`)
+                const json = await fetchIpfsJson(metadataUri)
 
-                const response = await fetch(url)
-                if (!response.ok) {
-                    console.warn(`[fetchTokenData] HTTP ${response.status} fetching ${url}`)
-                    return basicData
-                }
+                if (json) {
+                    console.log(`[fetchTokenData] Metadata for ${identifier}:`, json.name, json.image ? "(has image)" : "(no image)")
 
-                const json = await response.json()
-                console.log(`[fetchTokenData] Metadata for ${identifier}:`, json.name, json.image ? "(has image)" : "(no image)")
-
-                return {
-                    ...basicData,
-                    name: json.name || basicData.name,
-                    description: json.description || "",
-                    image: json.image ? json.image.replace("ipfs://", "https://ipfs.io/ipfs/") : basicData.image,
-                    attributes: json.attributes
+                    return {
+                        ...basicData,
+                        name: json.name || basicData.name,
+                        description: json.description || "",
+                        // Use the shared resolveMediaUrl helper for proxying and IPFS resolution
+                        image: resolveMediaUrl(json.image) || basicData.image,
+                        attributes: json.attributes
+                    }
                 }
             } catch (e) {
                 console.warn(`[fetchTokenData] Failed to fetch metadata for ${identifier}:`, e)
             }
-        } else {
+        }
+        else {
             console.log(`[fetchTokenData] No valid metadata URI for ${identifier}, using defaults`)
         }
 
