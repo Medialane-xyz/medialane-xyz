@@ -203,50 +203,38 @@ export default function AssetDetailPage() {
             </div>
 
             <div className="container mx-auto px-3 md:px-6 py-6 md:py-8 relative z-10">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-start">
 
-                    {/* LEFT COLUMN: Sticky Image */}
-                    <div className="lg:col-span-5 relative">
-                        <div className="sticky top-24 space-y-6">
-                            {/* Asset Image Card */}
-                            <div className="rounded-2xl overflow-hidden bg-muted/20 border border-white/10 shadow-2xl relative aspect-square group">
-                                <Image
-                                    src={asset.image}
-                                    alt={asset.name}
-                                    fill
-                                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                                />
-                                <div className="absolute top-4 left-4 flex flex-wrap gap-2">
-                                    {asset.verified && <Badge className="bg-green-500/90 text-white text-xs backdrop-blur-md border-0"><ShieldCheck className="w-3 h-3 mr-1" /> Verified</Badge>}
-                                    {asset.rarity && (
-                                        <Badge variant="secondary" className="text-xs bg-blue-500/90 text-white backdrop-blur-md border-0">
-                                            <Sparkles className="w-3 h-3 mr-1" /> {asset.rarity}
-                                        </Badge>
-                                    )}
-                                    {asset.isRemix && <Badge className="bg-purple-500/90 text-white text-xs backdrop-blur-md border-0"><GitBranch className="w-3 h-3 mr-1" /> Remix</Badge>}
-                                </div>
-                                <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
-                                    <div className="flex gap-2">
-                                        <Badge variant="outline" className="bg-green-500/20 text-green-400 border-green-500/30 text-xs backdrop-blur-md">
-                                            Zero Fees
-                                        </Badge>
-                                    </div>
-                                </div>
+                    {/* BLOCK 1: Main Image (Top Left) */}
+                    <div className="w-full relative group">
+                        <div className="rounded-2xl overflow-hidden bg-muted/20 border border-white/10 shadow-2xl relative aspect-square">
+                            <Image
+                                src={asset.image}
+                                alt={asset.name}
+                                fill
+                                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                            />
+                            <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+                                {asset.verified && <Badge className="bg-green-500/90 text-white text-xs backdrop-blur-md border-0"><ShieldCheck className="w-3 h-3 mr-1" /> Verified</Badge>}
+                                {asset.rarity && (
+                                    <Badge variant="secondary" className="text-xs bg-blue-500/90 text-white backdrop-blur-md border-0">
+                                        <Sparkles className="w-3 h-3 mr-1" /> {asset.rarity}
+                                    </Badge>
+                                )}
+                                {asset.isRemix && <Badge className="bg-purple-500/90 text-white text-xs backdrop-blur-md border-0"><GitBranch className="w-3 h-3 mr-1" /> Remix</Badge>}
                             </div>
-
-                            {/* Short Description for mobile/when sticky */}
-                            <div className="hidden lg:block p-4 rounded-xl border border-white/5 bg-white/5 backdrop-blur-sm">
-                                <h3 className="text-sm font-semibold mb-2 flex items-center text-muted-foreground"><Info className="w-4 h-4 mr-2" /> About this asset</h3>
-                                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4 hover:line-clamp-none transition-all">
-                                    {asset.description}
-                                </p>
+                            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
+                                <div className="flex gap-2">
+                                    <Badge variant="outline" className="bg-green-500/20 text-green-400 border-green-500/30 text-xs backdrop-blur-md">
+                                        Zero Fees
+                                    </Badge>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* RIGHT COLUMN: Info & Actions */}
-                    <div className="lg:col-span-7 space-y-8 min-w-0">
-                        {/* Header */}
+                    {/* BLOCK 2: Main Info & Actions (Top Right) */}
+                    <div className="space-y-8 min-w-0">
                         <div className="space-y-4">
                             <div className="flex items-center gap-2 flex-wrap">
                                 <Badge variant="outline" className="text-xs py-1 px-3 border-primary/20 bg-primary/5 text-primary">
@@ -257,15 +245,13 @@ export default function AssetDetailPage() {
                                     {asset.blockchain}
                                 </div>
                             </div>
-                            <h1 className="text-4xl md:text-5xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-white/50">
+                            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-white/50 leading-tight">
                                 {asset.name}
                             </h1>
 
-                            {/* Creator Row & Actions */}
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
                                 <div className="flex items-center gap-3 group cursor-pointer" onClick={() => router.push(`/creators/${asset.ownerAddress}`)}>
                                     <div className="h-10 w-10 rounded-full border border-white/10 bg-muted overflow-hidden">
-                                        {/* Placeholder for creator avatar */}
                                         <div className="w-full h-full bg-gradient-to-br from-purple-500/20 to-blue-500/20" />
                                     </div>
                                     <div>
@@ -294,9 +280,8 @@ export default function AssetDetailPage() {
 
                         {/* Action Card */}
                         <Card className="border-primary/20 bg-gradient-to-b from-primary/10 to-transparent backdrop-blur-xl overflow-hidden shadow-2xl shadow-primary/5">
-                            <CardContent className="p-6 md:p-8 space-y-6">
+                            <CardContent className="p-6 space-y-6">
                                 <div className="space-y-4">
-                                    {/* Action Logic */}
                                     {!isListed && !isOwner ? (
                                         <div className="bg-background/40 border border-primary/20 rounded-xl p-6 text-center space-y-4 backdrop-blur-md">
                                             <div className="flex justify-center">
@@ -307,7 +292,7 @@ export default function AssetDetailPage() {
                                             <div>
                                                 <h3 className="font-semibold text-lg text-primary">Not Listed For Sale</h3>
                                                 <p className="text-sm text-muted-foreground mt-2 max-w-xs mx-auto">
-                                                    This asset is currently not listed. Make an offer to signal your interest to the owner.
+                                                    Make an offer to signal your interest to the owner.
                                                 </p>
                                             </div>
                                             <Button
@@ -362,7 +347,6 @@ export default function AssetDetailPage() {
                                         </div>
                                     )}
 
-                                    {/* Remix Action - Always Visible */}
                                     <div className="pt-4 border-t border-white/10">
                                         <Button
                                             onClick={() => router.push(`/remix/${asset.collectionAddress}/${asset.tokenId}`)}
@@ -371,33 +355,39 @@ export default function AssetDetailPage() {
                                             <GitBranch className="h-5 w-5 mr-2" />
                                             Remix This Asset
                                         </Button>
-                                        <p className="text-xs text-center text-muted-foreground mt-2">
-                                            Create a derivative work. {asset.royalty}% royalty to original creator.
-                                        </p>
                                     </div>
                                 </div>
                             </CardContent>
                         </Card>
 
                         {/* Glass Stats Grid */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                             <GlassStatCard label="Remixes" value={asset.remixCount || 0} icon={<GitBranch className="h-4 w-4" />} />
                             <GlassStatCard label="Holders" value={asset.holders || 1} icon={<Zap className="h-4 w-4" />} />
                             <GlassStatCard label="Views" value={asset.views || 0} icon={<Eye className="h-4 w-4" />} />
                             <GlassStatCard label="Royalty" value={`${asset.royalty}%`} icon={<Scale className="h-4 w-4" />} />
                         </div>
+                    </div>
 
-                        {/* Tabs content */}
-                        <Tabs defaultValue="details" className="w-full">
-                            <TabsList className="w-full grid grid-cols-4 bg-muted/20 backdrop-blur-md p-1 h-auto rounded-xl">
+                    {/* BLOCK 3: Left Tabs (Details & Provenance) */}
+                    <div className="h-full min-w-0">
+                        <Tabs defaultValue="details" className="w-full h-full flex flex-col">
+                            <TabsList className="w-full grid grid-cols-2 bg-muted/20 backdrop-blur-md p-1 rounded-xl">
                                 <TabsTrigger value="details" className="rounded-lg py-2">Details</TabsTrigger>
-                                <TabsTrigger value="history" className="rounded-lg py-2">History</TabsTrigger>
-                                <TabsTrigger value="lineage" className="rounded-lg py-2">Remixes</TabsTrigger>
-                                <TabsTrigger value="chart" className="rounded-lg py-2"><TrendingUp className="w-4 h-4" /></TabsTrigger>
+                                <TabsTrigger value="provenance" className="rounded-lg py-2">Provenance</TabsTrigger>
                             </TabsList>
+                            <TabsContent value="details" className="mt-4 flex-1 space-y-6">
+                                {/* Description Card */}
+                                <Card className="border-white/10 bg-white/5 backdrop-blur-sm">
+                                    <CardContent className="p-4 space-y-3">
+                                        <h3 className="text-sm font-semibold flex items-center text-muted-foreground"><Info className="w-4 h-4 mr-2" /> About this asset</h3>
+                                        <p className="text-sm text-foreground/80 leading-relaxed">
+                                            {asset.description}
+                                        </p>
+                                    </CardContent>
+                                </Card>
 
-                            <TabsContent value="details" className="mt-6 space-y-6">
-                                {/* Collection Card */}
+                                {/* Collection Info */}
                                 <Card className="border-white/10 bg-white/5 backdrop-blur-sm">
                                     <CardContent className="p-4 flex items-center justify-between">
                                         <div className="flex items-center gap-4">
@@ -415,68 +405,15 @@ export default function AssetDetailPage() {
                                     </CardContent>
                                 </Card>
 
-                                {/* Attributes Grid */}
-                                <div className="space-y-3">
-                                    <h3 className="text-lg font-semibold flex items-center gap-2"><Sparkles className="w-4 h-4 text-primary" /> Traits</h3>
-                                    {asset.attributes && asset.attributes.length > 0 ? (
-                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                            {asset.attributes.map((attr: any, index: number) => (
-                                                <div key={index} className="px-4 py-3 bg-muted/20 rounded-xl border border-white/5 hover:border-primary/20 transition-colors">
-                                                    <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{attr.trait_type}</div>
-                                                    <div className="font-medium">{attr.value}</div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <div className="text-muted-foreground text-sm italic">No traits defined.</div>
-                                    )}
-                                </div>
-
-                                {/* Rights */}
-                                <div className="space-y-3">
-                                    <h3 className="text-lg font-semibold flex items-center gap-2"><FileText className="w-4 h-4 text-primary" /> Usage Rights</h3>
-                                    <div className="grid gap-3">
-                                        <div className="flex items-center p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
-                                            <ShieldCheck className="w-5 h-5 text-green-500 mr-3" />
-                                            <div>
-                                                <div className="font-medium text-sm text-green-400">Commercial Rights Included</div>
-                                                <div className="text-xs text-muted-foreground">Owner has full commercial usage rights</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </TabsContent>
-
-                            <TabsContent value="history" className="mt-6">
+                                {/* Market Chart (Moved here) */}
                                 <Card className="border-white/10 bg-white/5">
                                     <CardContent className="p-6">
-                                        <div className="space-y-4">
-                                            <div className="flex justify-between items-center pb-4 border-b border-white/10">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs">M</div>
-                                                    <div>
-                                                        <div className="font-medium text-sm">Minted</div>
-                                                        <div className="text-xs text-muted-foreground">Original creation</div>
-                                                    </div>
-                                                </div>
-                                                <div className="text-xs text-muted-foreground">{new Date(asset.createdAt).toLocaleDateString()}</div>
-                                            </div>
-                                            <p className="text-center text-muted-foreground text-sm py-4">No other activity recorded</p>
+                                        <div className="flex items-center gap-2 mb-4">
+                                            <TrendingUp className="w-4 h-4 text-primary" />
+                                            <h3 className="font-semibold text-sm">Market Activity</h3>
                                         </div>
-                                    </CardContent>
-                                </Card>
-                            </TabsContent>
-
-                            <TabsContent value="lineage" className="mt-6">
-                                <RemixGenealogyTree assetId={token.identifier} />
-                            </TabsContent>
-
-                            <TabsContent value="chart" className="mt-6">
-                                <Card className="border-white/10 bg-white/5">
-                                    <CardContent className="p-6">
-                                        <div className="h-[250px] w-full flex items-end justify-between gap-2 p-4 pt-10 relative">
+                                        <div className="h-[200px] w-full flex items-end justify-between gap-2 p-2 relative">
                                             <div className="absolute inset-x-0 bottom-0 top-0 flex flex-col justify-between text-xs text-muted-foreground/30 pointer-events-none">
-                                                <div className="border-b border-dashed border-white/5 w-full h-1"></div>
                                                 <div className="border-b border-dashed border-white/5 w-full h-1"></div>
                                                 <div className="border-b border-dashed border-white/5 w-full h-1"></div>
                                                 <div className="border-b border-dashed border-white/5 w-full h-1"></div>
@@ -484,21 +421,109 @@ export default function AssetDetailPage() {
                                             </div>
                                             {[...Array(12)].map((_, i) => (
                                                 <div key={i} className="flex-1 bg-gradient-to-t from-primary/40 to-primary/5 rounded-t-sm hover:from-primary/60 transition-colors relative group" style={{ height: `${20 + Math.random() * 60}%` }}>
-                                                    <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-black/80 px-2 py-1 rounded text-xs text-white whitespace-nowrap">
+                                                    <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-black/80 px-2 py-1 rounded text-xs text-white whitespace-nowrap z-10">
                                                         {(Math.random() * 10).toFixed(2)} ETH
                                                     </div>
                                                 </div>
                                             ))}
                                         </div>
-                                        <div className="flex justify-between mt-4 text-xs text-muted-foreground px-2">
-                                            <span>30 Days ago</span>
-                                            <span>Today</span>
-                                        </div>
                                     </CardContent>
                                 </Card>
                             </TabsContent>
+
+                            <TabsContent value="provenance" className="mt-4 flex-1 space-y-6">
+                                {/* Remix Genealogy */}
+                                <div>
+                                    <h3 className="text-sm font-semibold mb-3 flex items-center text-muted-foreground"><GitBranch className="w-4 h-4 mr-2" /> Remix Lineage</h3>
+                                    <RemixGenealogyTree assetId={token.identifier} />
+                                </div>
+
+                                {/* History List */}
+                                <div className="space-y-3">
+                                    <h3 className="text-sm font-semibold flex items-center text-muted-foreground"><History className="w-4 h-4 mr-2" /> Activity Log</h3>
+                                    <Card className="border-white/10 bg-white/5">
+                                        <CardContent className="p-6">
+                                            <div className="space-y-4">
+                                                <div className="flex justify-between items-center pb-4 border-b border-white/10">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs">M</div>
+                                                        <div>
+                                                            <div className="font-medium text-sm">Minted</div>
+                                                            <div className="text-xs text-muted-foreground">Original creation</div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-xs text-muted-foreground">{new Date(asset.createdAt).toLocaleDateString()}</div>
+                                                </div>
+                                                <p className="text-center text-muted-foreground text-sm py-4">No other activity recorded</p>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                </div>
+                            </TabsContent>
                         </Tabs>
                     </div>
+
+                    {/* BLOCK 4: Right Tabs (Traits & License) */}
+                    <div className="h-full min-w-0">
+                        <Tabs defaultValue="traits" className="w-full h-full flex flex-col">
+                            <TabsList className="w-full grid grid-cols-2 bg-muted/20 backdrop-blur-md p-1 rounded-xl">
+                                <TabsTrigger value="traits" className="rounded-lg py-2">Traits</TabsTrigger>
+                                <TabsTrigger value="license" className="rounded-lg py-2">License</TabsTrigger>
+                            </TabsList>
+
+                            <TabsContent value="traits" className="mt-4 flex-1">
+                                <div className="space-y-4">
+                                    {asset.attributes && asset.attributes.length > 0 ? (
+                                        <div className="grid grid-cols-2 gap-3">
+                                            {asset.attributes.map((attr: any, index: number) => (
+                                                <div key={index} className="px-4 py-3 bg-muted/20 rounded-xl border border-white/5 hover:border-primary/20 transition-colors min-w-0">
+                                                    <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1 truncate" title={attr.trait_type}>{attr.trait_type}</div>
+                                                    <div className="font-medium truncate" title={attr.value}>{attr.value}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="p-8 text-center border border-white/10 rounded-xl bg-white/5">
+                                            <p className="text-muted-foreground text-sm">No traits defined for this asset.</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </TabsContent>
+
+                            <TabsContent value="license" className="mt-4 flex-1 space-y-6">
+                                {/* Usage Rights */}
+                                <div className="space-y-3">
+                                    <h3 className="text-lg font-semibold flex items-center gap-2"><FileText className="w-4 h-4 text-primary" /> Usage Rights</h3>
+                                    <div className="grid gap-3">
+                                        <div className="flex items-center p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+                                            <ShieldCheck className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
+                                            <div className="min-w-0">
+                                                <div className="font-medium text-sm text-green-400 truncate">Commercial Rights Included</div>
+                                                <div className="text-xs text-muted-foreground truncate">Owner has full commercial usage rights</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Berne Convention Info */}
+                                <div className="p-5 bg-blue-500/5 border border-blue-500/10 rounded-xl space-y-3">
+                                    <div className="flex items-center gap-2 text-blue-400 font-medium">
+                                        <Globe className="w-4 h-4" />
+                                        <h3>Global IP Protection</h3>
+                                    </div>
+                                    <p className="text-xs text-muted-foreground leading-relaxed text-justify">
+                                        This asset is protected under the <strong>Berne Convention for the Protection of Literary and Artistic Works</strong>.
+                                        Your rights as a creator or owner are recognized in 181 countries worldwide, ensuring international copyright protection without the need for formal registration.
+                                    </p>
+                                    <div className="flex gap-2 pt-2">
+                                        <Badge variant="outline" className="text-[10px] border-blue-500/20 text-blue-400">181 Countries</Badge>
+                                        <Badge variant="outline" className="text-[10px] border-blue-500/20 text-blue-400">Automatic Protection</Badge>
+                                    </div>
+                                </div>
+                            </TabsContent>
+                        </Tabs>
+                    </div>
+
                 </div>
             </div>
 
