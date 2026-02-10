@@ -31,9 +31,8 @@ export default function RootLayout({
       <Providers>
         <StarknetProviderWrapper>
           <html lang="en" suppressHydrationWarning>
-            <body className={`${inter.className} bg-black text-white`}>
+            <body className={`${inter.className}`}>
               <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-
                 <FramerMotionProvider>
                   <div className="relative min-h-screen flex flex-col">
                     <FloatingNav />
@@ -42,7 +41,6 @@ export default function RootLayout({
                     <Toaster />
                   </div>
                 </FramerMotionProvider>
-
               </ThemeProvider>
             </body>
           </html>

@@ -1,11 +1,16 @@
 "use client"
 
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 import { useContract } from "@starknet-react/core"
+import { RpcProvider, shortString } from "starknet"
 import { ipCollectionAbi } from "@/src/abis/ip_collection"
 import { fetchIpfsJson, resolveMediaUrl } from "@/src/lib/ipfs"
 
 const COLLECTION_ADDRESS = process.env.NEXT_PUBLIC_COLLECTION_CONTRACT_ADDRESS
+// Start block where the registry was deployed (or reasonable recent block)
+const REGISTRY_START_BLOCK = Number(process.env.NEXT_PUBLIC_COLLECTION_CONTRACT_START_BLOCK) || 0
+const COLLECTION_CREATED_SELECTOR = "0xfca650bfd622aeae91aa1471499a054e4c7d3f0d75fbcb98bdb3bbb0358b0c"
+const BLOCK_WINDOW_SIZE = 50000
 
 export interface ScannedCollection {
     id: string
@@ -32,276 +37,385 @@ interface UseCollectionsScannerReturn {
     refresh: () => void
 }
 
+interface ParsedEvent {
+    collectionId: string
+    owner: string
+    name: string
+    symbol: string
+    baseUri: string
+    blockNumber: number
+    txHash: string
+}
+
+// Helper to parse Cairo ByteArray from event data iterator
+function parseByteArray(dataIter: IterableIterator<string>): string {
+    const lenResult = dataIter.next()
+    if (lenResult.done) return ""
+    const dataLen = parseInt(lenResult.value, 16)
+
+    let result = ""
+
+    // Read data chunks (bytes31)
+    for (let i = 0; i < dataLen; i++) {
+        const chunk = dataIter.next().value
+        if (chunk) {
+            try {
+                result += shortString.decodeShortString(chunk)
+            } catch {
+                // Silently skip invalid chunks
+            }
+        }
+    }
+
+    // Read pending word
+    const pendingWord = dataIter.next().value
+    // pending word length is next, but we consume it
+    dataIter.next()
+
+    if (pendingWord && pendingWord !== "0x0" && pendingWord !== "0x00") {
+        try {
+            result += shortString.decodeShortString(pendingWord)
+        } catch {
+            // Silently skip
+        }
+    }
+
+    return result
+}
+
 export function useCollectionsScanner(pageSize: number = 12): UseCollectionsScannerReturn {
+    const [allParsedEvents, setAllParsedEvents] = useState<ParsedEvent[]>([])
     const [collections, setCollections] = useState<ScannedCollection[]>([])
     const [loading, setLoading] = useState(true)
     const [loadingMore, setLoadingMore] = useState(false)
     const [error, setError] = useState<string | null>(null)
-    const [nextIdToScan, setNextIdToScan] = useState<number | null>(null)
-    const [hasMore, setHasMore] = useState(true)
+    const [displayCount, setDisplayCount] = useState(pageSize)
+
+    // Scanning state
+    const [lastScannedBlock, setLastScannedBlock] = useState<number | null>(null)
+    const [hasMoreBlocks, setHasMoreBlocks] = useState(true)
+    const [isScanning, setIsScanning] = useState(false)
+    const hasInitialized = useRef(false)
 
     const { contract } = useContract({
         abi: ipCollectionAbi,
         address: COLLECTION_ADDRESS as `0x${string}`,
     })
 
-    // Helper to find the max collection ID (probing strategy)
-    const findMaxCollectionId = useCallback(async () => {
-        if (!contract) {
-            console.warn("Scanner: Contract not loaded yet")
-            return 0
+    // Fetch events for a specific block range
+    const fetchEventsInRange = useCallback(async (fromBlock: number, toBlock: number) => {
+        if (!COLLECTION_ADDRESS) return []
+
+        const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || ""
+        const provider = new RpcProvider({ nodeUrl: rpcUrl })
+
+        const rangeEvents: ParsedEvent[] = []
+        let continuationToken: string | undefined = undefined
+        let pageCount = 0
+        const maxPagesPerWindow = 50
+
+        try {
+            do {
+                const response = await provider.getEvents({
+                    address: COLLECTION_ADDRESS,
+                    keys: [[COLLECTION_CREATED_SELECTOR]],
+                    from_block: { block_number: fromBlock },
+                    to_block: { block_number: toBlock },
+                    chunk_size: 100,
+                    continuation_token: continuationToken,
+                })
+
+                for (const event of response.events) {
+                    try {
+                        const data = event.data
+                        const dataIter = data[Symbol.iterator]()
+
+                        // Parse collection_id (u256: low, high)
+                        const collectionIdLow = dataIter.next().value
+                        const collectionIdHigh = dataIter.next().value
+                        if (!collectionIdLow || !collectionIdHigh) continue
+                        const collectionId = (BigInt(collectionIdLow) + (BigInt(collectionIdHigh) * BigInt("340282366920938463463374607431768211456"))).toString()
+
+                        // Parse owner
+                        const owner = dataIter.next().value || "0x0"
+
+                        // Parse name (ByteArray)
+                        const name = parseByteArray(dataIter)
+
+                        // Parse symbol (ByteArray)
+                        const symbol = parseByteArray(dataIter)
+
+                        // Parse base_uri (ByteArray)
+                        const baseUri = parseByteArray(dataIter)
+
+                        rangeEvents.push({
+                            collectionId,
+                            owner,
+                            name,
+                            symbol,
+                            baseUri,
+                            blockNumber: event.block_number || 0,
+                            txHash: event.transaction_hash,
+                        })
+                    } catch (e) {
+                        console.error("Error parsing CollectionCreated event:", e)
+                    }
+                }
+
+                continuationToken = response.continuation_token
+                pageCount++
+            } while (continuationToken && pageCount < maxPagesPerWindow)
+
+        } catch (err) {
+            console.error(`Error fetching events range ${fromBlock}-${toBlock}:`, err)
         }
 
-        console.log("Scanner: Probing for max collection ID...")
+        return rangeEvents
+    }, [])
+
+    // Fetch next batch of events (scanning backwards)
+    const fetchMoreEvents = useCallback(async (targetCount: number = pageSize) => {
+        if (isScanning || !hasMoreBlocks) {
+            // If scanning or no more blocks, but we have events in buffer we haven't shown, we should probably check if we need to load more?
+            // Actually this check is fine.
+            return
+        }
+
+        setIsScanning(true)
+        if (allParsedEvents.length === 0) setLoading(true)
+
         try {
-            // Quick check for standard IDs
-            let maxFound = 0
+            const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || ""
+            const provider = new RpcProvider({ nodeUrl: rpcUrl })
 
-            // Check in steps: 1, 10, 50, 100, 500, 1000...
-            // Added 1 just to check if ANY exist
-            const probes = [1, 10, 20, 30, 40, 50, 100, 200, 500, 1000]
+            let currentToBlock = lastScannedBlock
 
-            for (const probe of probes) {
+            // If starting fresh, get latest block
+            if (currentToBlock === null) {
                 try {
-                    // Try to call directly
-                    // Note: contract.is_valid_collection might throw if the ID is too large or invalid in some way
-                    // but for 'false' it should just return false.
-                    const valid = await contract.is_valid_collection(probe)
-                    console.log(`Scanner: Probe ${probe} -> ${valid}`)
-                    if (valid) {
-                        maxFound = probe
-                    } else {
-                        // Optimization: if 10 is invalid, 20 likely is too (assuming sequential ids)
-                        // But we continue just in case of gaps if we were scanning strictly, 
-                        // but for optimization we stop at first failure if we assume sequential.
-                        // Let's break to save time.
-                        break
-                    }
+                    const block = await provider.getBlock("latest")
+                    currentToBlock = block.block_number
                 } catch (e) {
-                    console.warn(`Scanner: Probe ${probe} failed`, e)
+                    console.error("Failed to get latest block", e)
+                    // Fallback to a high number or error out?
+                    // Let's assume we can't proceed without latest block
+                    setIsScanning(false)
+                    setLoading(false)
+                    return
+                }
+            }
+
+            const newEvents: ParsedEvent[] = []
+            let attempts = 0
+            const maxAttempts = 10
+
+            // Scan backwards until we find enough events or hit start block
+            while (newEvents.length < targetCount && attempts < maxAttempts && currentToBlock > REGISTRY_START_BLOCK) {
+                const currentFromBlock = Math.max(REGISTRY_START_BLOCK, currentToBlock - BLOCK_WINDOW_SIZE)
+
+                console.log(`Scanner: Fetching collections from ${currentFromBlock} to ${currentToBlock}`)
+                const windowEvents = await fetchEventsInRange(currentFromBlock, currentToBlock)
+                newEvents.push(...windowEvents)
+
+                currentToBlock = currentFromBlock - 1
+                attempts++
+
+                if (currentToBlock < REGISTRY_START_BLOCK) {
+                    setHasMoreBlocks(false)
                     break
                 }
             }
 
-            console.log(`Scanner: Max found ID approx: ${maxFound}`)
-            // If we found something, let's start a bit higher to catch any recent ones
-            // If maxFound is 0, we might still want to check 1 just in case probe 1 failed but it exists?
-            // If maxFound is 0, we return 0.
-            return maxFound > 0 ? maxFound + 5 : 0
-        } catch (e) {
-            console.error("Scanner: Error finding max collection ID:", e)
-            return 0
-        }
-    }, [contract])
-
-
-    const fetchBatch = useCallback(async (startId: number, count: number) => {
-        if (!contract) return { data: [], nextId: -1 };
-
-        console.log(`Scanner: Fetching batch starting from ${startId}, count ${count}`)
-
-        const newCollections: ScannedCollection[] = [];
-        let currentId = startId;
-        const scannedIds: number[] = [];
-        let attempts = 0;
-        const maxAttempts = 100; // Look back a bit further
-
-        // Scan backwards
-        while (newCollections.length < count && currentId >= 1 && attempts < maxAttempts) {
-            scannedIds.push(currentId);
-            currentId--;
-            attempts++;
-        }
-
-        if (scannedIds.length === 0) return { data: [], nextId: currentId };
-
-        try {
-            // Check validity in parallel
-            const validityResults = await Promise.all(
-                scannedIds.map(async (id) => {
-                    try {
-                        const valid = await contract.is_valid_collection(id)
-                        return { id, valid }
-                    } catch (e) {
-                        return { id, valid: false }
-                    }
-                })
-            );
-
-            const validIds = validityResults.filter(r => r.valid).map(r => r.id);
-            console.log(`Scanner: Valid IDs in batch: ${validIds.join(", ")}`)
-
-            if (validIds.length > 0) {
-                const details = await Promise.all(
-                    validIds.map(async (id) => {
-                        try {
-                            const rawData: any = await contract.get_collection(id)
-                            // Also get stats for total supply
-                            const stats: any = await contract.get_collection_stats(id)
-
-                            let name = "Unknown Collection"
-                            // Process ByteArray name
-                            try {
-                                if (rawData.name) {
-                                    // Check if it's already a string or needs decoding
-                                    // For now assume standard string or simple object structure
-                                    name = rawData.name.toString()
-                                }
-                            } catch (e) { }
-
-                            let image = ""
-                            let description = ""
-                            let headerImage = ""
-
-                            // IPFS Metadata
-                            if (rawData.base_uri) {
-                                try {
-                                    let uri = rawData.base_uri.toString()
-                                    // Cleanup URI
-                                    if (uri.startsWith("ipfs://")) uri = uri.replace("ipfs://", "")
-
-                                    // Try fetching collection.json inside dir if it ends with /
-                                    // or just the URI if it looks like a file
-                                    let metadata = null
-                                    if (uri.endsWith('/')) {
-                                        metadata = await fetchIpfsJson(`${uri}collection.json`)
-                                    }
-
-                                    if (!metadata) {
-                                        metadata = await fetchIpfsJson(uri)
-                                    }
-
-                                    if (metadata) {
-                                        name = metadata.name || name
-                                        image = resolveMediaUrl(metadata.image || "")
-                                        headerImage = resolveMediaUrl(metadata.banner || metadata.headerImage || "")
-                                        description = metadata.description || ""
-                                    }
-                                } catch (e) {
-                                    console.warn(`Scanner: Failed to fetch/parse IPFS for ${id}`, e)
-                                }
-                            }
-
-                            return {
-                                id: id.toString(),
-                                name,
-                                symbol: rawData.symbol?.toString() || "COLL",
-                                image,
-                                headerImage,
-                                description,
-                                owner: typeof rawData.owner === 'bigint' ? "0x" + rawData.owner.toString(16) : String(rawData.owner),
-                                nftAddress: typeof rawData.ip_nft === 'bigint' ? "0x" + rawData.ip_nft.toString(16) : String(rawData.ip_nft),
-                                baseUri: rawData.base_uri?.toString() || "",
-                                totalSupply: Number(stats.total_minted) || 0,
-                                isValid: true
-                            } as ScannedCollection
-
-                        } catch (e) {
-                            console.warn(`Scanner: Failed to fetch collection details ${id}`, e)
-                            return null
-                        }
-                    })
-                )
-
-                newCollections.push(...details.filter(Boolean) as ScannedCollection[])
+            if (currentToBlock <= REGISTRY_START_BLOCK) {
+                setHasMoreBlocks(false)
             }
 
-        } catch (e) {
-            console.error("Scanner: Batch fetch error", e)
+            setLastScannedBlock(currentToBlock)
+
+            if (newEvents.length > 0) {
+                // Sort by block number descending (newest first)
+                newEvents.sort((a, b) => b.blockNumber - a.blockNumber)
+
+                setAllParsedEvents(prev => {
+                    const combined = [...prev, ...newEvents]
+                    // Deduplicate
+                    const uniqueMap = new Map()
+                    for (const event of combined) {
+                        if (!uniqueMap.has(event.collectionId)) {
+                            uniqueMap.set(event.collectionId, event)
+                        }
+                    }
+                    return Array.from(uniqueMap.values()).sort((a, b) => b.blockNumber - a.blockNumber)
+                })
+            } else if (currentToBlock <= REGISTRY_START_BLOCK) {
+                // If no events found and we hit start block
+                setHasMoreBlocks(false)
+            }
+
+        } catch (err: any) {
+            console.error("Error fetching more events:", err)
+            setError(err.message || "Failed to load collections")
+        } finally {
+            setLoading(false)
+            setIsScanning(false)
+        }
+    }, [isScanning, hasMoreBlocks, lastScannedBlock, fetchEventsInRange, allParsedEvents.length, pageSize])
+
+    useEffect(() => {
+        if (!hasInitialized.current) {
+            hasInitialized.current = true
+            fetchMoreEvents(pageSize)
+        } else if (lastScannedBlock !== null && !loadingMore && !isScanning && allParsedEvents.length < displayCount && hasMoreBlocks) {
+            // Auto fetch more if we don't have enough to fill the page
+            fetchMoreEvents(pageSize)
+        }
+    }, [lastScannedBlock, fetchMoreEvents, pageSize, loadingMore, isScanning, allParsedEvents.length, displayCount])
+
+
+    // Process visible collections with full metadata
+    useEffect(() => {
+        const processCollections = async () => {
+            const eventsToProcess = allParsedEvents.slice(0, displayCount)
+
+            // Map ID to existing collection to avoid re-fetching
+            const existingMap = new Map(collections.map(c => [c.id, c]))
+            const processedList: ScannedCollection[] = []
+            const itemsToFetch: { event: ParsedEvent, index: number }[] = []
+
+            for (let i = 0; i < eventsToProcess.length; i++) {
+                const evt = eventsToProcess[i]
+                if (existingMap.has(evt.collectionId)) {
+                    processedList[i] = existingMap.get(evt.collectionId)!
+                } else {
+                    itemsToFetch.push({ event: evt, index: i })
+                }
+            }
+
+            if (itemsToFetch.length === 0) {
+                if (processedList.length !== collections.length) {
+                    setCollections(processedList)
+                }
+                return
+            }
+
+            // Batch fetch details
+            const batchSize = 5
+            for (let i = 0; i < itemsToFetch.length; i += batchSize) {
+                const batch = itemsToFetch.slice(i, i + batchSize)
+
+                await Promise.all(batch.map(async ({ event: parsed, index }) => {
+                    try {
+                        let name = parsed.name || `Collection #${parsed.collectionId}`
+                        let image = "/placeholder.svg"
+                        let headerImage = ""
+                        let description = ""
+
+                        // IPFS Metadata
+                        if (parsed.baseUri) {
+                            try {
+                                let uri = parsed.baseUri
+                                if (uri.startsWith("ipfs://")) uri = uri.replace("ipfs://", "")
+
+                                let metadata = null
+                                if (uri.endsWith('/')) {
+                                    metadata = await fetchIpfsJson(`${uri}collection.json`)
+                                }
+
+                                if (!metadata) {
+                                    metadata = await fetchIpfsJson(uri)
+                                }
+
+                                if (metadata) {
+                                    name = metadata.name || name
+                                    image = resolveMediaUrl(metadata.image || "")
+                                    headerImage = resolveMediaUrl(metadata.banner || metadata.headerImage || "")
+                                    description = metadata.description || ""
+                                }
+                            } catch (e) {
+                                console.warn(`Scanner: Failed to fetch/parse IPFS for ${parsed.collectionId}`, e)
+                            }
+                        }
+
+                        // Get stats (totalSupply) - we need to call contract for this
+                        let totalSupply = 0
+                        let ipNft = parsed.collectionId // Default fallback if we can't get address (should fetch from contract)
+
+                        // TODO: optimize this call?
+                        if (contract) {
+                            try {
+                                const stats: any = await contract.get_collection_stats(parsed.collectionId)
+                                totalSupply = Number(stats.total_minted) || 0
+
+                                // Ideally we get the address too if we want to be 100% sure, but event doesn't give address directly, 
+                                // wait, event gives owner but not ip_nft address. 
+                                // Actually we can compute or fetch. 
+                                // Let's fetch the struct to be safe and get the real address.
+                                const rawData: any = await contract.get_collection(parsed.collectionId)
+                                ipNft = typeof rawData.ip_nft === 'bigint' ? "0x" + rawData.ip_nft.toString(16) : String(rawData.ip_nft)
+
+                            } catch (e) { }
+                        }
+
+                        processedList[index] = {
+                            id: parsed.collectionId,
+                            name,
+                            symbol: parsed.symbol,
+                            image,
+                            headerImage,
+                            description,
+                            owner: parsed.owner,
+                            nftAddress: ipNft,
+                            baseUri: parsed.baseUri,
+                            totalSupply,
+                            isValid: true,
+                            type: "Standard"
+                        }
+
+                    } catch (e) {
+                        console.warn(`Failed to process collection ${parsed.collectionId}`, e)
+                    }
+                }))
+
+                setCollections([...processedList.filter(Boolean)])
+            }
         }
 
-        return { data: newCollections, nextId: currentId }
-
-    }, [contract])
+        processCollections()
+    }, [allParsedEvents, displayCount, contract])
 
 
     const loadMore = async () => {
-        if (loadingMore || !nextIdToScan || nextIdToScan < 1) return
+        if (loadingMore) return
         setLoadingMore(true)
 
-        try {
-            const { data, nextId } = await fetchBatch(nextIdToScan, pageSize)
+        const newDisplayCount = displayCount + pageSize
 
-            // Avoid duplicates
-            setCollections(prev => {
-                const existing = new Set(prev.map(c => c.id))
-                const uniqueNew = data.filter(c => !existing.has(c.id))
-                return [...prev, ...uniqueNew]
-            })
-
-            setNextIdToScan(nextId)
-            if (nextId < 1) setHasMore(false)
-
-        } catch (err: any) {
-            setError(err.message)
-        } finally {
-            setLoadingMore(false)
+        // Check if we need more events
+        if (allParsedEvents.length < newDisplayCount && hasMoreBlocks) {
+            await fetchMoreEvents(pageSize)
         }
+
+        setDisplayCount(newDisplayCount)
+        setLoadingMore(false)
     }
 
     const refresh = () => {
         console.log("Scanner: Refreshing...")
+        setDisplayCount(pageSize)
+        setAllParsedEvents([])
         setCollections([])
-        setNextIdToScan(null)
-        setLoading(true)
-        setHasMore(true)
-        // Effect will re-trigger because contract is constant but loading state reset might not trigger effect if deps didn't change
-        // We need to trigger the init effect. 
-        // Actually, setting nextIdToScan to null triggering the effect? 
-        // The effect depends on [contract, findMaxCollectionId, fetchBatch, nextIdToScan, pageSize]
-        // If nextIdToScan is null, the effect runs.
-        // But we need to make sure we don't get into a loop.
+        setLastScannedBlock(null)
+        setHasMoreBlocks(true)
+        hasInitialized.current = false // Allow re-init
+        // Trigger re-fetch
+        setTimeout(() => fetchMoreEvents(pageSize), 0)
     }
 
-    // Initial load
-    useEffect(() => {
-        let mounted = true
-
-        const init = async () => {
-            if (!contract) return
-            // If we already have collections and nextIdToScan is not null, don't re-init automatically
-            // ONLY init if nextIdToScan IS null (initial state or refresh)
-            if (nextIdToScan !== null) return
-
-            console.log("Scanner: Initializing...")
-            setLoading(true)
-            try {
-                // Find start point
-                const maxId = await findMaxCollectionId()
-                console.log("Scanner: Max ID from probe:", maxId)
-
-                if (maxId === 0) {
-                    if (mounted) {
-                        setLoading(false)
-                        setHasMore(false)
-                    }
-                    return
-                }
-
-                const { data, nextId } = await fetchBatch(maxId, pageSize)
-
-                if (mounted) {
-                    setCollections(data)
-                    setNextIdToScan(nextId)
-                    if (nextId < 1) setHasMore(false)
-                }
-
-            } catch (err: any) {
-                console.error("Scanner: Init error", err)
-                if (mounted) setError(err.message)
-            } finally {
-                if (mounted) setLoading(false)
-            }
-        }
-
-        init()
-
-        return () => { mounted = false }
-    }, [contract, findMaxCollectionId, fetchBatch, nextIdToScan, pageSize])
+    const hasMore = hasMoreBlocks || allParsedEvents.length > displayCount
 
     return {
         collections,
-        loading,
+        loading: loading || (allParsedEvents.length > 0 && collections.length < Math.min(allParsedEvents.length, displayCount)),
         loadingMore,
         error,
         hasMore,
