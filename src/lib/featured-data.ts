@@ -19,11 +19,11 @@ export const FEATURED_DATA: FeaturedItem[] = [
         tag: "Starknet"
     },
     {
-        id: "moma",
-        title: "MoMA Collection",
-        description: "MoMa Photography Collection",
-        image: "/moma-banner.jpg",
-        link: "/collections/", // Assuming this route exists or will be created/redirected
+        id: "newyorker",
+        title: "New Yorker",
+        description: "New Yorker Photography Collection",
+        image: "/moma.jpg",
+        link: "/collections/0x2c215c0925d5e85224a9d74ef4c09ed4d5c168f8a251d330aca410b62569252", // Assuming this route exists or will be created/redirected
         ctaText: "Explore",
         tag: "Photography"
     },
