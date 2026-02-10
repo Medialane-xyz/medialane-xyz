@@ -44,7 +44,7 @@ export function FeaturedSlider({ items, autoPlay = true, interval = 5000 }: Feat
     if (!items.length) return null
 
     return (
-        <div className="relative min-h-[95vh] h-[95vh] overflow-hidden">
+        <div className="relative min-h-[100vh] h-[100vh] overflow-hidden">
             {/* Background Images */}
             <AnimatePresence mode="wait">
                 <motion.div
@@ -58,16 +58,16 @@ export function FeaturedSlider({ items, autoPlay = true, interval = 5000 }: Feat
                     <div className="absolute inset-0 transition-transform duration-[10000ms] ease-out scale-105">
                         <Image
                             src={items[currentSlide]?.image || "/placeholder.svg"}
-                            alt={items[currentSlide]?.title || "Featured Image"}
+                            alt={items[currentSlide]?.title || "Onchain image"}
                             fill
                             priority
                             className="object-cover"
                             sizes="100vw"
                         />
                     </div>
-                    {/* Gradients to ensure text readability */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
+                    {/* Gradient to ensure text readability */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-black/30 to-transparent" />
+
                 </motion.div>
             </AnimatePresence>
 
