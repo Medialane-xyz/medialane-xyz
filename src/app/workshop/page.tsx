@@ -221,10 +221,10 @@ export default function WorkshopPage() {
                             </div>
 
                             <div className="pt-4">
-                                <Link href="https://github.com/Medialane-xyz/medialane-xyz" target="_blank" className="w-full">
+                                <Link href="https://drive.google.com/file/d/1ew9A0AO5PsRlqS4Zib9l7p-pmC9TzVA0/view?usp=drive_link" target="_blank" className="w-full">
                                     <Button className="w-full h-12 text-base font-semibold bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white border-0 shadow-lg shadow-cyan-900/20">
                                         <Terminal className="mr-2 h-5 w-5" />
-                                        Baixar Código Fonte (GitHub)
+                                        Baixar Código Fonte (Template Starknet + Chipipay)
                                     </Button>
                                 </Link>
                             </div>
