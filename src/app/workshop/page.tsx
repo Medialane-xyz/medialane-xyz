@@ -198,7 +198,7 @@ export default function WorkshopPage() {
 
                     {/* Video Section */}
                     <motion.div variants={itemVariants} className="relative aspect-video w-full rounded-2xl overflow-hidden border border-white/10 bg-zinc-900 shadow-2xl shadow-purple-900/20 group max-w-4xl mx-auto">
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10 pointer-events-none" />
+
                         <iframe
                             width="100%"
                             height="100%"
@@ -269,11 +269,12 @@ export default function WorkshopPage() {
 
                                     <div className="space-y-3">
                                         {[
-                                            { name: "Workshop Medialane", url: "https://medialane.xyz/workshop" },
+                                            { name: "Workshop Youtube", url: "https://youtu.be/XC_jgphiu5M" },
                                             { name: "Documentação Starknet", url: "https://docs.starknet.io/" },
                                             { name: "Chipipay SDK Guide", url: "https://docs.Chipipay.com/" },
                                             { name: "Starknet.js GitHub", url: "https://github.com/starknet-io/starknet.js" },
                                             { name: "Starkup Toolchain", url: "https://github.com/software-mansion/starkup" },
+                                            { name: "Clerk SDK Docs", url: "https://clerk.com/docs" },
                                         ].map((link) => (
                                             <Link key={link.url} href={link.url} target="_blank" className="block group">
                                                 <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 hover:border-purple-500/50 hover:bg-white/10 transition-all">
@@ -299,14 +300,6 @@ export default function WorkshopPage() {
                 </motion.div>
             </div>
 
-            <Button
-                variant="ghost"
-                className="fixed top-24 left-4 z-50 hidden xl:flex group pl-0 hover:pl-2 transition-all text-muted-foreground hover:text-white"
-                onClick={() => router.back()}
-            >
-                <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-                Voltar
-            </Button>
         </div>
     )
 }
