@@ -191,6 +191,10 @@ export default function CollectionsPage() {
                           items: collection.totalSupply || 0,
                           image: collection.image,
                           banner: collection.headerImage,
+                          // Fix: pass nftAddress as ipNft so the link works (uses address not ID)
+                          ipNft: collection.nftAddress,
+                          // Fix: pass type
+                          type: collection.type
                         } as any}
                       />
                     </div>

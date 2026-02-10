@@ -19,6 +19,7 @@ export interface ScannedCollection {
     baseUri: string
     totalSupply: number
     isValid: boolean
+    type: string
 }
 
 interface UseCollectionsScannerReturn {

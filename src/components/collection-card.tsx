@@ -98,7 +98,7 @@ export function CollectionCard({ collection, index }: CollectionCardProps) {
           {/* Collection Type - Replacing Volume */}
           <div className="text-right">
             <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Type</p>
-            <p className="font-semibold">IP Collection</p>
+            <p className="font-semibold truncate max-w-[120px]">{collection.type || "IP Collection"}</p>
           </div>
         </div>
       </div>

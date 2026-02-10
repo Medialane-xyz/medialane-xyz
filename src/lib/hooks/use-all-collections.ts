@@ -8,7 +8,7 @@ import { fetchIpfsJson, resolveIpfsUrl, resolveMediaUrl } from "@/src/lib/ipfs"
 
 // Contract configuration
 const COLLECTION_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_COLLECTION_CONTRACT_ADDRESS || ""
-const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || "https://starknet-mainnet.public.blastapi.io" // public fallback if env missing
+const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || ""
 const START_BLOCK = Number(process.env.NEXT_PUBLIC_COLLECTION_CONTRACT_START_BLOCK) || 0
 
 // Types for collections
@@ -155,6 +155,25 @@ export async function fetchCollectionById(collectionId: number | bigint): Promis
         }
     } catch (error) {
         console.error(`Error fetching collection ${collectionId}:`, error)
+        return null
+    }
+}
+
+/**
+ * Optimized: Fetch ONLY on-chain collection data (specifically address/ipNft)
+ * Skips the heavy IPFS metadata fetch.
+ */
+export async function fetchCollectionAddressOnly(collectionId: number | bigint): Promise<{ ipNft: string, name: string } | null> {
+    try {
+        const contract = getIPCollectionContract()
+        const collectionData = await contract.get_collection(collectionId)
+
+        return {
+            ipNft: num.toHex(collectionData.ip_nft),
+            name: decodeByteArray(collectionData.name) || `Collection #${collectionId}`
+        }
+    } catch (error) {
+        // console.warn(`Error fetching collection address for #${collectionId}`, error)
         return null
     }
 }
@@ -352,24 +371,97 @@ export function useOnChainCollection(collectionId: number | bigint | undefined) 
 }
 
 /**
+ * Helper to find the max collection ID (probing strategy)
+ * Copied/Adapted from useCollectionsScanner to keep this file self-contained for now
+ */
+async function findMaxCollectionId(contract: Contract): Promise<number> {
+    try {
+        let maxFound = 0
+        const probes = [1, 10, 20, 50, 100, 200, 500, 1000]
+
+        for (const probe of probes) {
+            try {
+                const valid = await contract.is_valid_collection(probe)
+                if (valid) {
+                    maxFound = probe
+                } else {
+                    break
+                }
+            } catch (e) {
+                break
+            }
+        }
+        return maxFound > 0 ? maxFound + 5 : 5
+    } catch (e) {
+        return 0
+    }
+}
+
+/**
+ * Optimize: Fetch ONLY the ID for a given address by scanning on-chain structs
+ * This avoids fetching IPFS metadata for every single collection
+ */
+export async function findCollectionIdByAddress(address: string): Promise<number | null> {
+    if (!address) return null
+    const normalizedAddr = address.toLowerCase()
+
+    try {
+        const contract = getIPCollectionContract()
+        const maxId = await findMaxCollectionId(contract)
+
+        // Scan in batches
+        const BATCH_SIZE = 10
+        for (let i = 1; i <= maxId; i += BATCH_SIZE) {
+            const batchIds = []
+            for (let j = 0; j < BATCH_SIZE; j++) {
+                if (i + j <= maxId) batchIds.push(i + j)
+            }
+
+            // Parallel fetch of on-chain data ONLY
+            const results = await Promise.all(batchIds.map(async (id) => {
+                try {
+                    const isValid = await contract.is_valid_collection(id)
+                    if (!isValid) return null
+
+                    const data = await contract.get_collection(id)
+                    const ipNft = num.toHex(data.ip_nft).toLowerCase()
+
+                    if (ipNft === normalizedAddr) {
+                        return id
+                    }
+                    return null
+                } catch (e) {
+                    return null
+                }
+            }))
+
+            const found = results.find(id => id !== null)
+            if (found) return found
+        }
+
+    } catch (e) {
+        console.error("Error finding collection ID by address:", e)
+    }
+
+    return null
+}
+
+/**
  * Helper to fetch a collection by its address (ipNft)
- * Note: This iterates through all collections for now as the contract doesn't support lookup by address directly.
+ * Optimized to NOT fetch all collections' metadata
  */
 export async function fetchCollectionByAddress(address: string): Promise<OnChainCollection | null> {
     if (!address) return null
 
-    // Normalize address
-    const normalizedAddress = address.toLowerCase()
+    // 1. Find the ID efficiently
+    const id = await findCollectionIdByAddress(address)
 
-    // Fetch all collections
-    const allCollections = await fetchAllCollections()
+    if (id) {
+        // 2. Fetch full details ONLY for the match
+        return await fetchCollectionById(id)
+    }
 
-    // Find match
-    const found = allCollections.find(c =>
-        c.ipNft && c.ipNft.toLowerCase() === normalizedAddress
-    )
-
-    return found || null
+    return null
 }
 
 /**

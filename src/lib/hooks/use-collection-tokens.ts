@@ -7,7 +7,7 @@ import { Contract, RpcProvider, shortString } from "starknet"
 import { fetchIpfsJson, resolveMediaUrl } from "@/src/lib/ipfs"
 
 const COLLECTION_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_COLLECTION_CONTRACT_ADDRESS || ""
-const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || "https://starknet-mainnet.public.blastapi.io"
+const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || ""
 
 // Extended Token Data with off-chain metadata
 export interface ExtendedTokenData extends TokenData {
@@ -369,14 +369,23 @@ export function useTokenByAddress(collectionAddress: string | undefined, tokenId
         setError(null)
 
         try {
-            // First, find the collection by its contract address (ipNft)
-            const collections = await fetchAllCollections()
-            const matchedCollection = collections.find(c =>
-                c.ipNft?.toLowerCase() === collectionAddress.toLowerCase()
-            )
+            // Updated: Use efficient lookup instead of fetching all collections
+            // 1. Find ID by address
+            const { findCollectionIdByAddress, fetchCollectionById } = await import("./use-all-collections")
+            const collectionId = await findCollectionIdByAddress(collectionAddress)
+
+            if (!collectionId) {
+                setError(new Error("Collection not found"))
+                setIsLoading(false)
+                return
+            }
+
+            // 2. Fetch collection details (needed for base URI etc, though fetchTokenData might fetch again? 
+            // Actually fetchTokenData uses contract.get_token directly but might need base_uri if metadata_uri is empty)
+            const matchedCollection = await fetchCollectionById(collectionId)
 
             if (!matchedCollection) {
-                setError(new Error("Collection not found"))
+                setError(new Error("Collection details failed to load"))
                 setIsLoading(false)
                 return
             }
@@ -384,8 +393,7 @@ export function useTokenByAddress(collectionAddress: string | undefined, tokenId
             setCollection(matchedCollection)
 
             // Build the identifier in the format "collectionId:tokenId"
-            const numericCollectionId = matchedCollection.id // This is the string representation of the numeric ID
-            const identifier = `${numericCollectionId}:${tokenId}`
+            const identifier = `${collectionId}:${tokenId}`
 
             console.log("[useTokenByAddress] Fetching token:", identifier, "from collection:", matchedCollection.name)
 

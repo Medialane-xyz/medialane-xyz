@@ -115,7 +115,7 @@ export function useRecentAssets(pageSize: number = 20): UseRecentAssetsReturn {
     const fetchEventsInRange = useCallback(async (fromBlock: number, toBlock: number) => {
         if (!COLLECTION_ADDRESS) return []
 
-        const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || "https://starknet-mainnet.public.blastapi.io"
+        const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || ""
         const provider = new RpcProvider({ nodeUrl: rpcUrl })
 
         const rangeEvents: ParsedEvent[] = []
@@ -193,7 +193,7 @@ export function useRecentAssets(pageSize: number = 20): UseRecentAssetsReturn {
         if (allParsedEvents.length === 0) setLoading(true)
 
         try {
-            const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || "https://starknet-mainnet.public.blastapi.io"
+            const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || ""
             const provider = new RpcProvider({ nodeUrl: rpcUrl })
 
             let currentToBlock = lastScannedBlock
@@ -308,7 +308,7 @@ export function useRecentAssets(pageSize: number = 20): UseRecentAssetsReturn {
                             const metadata = await fetchIpfsJson(parsed.metadataUri)
                             if (metadata) {
                                 name = metadata.name || name
-                                image = resolveMediaUrl(metadata.image || "/placeholder.svg")
+                                image = resolveMediaUrl(metadata.image || "/placeholder.svg") || "/placeholder.svg"
                                 description = metadata.description || ""
                                 if (metadata.attributes) {
                                     const typeAttr = metadata.attributes.find((a: any) => a.trait_type?.toLowerCase() === "type")
@@ -320,17 +320,23 @@ export function useRecentAssets(pageSize: number = 20): UseRecentAssetsReturn {
                         }
                     }
 
-                    // Try to fetch collection name if contract is available
-                    if (registryContract) {
-                        try {
-                            // This might be slow if done for every item sequentially
-                            // ideally we cache collection names
-                            // skipping for now to keep it fast, relying on placeholder or batching later
-                        } catch (e) { }
+                    // Try to fetch collection details to get the real address and name
+                    let realCollectionAddress = parsed.collectionAddress;
+
+                    try {
+                        // Dynamically import to avoid circular dependency issues if possible, or just use the one we'll add to imports
+                        const { fetchCollectionById } = await import("./use-all-collections");
+                        const colData = await fetchCollectionById(BigInt(parsed.collectionId));
+                        if (colData) {
+                            collectionName = colData.name;
+                            realCollectionAddress = colData.ipNft;
+                        }
+                    } catch (e) {
+                        console.warn("Failed to fetch collection details for recent asset", e);
                     }
 
                     processedAssets[index] = {
-                        id: `${parsed.collectionAddress}-${parsed.tokenId}`,
+                        id: `${realCollectionAddress}-${parsed.tokenId}`,
                         tokenId: parsed.tokenId,
                         collectionId: parsed.collectionId,
                         name,
@@ -339,7 +345,7 @@ export function useRecentAssets(pageSize: number = 20): UseRecentAssetsReturn {
                         txHash: parsed.txHash,
                         metadataUri: parsed.metadataUri,
                         blockNumber: parsed.blockNumber,
-                        collectionAddress: parsed.collectionAddress,
+                        collectionAddress: realCollectionAddress,
                         collectionName,
                         description,
                         category,

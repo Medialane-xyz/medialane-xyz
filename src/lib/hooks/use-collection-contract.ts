@@ -7,7 +7,7 @@ import ipCollectionAbi from "@/src/lib/abi/ip-collection.json"
 // Contract address from environment
 // Contract address from environment
 const COLLECTION_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_COLLECTION_CONTRACT_ADDRESS || ""
-const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || "https://starknet-mainnet.public.blastapi.io"
+const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || ""
 
 // Types matching the Cairo structs
 export interface Collection {
