@@ -66,7 +66,7 @@ export function FeaturedSlider({ items, autoPlay = true, interval = 5000 }: Feat
                         />
                     </div>
                     {/* Gradient to ensure text readability */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-black/30 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/30 to-transparent" />
 
                 </motion.div>
             </AnimatePresence>
@@ -169,12 +169,12 @@ export function FeaturedSlider({ items, autoPlay = true, interval = 5000 }: Feat
 
             {/* Slide Indicators */}
             <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20">
-                <div className="flex items-center gap-3 p-2 rounded-full bg-black/20 backdrop-blur-md border border-white/5">
+                <div className="flex items-center gap-3 p-2 rounded-full backdrop-blur-sm border border-white/5">
                     {items.map((_, index) => (
                         <button
                             key={index}
                             onClick={() => goToSlide(index)}
-                            className={`h-2 rounded-full transition-all duration-500 ${index === currentSlide ? "bg-cyan-500 w-8" : "bg-white/30 w-2 hover:bg-white/50"
+                            className={`h-2 rounded-full transition-all duration-500 ${index === currentSlide ? "bg-cyan-500/30 w-8" : "bg-white/10 w-2 hover:bg-white/20"
                                 }`}
                         />
                     ))}
@@ -187,7 +187,7 @@ export function FeaturedSlider({ items, autoPlay = true, interval = 5000 }: Feat
                     variant="ghost"
                     size="icon"
                     onClick={prevSlide}
-                    className="h-10 w-10 rounded-full bg-black/30 text-white backdrop-blur-md border border-white/10"
+                    className="h-10 w-10 rounded-full bg-black/10 text-white backdrop-blur-md border border-white/10"
                 >
                     <ChevronLeft className="h-5 w-5" />
                 </Button>
@@ -195,7 +195,7 @@ export function FeaturedSlider({ items, autoPlay = true, interval = 5000 }: Feat
                     variant="ghost"
                     size="icon"
                     onClick={nextSlide}
-                    className="h-10 w-10 rounded-full bg-black/30 text-white backdrop-blur-md border border-white/10"
+                    className="h-10 w-10 rounded-full bg-black/10 text-white backdrop-blur-md border border-white/10"
                 >
                     <ChevronRight className="h-5 w-5" />
                 </Button>
