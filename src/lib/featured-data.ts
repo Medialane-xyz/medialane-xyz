@@ -12,8 +12,8 @@ export const FEATURED_DATA: FeaturedItem[] = [
     {
         id: "workshop",
         title: "Da Web 2 para Web 3 em 1 hora",
-        description: "Aprenda a criar dApps na Starknet com Chipipay neste workshop exclusivo.",
-        image: "https://img.youtube.com/vi/XC_jgphiu5M/maxresdefault.jpg",
+        description: "Alcance o mercado global com seu app onchain",
+        image: "/workshop.jpg",
         link: "/workshop",
         ctaText: "Workshop",
         tag: "Starknet"
@@ -21,7 +21,7 @@ export const FEATURED_DATA: FeaturedItem[] = [
     {
         id: "newyorker",
         title: "New Yorker",
-        description: "New Yorker Photography Collection",
+        description: "New York City Photography Collection",
         image: "/moma.jpg",
         link: "/collections/0x2c215c0925d5e85224a9d74ef4c09ed4d5c168f8a251d330aca410b62569252", // Assuming this route exists or will be created/redirected
         ctaText: "Explore",
