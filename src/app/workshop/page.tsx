@@ -29,7 +29,7 @@ export default function WorkshopPage() {
         {
             number: "01",
             title: "Configuração do ambiente",
-            description: "Prepare sua máquina com o toolchain da Starknet (Scarb, Foundry, ASDF).",
+            description: "Prepare sua máquina local com o conjunto de ferramentas de desenvolvimento Starknet. (Scarb, Foundry, ASDF).",
             content: (
                 <div className="space-y-4">
                     <p className="text-sm text-zinc-400">
@@ -57,13 +57,26 @@ export default function WorkshopPage() {
                     </p>
                     <div className="bg-zinc-900/50 rounded-lg p-3 border border-white/5">
                         <p className="text-xs text-zinc-500 mb-2 uppercase tracking-wider">Prompt Sugerido</p>
-                        <p className="text-sm italic text-zinc-300">"Crie uma página inicial moderna para um mercado de NFTs com uma seção de cunhagem e um cabeçalho de perfil de usuário."</p>
+                        <p className="text-sm italic text-zinc-300">"Projetar e implementar um frontend moderno, responsivo e funcional para o dApp de Mint de NFT. Este aplicativo é destinado para o lançamento de uma coleção de NFTs onde cada usuário pode realizar o mint de uma NFT.
+
+                            O escopo desta fase é exclusivamente frontend. O aplicativo deve funcionar inteiramente usando dados simulados para reproduzir interações reais com blockchain. A estrutura final deve estar pronta para produção, para posterior integração com protocolos de backend/blockchain.
+
+                            Funcionalidades Necessárias:
+                            1. Configuração do Framework: Utilize Next.js, Tailwind CSS e componentes de UI/UX Shadcn para desenvolvimento rápido e de alta qualidade.
+                            2. Responsividade: O design deve ser totalmente responsivo e otimizado para visualização em desktops e dispositivos móveis.
+                            3. Estética: O design deve ser minimalista, limpo, confiável e futurista. Utilize o componente de tema shadcn para oferecer os modos claro e escuro.
+                            4. Geração de Dados de Mockup: Todos os dados para o aplicativo devem ser gerados como dados de mockup estáticos. Tarefa: Crie uma estrutura de pastas dedicada: src/lib/mock-data/
+                            5. Código Final e Documentação: O código final entregue deve ser limpo, modular e bem organizado, refletindo as melhores práticas para desenvolvimento frontend moderno. A lógica para buscar e exibir os dados de mockup deve estar claramente separada dos componentes da interface do usuário."</p>
                     </div>
                     <div className="space-y-2">
                         <p className="text-xs text-zinc-500 uppercase tracking-wider">Rodar Localmente</p>
                         <div className="bg-black/50 border border-white/10 rounded-lg p-2 font-mono text-xs text-cyan-300">
-                            npm install && npm run dev
+                            npm install
                         </div>
+                        <div className="bg-black/50 border border-white/10 rounded-lg p-2 font-mono text-xs text-cyan-300">
+                            npm run dev
+                        </div>
+
                     </div>
                 </div>
             )
@@ -80,48 +93,58 @@ export default function WorkshopPage() {
                     <div className="bg-black/50 border border-white/10 rounded-lg p-3 font-mono text-xs text-cyan-300 overflow-x-auto">
                         npm install @clerk/nextjs
                     </div>
+                    <div className="space-y-2">
+                        <p className="text-xs text-zinc-500 uppercase tracking-wider">Configuração do Middleware</p>
+                        <div className="bg-black/50 border border-white/10 rounded-lg p-2 font-mono text-xs text-cyan-300">
+                            Utilize o Guia Clerk e crie um arquivo com conteúdo padrão em src/middleware.ts
+                        </div>
+                    </div>
                 </div>
             )
         },
         {
             number: "04",
-            title: "Carteiras Invisíveis (ChipPay)",
-            description: "Conecte contas Web2 à Starknet gerando Smart Accounts automaticamente.",
+            title: "Chipipay SDK",
+            description: "Configure o Chipipay SDK para experiência web3.",
             content: (
                 <div className="space-y-4">
                     <div className="space-y-2">
                         <p className="text-sm text-zinc-400"><strong className="text-white">1. Instale o SDK:</strong></p>
                         <div className="bg-black/50 border border-white/10 rounded-lg p-3 font-mono text-xs text-cyan-300 overflow-x-auto">
-                            npm install @chippay/sdk
+                            npm install @chipi-stack/nextjs
                         </div>
                     </div>
-                    <ul className="space-y-2 text-sm text-zinc-400">
-                        <li className="flex gap-2">
-                            <CheckCircle2 className="h-4 w-4 text-cyan-500 flex-shrink-0" />
-                            Configurar JWT template no Clerk
-                        </li>
-                        <li className="flex gap-2">
-                            <CheckCircle2 className="h-4 w-4 text-cyan-500 flex-shrink-0" />
-                            Criar tela de PIN (assinatura da carteira)
-                        </li>
-                    </ul>
+                    <div className="space-y-4">
+                        <p className="text-sm text-zinc-400">
+                            Configure Chipipay API Keys (.env)
+                        </p>
+                        <div className="bg-black/50 border border-white/10 rounded-lg p-3 font-mono text-xs text-cyan-300 overflow-x-auto">
+                            NEXT_PUBLIC_CHIPI_API_KEY=pk_prod_xxxx
+                        </div>
+                        <div className="space-y-2">
+                            <p className="text-xs text-zinc-500 uppercase tracking-wider">Configuração do Provider (layout.tsx)</p>
+                            <div className="bg-black/50 border border-white/10 rounded-lg p-2 font-mono text-xs text-cyan-300">
+                                Importe e envolva seu aplicativo com o componente ChipiProvider.
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )
         },
         {
             number: "05",
             title: "Implantação em Produção",
-            description: "Faça o deploy da sua dApp na Vercel com todas as integrações.",
+            description: "Faça o deploy com todas as integrações.",
             content: (
                 <div className="space-y-4">
                     <div className="bg-zinc-900/50 rounded-lg p-3 border border-white/5 space-y-2">
-                        <p className="text-xs text-zinc-500 uppercase tracking-wider">Variáveis de Ambiente (Vercel)</p>
+                        <p className="text-xs text-zinc-500 uppercase tracking-wider">Variáveis de Ambiente (.env)</p>
                         <div className="font-mono text-xs text-orange-300">NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY</div>
                         <div className="font-mono text-xs text-orange-300">CLERK_SECRET_KEY</div>
-                        <div className="font-mono text-xs text-orange-300">CHIPPAY_API_KEY</div>
+                        <div className="font-mono text-xs text-orange-300">NEXT_PUBLIC_CHIPI_API_KEY</div>
                     </div>
                     <p className="text-sm text-zinc-400">
-                        Sincronize seu repo GitHub com a Vercel e adicione as chaves acima.
+                        Adicione as chaves acima e sincronize seu repo GitHub com a Vercel (ou outra plataforma de deploy).
                     </p>
                 </div>
             )
@@ -199,7 +222,8 @@ export default function WorkshopPage() {
                                 </div>
                                 <div>
                                     <h2 className="text-2xl font-bold text-white">Guia do Desenvolvedor</h2>
-                                    <p className="text-sm text-zinc-400">Fluxo de trabalho passo a passo</p>
+                                    <p className="text-sm text-zinc-400">Da Web 2 para a Web 3 em 1 hora</p>
+                                    <p className="text-sm text-zinc-400">Este guia fornece um fluxo de trabalho estruturado para desenvolvedores criarem um aplicativo Web 3 na Starknet sem complicações.</p>
                                 </div>
                             </div>
 
@@ -247,7 +271,7 @@ export default function WorkshopPage() {
                                         {[
                                             { name: "Workshop Medialane", url: "https://medialane.xyz/workshop" },
                                             { name: "Documentação Starknet", url: "https://docs.starknet.io/" },
-                                            { name: "Chipipay SDK Guide", url: "https://docs.chippay.com/" },
+                                            { name: "Chipipay SDK Guide", url: "https://docs.Chipipay.com/" },
                                             { name: "Starknet.js GitHub", url: "https://github.com/starknet-io/starknet.js" },
                                             { name: "Starkup Toolchain", url: "https://github.com/software-mansion/starkup" },
                                         ].map((link) => (
