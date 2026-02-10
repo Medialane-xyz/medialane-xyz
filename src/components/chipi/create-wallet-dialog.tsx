@@ -29,7 +29,7 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/src/components/ui/alert";
 import { CheckCircleIcon } from "lucide-react";
 import { useCreateWallet, Chain } from "@chipi-stack/nextjs";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 
 const FormSchema = z
     .object({
@@ -47,6 +47,7 @@ const FormSchema = z
 
 export function CreateWalletDialog({ open, onOpenChange }: { open?: boolean; onOpenChange?: (open: boolean) => void }) {
     const { getToken, userId: clerkUserId } = useAuth();
+    const { user } = useUser();
     const {
         createWalletAsync,
         isLoading,
