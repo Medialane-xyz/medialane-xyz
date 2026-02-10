@@ -60,7 +60,11 @@ export function AccountButton() {
   }
 
   return (
-    <SignInButton mode="modal">
+    <SignInButton
+      mode="modal"
+      fallbackRedirectUrl={typeof window !== "undefined" ? window.location.href : "/"}
+      signUpFallbackRedirectUrl={typeof window !== "undefined" ? window.location.href : "/"}
+    >
       <Button
         className="glass-card rounded-full hover:scale-105 transition-transform"
         variant="secondary"

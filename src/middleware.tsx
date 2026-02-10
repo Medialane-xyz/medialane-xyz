@@ -32,6 +32,7 @@ export default clerkMiddleware(async (auth, req) => {
       // Redirect them to the /onboarding route to complete onboarding
       if (!hasWallet && req.nextUrl.pathname !== "/onboarding") {
         const onboardingUrl = new URL("/onboarding", req.url);
+        onboardingUrl.searchParams.set("redirect_url", req.url);
         return NextResponse.redirect(onboardingUrl);
       }
     } catch (error) {

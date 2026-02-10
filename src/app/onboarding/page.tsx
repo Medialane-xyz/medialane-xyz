@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useAuth, useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { useCreateWallet } from "@chipi-stack/nextjs";
 import { completeOnboarding } from "./_actions";
@@ -11,6 +11,8 @@ export default function OnboardingComponent() {
   // Access the current user's data
   const { user } = useUser();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get("redirect_url") || "/";
 
   const { createWalletAsync, isLoading, isError } = useCreateWallet();
   const { getToken } = useAuth();
@@ -74,13 +76,13 @@ export default function OnboardingComponent() {
       }
 
       const response = await createWalletAsync({
-        params:{ 
+        params: {
           encryptKey: pin,
-          externalUserId:  user?.id as any,
+          externalUserId: user?.id as any,
         },
         bearerToken: token,
       });
-      
+
       console.log('Wallet creation response:', response);
 
       if (!response.txHash || !response.wallet) {
@@ -101,7 +103,7 @@ export default function OnboardingComponent() {
 
       await user?.reload();
 
-      window.location.assign("/");
+      window.location.assign(redirectUrl);
     } catch (error) {
       console.error('Error in handleSubmit:', error);
       setGeneralError(error instanceof Error ? error.message : 'An unexpected error occurred');
