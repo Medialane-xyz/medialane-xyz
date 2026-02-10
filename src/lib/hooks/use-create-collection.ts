@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react"
 import { useAccount, useSendTransaction, useTransactionReceipt } from "@starknet-react/core"
 import { useRouter } from "next/navigation"
+import { useAuth } from "@clerk/nextjs"
+import { useCallAnyContract, useGetWallet } from "@chipi-stack/nextjs"
 import { useToast } from "@/src/components/ui/use-toast"
 import { uploadToIPFS, uploadMetadata } from "@/src/lib/services/upload"
 
@@ -36,6 +38,14 @@ export function useCreateCollection() {
     const [step, setStep] = useState<"idle" | "upload" | "sign" | "mining" | "indexing">("idle")
     const [txHash, setTxHash] = useState<string | undefined>(undefined)
 
+    // Chipipay hooks
+    const { getToken, userId: clerkUserId } = useAuth()
+    const { data: customerWallet } = useGetWallet({
+        getBearerToken: getToken,
+        params: { externalUserId: clerkUserId || "" },
+    })
+    const { callAnyContractAsync } = useCallAnyContract()
+
     const { sendAsync: createCollectionOnChain } = useSendTransaction({
         calls: undefined,
     })
@@ -47,8 +57,8 @@ export function useCreateCollection() {
     })
 
     // Handle creation flow
-    const createCollection = async (params: CreateCollectionParams) => {
-        if (!address) {
+    const createCollection = async (params: CreateCollectionParams, pin?: string) => {
+        if (!address && !(customerWallet && pin)) {
             toast({
                 title: "Wallet Not Connected",
                 description: "Please connect your wallet to create a collection.",
@@ -106,17 +116,40 @@ export function useCreateCollection() {
                 ],
             }
 
-            // @ts-ignore - Starknet React v5 sendAsync expects Call[]
-            const { transaction_hash } = await createCollectionOnChain([call])
-            setTxHash(transaction_hash)
-            setStep("mining")
+            let transaction_hash: string | undefined
 
-            toast({
-                title: "Transaction Submitted",
-                description: "Waiting for confirmation...",
-            })
+            if (address) {
+                // @ts-ignore - Starknet React v5 sendAsync expects Call[]
+                const res = await createCollectionOnChain([call])
+                transaction_hash = res.transaction_hash
+            } else if (customerWallet && pin) {
+                const jwtToken = await getToken()
+                if (!jwtToken) throw new Error("No token found")
 
-            return transaction_hash
+                transaction_hash = await callAnyContractAsync({
+                    params: {
+                        encryptKey: pin,
+                        wallet: {
+                            publicKey: (customerWallet as any).walletPublicKey,
+                            encryptedPrivateKey: (customerWallet as any).encryptedPrivateKey || "",
+                        },
+                        calls: [call],
+                    } as any,
+                    bearerToken: jwtToken,
+                })
+            }
+
+            if (transaction_hash) {
+                setTxHash(transaction_hash)
+                setStep("mining")
+
+                toast({
+                    title: "Transaction Submitted",
+                    description: "Waiting for confirmation...",
+                })
+
+                return transaction_hash
+            }
 
         } catch (e) {
             console.error("Creation error:", e)

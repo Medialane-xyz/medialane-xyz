@@ -38,6 +38,10 @@ import { useToast } from "@/src/components/ui/use-toast"
 import { useMobile } from "@/src/hooks/use-mobile"
 import { useCreateCollection } from "@/src/lib/hooks/use-create-collection"
 import { cn } from "@/src/lib/utils"
+import { useAccount } from "@starknet-react/core"
+import { useAuth } from "@clerk/nextjs"
+import { useGetWallet } from "@chipi-stack/nextjs"
+import { WalletPinDialog } from "@/src/components/chipi/wallet-pin-dialog"
 
 // Define types
 interface CollectionFormData {
@@ -63,6 +67,15 @@ interface CollectionFormData {
 export default function CreateCollectionPage() {
   const { toast } = useToast()
   const { createCollection, isProcessing } = useCreateCollection()
+  const { address } = useAccount()
+
+  // Chipipay integration
+  const { getToken, userId: clerkUserId } = useAuth()
+  const { data: customerWallet } = useGetWallet({
+    getBearerToken: getToken,
+    params: { externalUserId: clerkUserId || "" },
+  })
+  const [pinOpen, setPinOpen] = useState(false)
 
   const [formData, setFormData] = useState<CollectionFormData>({
     // Basic Information
@@ -243,6 +256,15 @@ export default function CreateCollectionPage() {
     }
 
     if (!formData.featureImage) return
+
+    // Wallet check
+    if (!address) {
+      if (customerWallet) {
+        setPinOpen(true)
+        return
+      }
+      // If neither, let logic flow to createCollection which will show toast
+    }
 
     await createCollection({
       name: formData.name,
@@ -481,6 +503,35 @@ export default function CreateCollectionPage() {
                 {isProcessing ? <><Loader2 className="h-5 w-5 mr-2 animate-spin" /> Deploying...</> : <><Layers className="h-5 w-5 mr-2" /> Create Collection</>}
               </Button>
             </motion.div>
+
+            <WalletPinDialog
+              open={pinOpen}
+              onCancel={() => setPinOpen(false)}
+              onSubmit={async (pin) => {
+                setPinOpen(false)
+                if (formData.featureImage) {
+                  await createCollection({
+                    name: formData.name,
+                    symbol: formData.symbol,
+                    description: formData.description,
+                    category: formData.category,
+                    featureImage: formData.featureImage.file,
+                    tags: formData.tags,
+                    royaltyPercentage: formData.royaltyPercentage,
+                    mintPrice: formData.mintPrice,
+                    currency: formData.currency,
+                    enableRemixing: formData.enableRemixing,
+                    remixRoyalty: formData.remixRoyalty,
+                    allowCommercialUse: formData.allowCommercialUse,
+                    requireAttribution: formData.requireAttribution,
+                    licenseType: formData.licenseType,
+                    website: formData.website,
+                    twitter: formData.twitter,
+                    discord: formData.discord
+                  }, pin)
+                }
+              }}
+            />
           </div>
 
           {/* Preview Panel */}
