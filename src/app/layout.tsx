@@ -15,7 +15,7 @@ const inter = Inter({ subsets: ["latin"], display: "swap" })
 
 export const metadata = {
   title: "MediaLane",
-  description: "The permissionless marketplace for the integrity web",
+  description: "Creator Launchpad + NFT Marketplace",
 }
 
 export default function RootLayout({
