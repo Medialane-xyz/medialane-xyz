@@ -101,22 +101,10 @@ const FloatingNav = () => {
       isActive: pathname.startsWith("/collections"),
     },
     {
-      icon: <Users className="w-4 h-4" />,
-      label: "Creators",
-      href: "/creators",
-      isActive: pathname.startsWith("/creators") || pathname.startsWith("/users"),
-    },
-    {
-      icon: <Shapes className="w-4 h-4" />,
-      label: "Media",
-      href: "/categories",
-      isActive: pathname.startsWith("/categories") || pathname.startsWith("/categories"),
-    },
-    {
-      icon: <Sparkles className="w-4 h-4" />,
-      label: "New",
-      href: "/new-releases",
-      isActive: pathname.startsWith("/new-releases"),
+      icon: <Stars className="w-4 h-4" />,
+      label: "Launchpad",
+      href: "/creator",
+      isActive: pathname.startsWith("/creator"),
     },
   ]
 
@@ -138,8 +126,8 @@ const FloatingNav = () => {
           <div className="relative flex items-center justify-between h-12 md:h-14">
             {/* Logo */}
             <div className="flex-shrink-0 flex items-center">
-              
-            <LogoMedialane />
+
+              <LogoMedialane />
 
               {/* <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigateTo("/")}>
                 <div className="h-7 w-7 md:h-8 md:w-8 rounded-full bg-gradient-to-r from-purple-600 to-primary"></div>
@@ -183,11 +171,11 @@ const FloatingNav = () => {
               {/* <NotificationsMenu /> */}
 
 
-            
-            
 
 
-        
+
+
+
 
               {/* Create Button - Desktop Only */}
               {!isMobile && (
@@ -201,7 +189,7 @@ const FloatingNav = () => {
                 </Button>
               )}
 
-              
+
 
 
 
@@ -265,7 +253,7 @@ const FloatingNav = () => {
                       onClick={() => navigateTo("/create")}
                     >
                       <Plus className="w-4 h-4 mr-2" />
-                      Create 
+                      Create
                     </Button>
                   </div>
                 </div>

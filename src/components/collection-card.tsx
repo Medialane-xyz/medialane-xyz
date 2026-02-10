@@ -4,6 +4,7 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 import { CheckCircle2, ArrowRight } from "lucide-react"
 import { Button } from "@/src/components/ui/button"
+import Image from "next/image"
 import { Badge } from "@/src/components/ui/badge"
 import { useRouter } from "next/navigation"
 
@@ -51,10 +52,12 @@ export function CollectionCard({ collection, index }: CollectionCardProps) {
         {imageError || !imgSrc ? (
           <div className={`h-full w-full bg-gradient-to-br ${getGradient(collection.id)}`} />
         ) : (
-          <img
+          <Image
             src={imgSrc}
             alt={collection.name}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
             onError={() => {
               // If we failed on banner and have an image, try that next
               if (imgSrc === collection.banner && collection.image) {

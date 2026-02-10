@@ -22,29 +22,31 @@ export function useAllAssets() {
                 return
             }
 
-            // For now, let's limit to the last 3 collections to avoid massive loading times
-            // and fetch up to 10 tokens from each
-            const recentCollections = collections.sort((a, b) => Number(b.id) - Number(a.id)).slice(0, 5)
+            // For now, let's limit to the last 10 collections to ensure we have enough assets
+            // and fetch up to 20 tokens from each
+            const recentCollections = collections.sort((a, b) => Number(b.id) - Number(a.id)).slice(0, 10)
 
-            const allTokens: any[] = []
-
-            for (const col of recentCollections) {
+            // Fetch tokens from all collections in parallel
+            const collectionPromises = recentCollections.map(async (col) => {
                 console.log(`[useAllAssets] Fetching tokens for collection ${col.id} (${col.name})`)
                 const startTokenId = 0
-                const endTokenId = Math.min(col.items || 0, 10) // Limit to 10 items per collection for demo
+                const endTokenId = Math.min(col.items || 0, 20) // Limit to 20 items per collection
 
-                const promises = []
+                if (endTokenId === 0) return []
+
+                const tokenPromises = []
                 for (let i = startTokenId; i < endTokenId; i++) {
                     // identifier = collectionId:tokenId
                     const identifier = `${col.id}:${i}`
-                    promises.push(fetchTokenData(identifier, col.baseUri))
+                    tokenPromises.push(fetchTokenData(identifier, col.baseUri))
                 }
 
-                const tokens = await Promise.all(promises)
+                // Wait for all tokens in this collection
+                const tokens = await Promise.all(tokenPromises)
                 const validTokens = tokens.filter((t): t is ExtendedTokenData => t !== null)
 
-                // Map to Asset Card format
-                const mappedTokens = validTokens.map(t => ({
+                // Map to Asset Card format immediately
+                return validTokens.map(t => ({
                     id: t.identifier,
                     tokenId: t.token_id.toString(),
                     collectionAddress: col.ipNft, // Important for addressing
@@ -63,9 +65,10 @@ export function useAllAssets() {
                     verified: col.verified,
                     programmable: true // Default for IP assets
                 }))
+            })
 
-                allTokens.push(...mappedTokens)
-            }
+            const collectionsResults = await Promise.all(collectionPromises)
+            const allTokens = collectionsResults.flat()
 
             // Shuffle or sort? Let's sort by "newest" implicitly (by collection ID then token ID)
             // Actually, let's just reverse them so newest collections are first

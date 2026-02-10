@@ -3,6 +3,7 @@
 import type React from "react"
 import { Shuffle, MoreVertical, ShoppingCart, Share2, Flag, Link, Coins, Scale, Handshake, ZoomIn } from "lucide-react"
 import { Badge } from "@/src/components/ui/badge"
+import Image from "next/image"
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar"
 import { Button } from "@/src/components/ui/button"
 import { useRouter } from "next/navigation"
@@ -94,12 +95,11 @@ export default function AssetCard({ asset, minimal = false }: AssetCardProps) {
     <div className="group cursor-pointer" onClick={handleCardClick}>
       <div className="gradient-border-animated gradient-border-hover rounded-xl overflow-hidden transition-all duration-300">
         <div className="relative aspect-square overflow-hidden rounded-[10px] bg-muted/10">
-          <img
+          <Image
             src={asset.image || "/placeholder.svg?height=400&width=400&query=asset-card"}
             alt={asset.name}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
-            loading="lazy"
-            decoding="async"
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-110"
             sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
           />
 

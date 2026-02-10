@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+import Image from "next/image"
 
 import { CheckCircle2, Eye } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar"
@@ -39,11 +40,12 @@ export default function CreatorCard({ creator }: CreatorCardProps) {
     <Card className="group overflow-hidden border border-border/50 hover:border-border transition-all duration-300 hover:shadow-lg bg-card/50 backdrop-blur-sm">
       {/* Banner Section */}
       <div className="relative h-48 overflow-hidden">
-        <img
+        <Image
           src={creator.banner || "/placeholder.svg?height=96&width=400&text=Creator+Banner"}
           alt={`${creator.name} banner`}
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-          loading="lazy"
+          fill
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
+          sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 

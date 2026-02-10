@@ -1,5 +1,5 @@
 // Use configured gateway or fallback to dweb.link (more reliable for public reads than pinata)
-export const IPFS_GATEWAY = process.env.NEXT_PUBLIC_IPFS_GATEWAY || "https://dweb.link/ipfs/"
+export const IPFS_GATEWAY = process.env.NEXT_PUBLIC_IPFS_GATEWAY || "https://gateway.pinata.cloud/ipfs/"
 
 /**
  * Resolves an IPFS URI to a HTTP URL using a public gateway.
@@ -36,7 +36,7 @@ export async function fetchIpfsJson<T = any>(uri: string): Promise<T | null> {
         const proxyUrl = `/api/proxy?url=${encodeURIComponent(ipfsUrl)}`
 
         const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 10000) // 10s timeout
+        const timeoutId = setTimeout(() => controller.abort(), 30000) // 30s timeout
 
         try {
             const response = await fetch(proxyUrl, { signal: controller.signal })

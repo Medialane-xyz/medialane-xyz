@@ -5,29 +5,39 @@ import { motion, useScroll, useTransform } from "framer-motion"
 import { ArrowRight } from "lucide-react"
 import { Button } from "@/src/components/ui/button"
 import { useMobile } from "@/src/hooks/use-mobile"
-import { useMockData } from "@/src/lib/hooks/use-mock-data"
 import { useRouter } from "next/navigation"
 import AssetCard from "@/src/components/asset-card"
 import { HeroSlider } from "@/src/components/hero-slider"
-import FeaturedCreatorsCards from "@/src/components/featured-creators"
-import LatestActivities from "@/src/components/latest-activities"
+import { Skeleton } from "@/src/components/ui/skeleton"
+import { useAllCollections } from "@/src/lib/hooks/use-all-collections"
+import { useAllAssets } from "@/src/lib/hooks/use-all-assets"
 
 export default function Home() {
-  const [isLoaded, setIsLoaded] = useState(false)
   const isMobile = useMobile()
-  const { assets, collections, creators, activities } = useMockData()
   const router = useRouter()
   const { scrollY } = useScroll()
   const heroY = useTransform(scrollY, [0, 500], [0, 150])
 
-  const featuredCollections = collections.slice(0, 5)
+  // Real data fetching
+  const { collections, isLoading: isCollectionsLoading } = useAllCollections()
+  const { assets, isLoading: isAssetsLoading } = useAllAssets()
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoaded(true)
-    }, 150)
-    return () => clearTimeout(timer)
-  }, [])
+  const isLoading = isCollectionsLoading || isAssetsLoading
+
+  // Map collections for HeroSlider
+  const heroCollections = collections.map(c => ({
+    id: c.id,
+    name: c.name,
+    description: c.description || `Collection #${c.id}`,
+    image: c.image || "/placeholder.svg", // Fallback
+    banner: c.banner || c.image || "/placeholder.svg", // Fallback
+    items: c.items || 0,
+    volume: 0, // Not available on-chain yet
+    category: "Art" // Default category
+  })).slice(0, 5) // Show top 5
+
+  // Get recent assets (first 12)
+  const recentAssets = assets.slice(0, 12)
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -45,21 +55,14 @@ export default function Home() {
     visible: { opacity: 1, y: 0 },
   }
 
-  if (!isLoaded) {
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
-        <div className="flex flex-col items-center space-y-3">
-          <div className="w-8 h-8 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
-          <span className="text-sm font-medium">Loading MediaLane</span>
-        </div>
-      </div>
-    )
+  if (isLoading) {
+    return <HomeSkeleton />
   }
 
   return (
     <div className="relative w-full overflow-hidden pb-20">
       {/* Hero Slider */}
-      <HeroSlider collections={featuredCollections} />
+      <HeroSlider collections={heroCollections} />
 
       {/* Main Content - Optimized & Simplified */}
       <div className="px-4 md:px-6">
@@ -67,8 +70,8 @@ export default function Home() {
           <motion.div variants={itemVariants} className="max-w-7xl mx-auto">
             <div className="flex items-end justify-between mb-8">
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Trending Assets</h2>
-                <p className="text-base text-muted-foreground mt-2">Discover what's popular in our marketplace</p>
+                <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Recent Assets</h2>
+                <p className="text-base text-muted-foreground mt-2">Discover the latest drops in our marketplace</p>
               </div>
               <Button variant="outline" size="sm" onClick={() => router.push("/assets")} className="gap-2">
                 View All
@@ -77,7 +80,7 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {assets.slice(12, 24).map((asset, index) => (
+              {recentAssets.map((asset: any) => (
                 <motion.div key={asset.id} variants={itemVariants}>
                   <AssetCard asset={asset} />
                 </motion.div>
@@ -85,11 +88,53 @@ export default function Home() {
             </div>
           </motion.div>
         </motion.section>
+      </div>
+    </div>
+  )
+}
 
-        {/* Featured Creators - Enhanced */}
-        <FeaturedCreatorsCards creators={creators} />
+function HomeSkeleton() {
+  return (
+    <div className="relative w-full overflow-hidden pb-20">
+      {/* Hero Skeleton */}
+      <div className="relative min-h-screen h-screen w-full bg-zinc-900/20 animate-pulse">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="max-w-3xl space-y-6">
+              <Skeleton className="h-8 w-24 rounded-full" />
+              <Skeleton className="h-16 w-3/4" />
+              <Skeleton className="h-24 w-full" />
+              <div className="flex gap-4">
+                <Skeleton className="h-12 w-40" />
+                <Skeleton className="h-12 w-32" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        <LatestActivities activities={activities} />
+      {/* Content Skeleton */}
+      <div className="px-4 md:px-6 py-12 md:py-16">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex justify-between items-end mb-8">
+            <div className="space-y-2">
+              <Skeleton className="h-10 w-64" />
+              <Skeleton className="h-5 w-48" />
+            </div>
+            <Skeleton className="h-9 w-24" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="space-y-3">
+                <Skeleton className="h-[300px] w-full rounded-xl" />
+                <div className="space-y-2">
+                  <Skeleton className="h-5 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   )

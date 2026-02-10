@@ -133,19 +133,28 @@ export async function fetchCollectionById(collectionId: number | bigint): Promis
             }
         }
 
+        console.log(`[Collection #${collectionId}] Metadata:`, offChainMetadata, "BaseURI:", baseUri)
+
         // Helper to resolve image/banner URI
         const resolveMetaUri = (uri: string | undefined) => {
             if (!uri) return undefined
-            if (uri.startsWith("http") || uri.startsWith("ipfs://")) {
+
+            // If it's a direct IPFS CID (starts with Qm... or bafy... and has no slashes)
+            // or explicitly starts with ipfs://
+            if (uri.startsWith("ipfs://") || (!uri.includes("/") && (uri.startsWith("Qm") || uri.startsWith("bafy")))) {
                 return `/api/proxy?url=${encodeURIComponent(resolveIpfsUrl(uri))}`
             }
+
+            if (uri.startsWith("http")) {
+                return `/api/proxy?url=${encodeURIComponent(uri)}`
+            }
+
             // If relative path, try to append to baseUri
-            // If baseUri ends with /, append directly
-            // If baseUri is a directory but no trailing slash, append / + uri
-            // If baseUri is a file (no /), this might be tricky, but assuming directory structure for relative paths
             if (baseUri) {
                 const cleanBase = baseUri.endsWith('/') ? baseUri : `${baseUri}/`
-                return `/api/proxy?url=${encodeURIComponent(resolveIpfsUrl(`${cleanBase}${uri}`))}`
+                // If the relative path starts with /, remove it to avoid double slashes
+                const cleanUri = uri.startsWith('/') ? uri.slice(1) : uri
+                return `/api/proxy?url=${encodeURIComponent(resolveIpfsUrl(`${cleanBase}${cleanUri}`))}`
             }
             return undefined
         }
@@ -164,12 +173,8 @@ export async function fetchCollectionById(collectionId: number | bigint): Promis
             items: Number(stats.total_minted) - Number(stats.total_burned),
             volume: "0 ETH", // Volume would need marketplace integration
             verified: false, // Would need verification system
-            image: resolveMetaUri(offChainMetadata.image)
-                ? resolveMetaUri(offChainMetadata.image)
-                : (baseUri ? `/api/proxy?url=${encodeURIComponent(resolveIpfsUrl(`${baseUri}/collection.png`))}` : undefined),
-            banner: resolveMetaUri(offChainMetadata.banner)
-                ? resolveMetaUri(offChainMetadata.banner)
-                : (baseUri ? `/api/proxy?url=${encodeURIComponent(resolveIpfsUrl(`${baseUri}/banner.png`))}` : undefined),
+            image: resolveMetaUri(offChainMetadata.image),
+            banner: resolveMetaUri(offChainMetadata.banner),
             description: offChainMetadata.description,
         }
     } catch (error) {
@@ -188,30 +193,43 @@ export async function fetchAllCollections(): Promise<OnChainCollection[]> {
         // For now, try to fetch collections by iterating from 1
         // In production, you'd want to use event indexing or a subgraph
         const MAX_COLLECTIONS_TO_CHECK = 50
+        const BATCH_SIZE = 3
 
-        for (let i = 1; i <= MAX_COLLECTIONS_TO_CHECK; i++) {
-            try {
-                // Add a small delay to avoid rate limiting on IPFS gateway
-                await new Promise(resolve => setTimeout(resolve, 200))
+        for (let i = 1; i <= MAX_COLLECTIONS_TO_CHECK; i += BATCH_SIZE) {
+            const batchPromises = []
+            for (let j = 0; j < BATCH_SIZE; j++) {
+                const collectionId = i + j
+                if (collectionId > MAX_COLLECTIONS_TO_CHECK) break
 
-                const contract = getIPCollectionContract()
-                const isValid = await contract.is_valid_collection(i)
-
-                if (isValid) {
-                    const collection = await fetchCollectionById(i)
-                    if (collection) {
-                        collections.push(collection)
+                batchPromises.push(async () => {
+                    try {
+                        const contract = getIPCollectionContract()
+                        const isValid = await contract.is_valid_collection(collectionId)
+                        if (isValid) {
+                            return await fetchCollectionById(collectionId)
+                        }
+                        return null
+                    } catch (e) {
+                        return null
                     }
-                } else {
-                    // Stop searching if encountered an invalid collection (assuming sequential IDs)
-                    break
-                }
-            } catch (e) {
-                // Collection doesn't exist or RPC error, stop searching if it's a "does not exist" type error, 
-                // but if it's RPC error we might want to continue? 
-                // Actually if seq is 1,2,3... and 1 fails, maybe stop.
-                // But let's log specifically.
-                break
+                })
+            }
+
+            // Execute batch
+            const results = await Promise.all(batchPromises.map(fn => fn()))
+
+            // Add found collections
+            const validResults = results.filter((c): c is OnChainCollection => c !== null)
+            collections.push(...validResults)
+
+            // If we found nothing in this batch, and it was a full batch, 
+            // maybe we should stop? For now, let's keep going to be safe, 
+            // or maybe assume sequential IDs and stop if we see consecutive failures?
+            // Let's rely on MAX_COLLECTIONS_TO_CHECK for now.
+
+            // Artificial delay to be nice to RPC/IPFS
+            if (validResults.length > 0) {
+                await new Promise(resolve => setTimeout(resolve, 100))
             }
         }
     } catch (error) {
