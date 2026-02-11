@@ -9,7 +9,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@chipi-stack/nextjs": "^11.13.0",
+    "@chipi-stack/nextjs": "^11.22.0",
     "@clerk/nextjs": "^6.37.3",
     "@emotion/is-prop-valid": "latest",
     "@hookform/resolvers": "^3.10.0",
