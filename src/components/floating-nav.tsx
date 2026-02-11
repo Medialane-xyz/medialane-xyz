@@ -100,12 +100,6 @@ const FloatingNav = () => {
       href: "/collections",
       isActive: pathname.startsWith("/collections"),
     },
-    {
-      icon: <Plus className="w-4 h-4" />,
-      label: "Launchpad",
-      href: "/creator",
-      isActive: pathname.startsWith("/creator"),
-    },
   ]
 
   return (

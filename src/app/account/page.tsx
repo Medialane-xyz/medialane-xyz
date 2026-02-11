@@ -98,8 +98,8 @@ export default function AccountPage() {
                     {wallet ? (
                         <div className="space-y-4">
                             <WalletSummary
-                                normalizedPublicKey={wallet.wallet.normalizedPublicKey || wallet.wallet.publicKey}
-                                walletPublicKey={wallet.wallet.publicKey}
+                                normalizedPublicKey={(wallet as any).normalizedPublicKey || wallet.wallet?.normalizedPublicKey}
+                                walletPublicKey={(wallet as any).publicKey || wallet.wallet?.publicKey}
                             />
                             <p className="text-xs text-muted-foreground text-center px-4">
                                 Your Chipi Wallet is a smart contract wallet secured by your PIN and passkeys.
