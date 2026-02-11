@@ -55,6 +55,8 @@
     "lucide-react": "^0.454.0",
     "next": "^15.5.12",
     "next-themes": "latest",
+    "nodemailer": "^8.0.1",
+    "pinata": "^2.4.9",
     "radix-ui": "^1.4.3",
     "react": "19.2.0",
     "react-day-picker": "9.8.0",
@@ -66,10 +68,9 @@
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "latest",
+    "ws": "^8.18.3",
     "yup": "^1.7.1",
-    "zod": "3.25.76",
-    "pinata": "^2.4.9",
-    "ws": "^8.18.3"
+    "zod": "3.25.76"
   },
   "devDependencies": {
     "@types/node": "^22",

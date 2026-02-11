@@ -5,15 +5,15 @@ import {
   uint256,
   num,
 } from "starknet";
-import { ERC721_ABI } from "../abi/ERC721_ABI";
+import { ERC721_ABI } from "@/src/abis/ERC721_ABI";
 import type {
   TokenBalanceERC721,
   NFTAsset,
   TokenBalance,
   WalletAssets,
   IPortfolioReturnTypeObj,
-} from "../types/asset";
-import { ERC20_ABI } from "../abi/ERC20_ABI";
+} from "@/src/types/asset";
+import { ERC20_ABI } from "@/src/abis/ERC20_ABI";
 import { CONTRACTS, provider } from "./constant";
 
 export class StarkNetService {
@@ -188,12 +188,12 @@ export class StarkNetService {
                 walletAddress,
                 tokenIndex,
               ], { blockIdentifier: "latest" });
-              const tokenId = Array.isArray(tokenIdBigInt) 
-                ? tokenIdBigInt[0]?.toString() 
+              const tokenId = Array.isArray(tokenIdBigInt)
+                ? tokenIdBigInt[0]?.toString()
                 : tokenIdBigInt?.toString();
-              
+
               if (!tokenId) return null;
-              
+
               let tokenURI: string | undefined;
               let metadata: any = undefined;
 
@@ -259,8 +259,8 @@ export class StarkNetService {
       const balance = balanceData[0]
         ? Number(balanceData[0])
         : balanceData.low
-        ? balanceData.low + (balanceData.high << 128)
-        : 0;
+          ? balanceData.low + (balanceData.high << 128)
+          : 0;
 
       const decimals = Number(decimalsResult) || 18;
       const symbol = symbolResult?.toString() || "UNKNOWN";
@@ -302,8 +302,8 @@ export class StarkNetService {
       const balance = balanceData[0]
         ? Number(balanceData[0])
         : balanceData.low
-        ? balanceData.low + (balanceData.high << 128)
-        : 0;
+          ? balanceData.low + (balanceData.high << 128)
+          : 0;
 
       if (balance === 0) {
         return [];
@@ -322,8 +322,8 @@ export class StarkNetService {
           const tokenId = tokenData[0]
             ? Number(tokenData[0])
             : tokenData.low
-            ? tokenData.low + (tokenData.high << 128)
-            : 0;
+              ? tokenData.low + (tokenData.high << 128)
+              : 0;
 
           // Try to get token URI
           let tokenURI: string | undefined;
@@ -385,7 +385,7 @@ export class StarkNetService {
 
 
 
-  
+
 
   /**
    * Get all wallet assets (tokens + NFTs)
@@ -397,14 +397,14 @@ export class StarkNetService {
     }
 
     try {
-      
+
       //   Get common token balances - dynamically filter out non-ERC20 contracts
       const erc20Contracts = Object.fromEntries(
-        Object.entries(CONTRACTS).filter(([key]) => 
+        Object.entries(CONTRACTS).filter(([key]) =>
           !['COLLECTION_FACTORY', 'MEDIOLANO'].includes(key)
         )
       );
-      
+
       const tokenPromises = Object.entries(erc20Contracts).map(([symbol, address]) =>
         this.getTokenBalance(address, normalizedAddress)
       );
@@ -452,11 +452,11 @@ export class StarkNetService {
     try {
       // Get common token balances - dynamically filter out non-ERC20 contracts
       const erc20Contracts = Object.fromEntries(
-        Object.entries(CONTRACTS).filter(([key]) => 
+        Object.entries(CONTRACTS).filter(([key]) =>
           !['COLLECTION_FACTORY', 'MEDIOLANO'].includes(key)
         )
       );
-      
+
       const tokenPromises = Object.entries(erc20Contracts).map(([symbol, address]) =>
         this.getTokenBalance(address, normalizedAddress)
       );
@@ -551,11 +551,11 @@ export class StarkNetService {
    */
   public async getTransactionStatus(txHash: string): Promise<{
     status:
-      | "PENDING"
-      | "ACCEPTED_ON_L1"
-      | "ACCEPTED_ON_L2"
-      | "REJECTED"
-      | "NOT_RECEIVED";
+    | "PENDING"
+    | "ACCEPTED_ON_L1"
+    | "ACCEPTED_ON_L2"
+    | "REJECTED"
+    | "NOT_RECEIVED";
     block_number?: number;
   }> {
     try {
