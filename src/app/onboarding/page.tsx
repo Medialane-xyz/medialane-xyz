@@ -79,15 +79,15 @@ export default function OnboardingComponent() {
         params: {
           encryptKey: pin,
           externalUserId: user?.id as any,
-          chain: "STARKNET" as any, // Cast to any or import Chain enum if strictly typed
+          // chain: "STARKNET", // Removing chain param as it might be causing issues
         },
         bearerToken: token,
       });
 
-      console.log('Wallet creation response:', response);
+      console.log('Wallet creation response:', JSON.stringify(response, null, 2));
 
       if (!response.txHash || !response.wallet) {
-        throw new Error('Failed to create wallet');
+        throw new Error(`Failed to create wallet. Response: ${JSON.stringify(response)}`);
       }
 
       console.log('Updating Clerk metadata...');
