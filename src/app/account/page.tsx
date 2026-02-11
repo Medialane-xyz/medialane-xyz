@@ -78,12 +78,12 @@ export default function AccountPage() {
                     <CardContent>
                         {wallet ? (
                             <WalletSummary
-                                normalizedPublicKey={wallet.walletPublicKey}
-                                walletPublicKey={wallet.walletPublicKey}
+                                normalizedPublicKey={(wallet as any).walletPublicKey}
+                                walletPublicKey={(wallet as any).walletPublicKey}
                             />
                         ) : (
                             <div className="text-center py-8 text-muted-foreground">
-                                <p>No wallet found.</p>
+                                <p>Redirecting to wallet setup...</p>
                             </div>
                         )}
                     </CardContent>

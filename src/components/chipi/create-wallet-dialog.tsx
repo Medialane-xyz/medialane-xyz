@@ -45,7 +45,7 @@ const FormSchema = z
         path: ["confirmPin"],
     });
 
-export function CreateWalletDialog({ open, onOpenChange }: { open?: boolean; onOpenChange?: (open: boolean) => void }) {
+export function CreateWalletDialog({ open, onOpenChange, trigger }: { open?: boolean; onOpenChange?: (open: boolean) => void; trigger?: React.ReactNode }) {
     const { getToken, userId: clerkUserId } = useAuth();
     const { user } = useUser();
     const {
@@ -81,6 +81,7 @@ export function CreateWalletDialog({ open, onOpenChange }: { open?: boolean; onO
             });
             toast.success("Wallet created successfully!");
             form.reset();
+            // Optional: Close dialog or refresh parent
         } catch (error) {
             toast.error("Failed to create wallet");
             console.error("Wallet creation error:", error);
@@ -88,9 +89,7 @@ export function CreateWalletDialog({ open, onOpenChange }: { open?: boolean; onO
     };
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            {/* <DialogTrigger asChild>
-                <Button variant="outline">Create Wallet</Button>
-            </DialogTrigger> */}
+            {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
 
             <DialogContent>
                 <DialogHeader>
@@ -104,11 +103,11 @@ export function CreateWalletDialog({ open, onOpenChange }: { open?: boolean; onO
                             <FormField
                                 control={form.control}
                                 name="pin"
-                                render={({ field }: { field: React.ComponentProps<typeof InputOTP> }) => (
+                                render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Enter PIN</FormLabel>
                                         <FormControl>
-                                            <InputOTP maxLength={4} {...field}>
+                                            <InputOTP maxLength={4} value={field.value} onChange={field.onChange} onBlur={field.onBlur} ref={field.ref}>
                                                 <InputOTPGroup>
                                                     <InputOTPSlot index={0} />
                                                     <InputOTPSlot index={1} />
@@ -126,11 +125,11 @@ export function CreateWalletDialog({ open, onOpenChange }: { open?: boolean; onO
                             <FormField
                                 control={form.control}
                                 name="confirmPin"
-                                render={({ field }: { field: React.ComponentProps<typeof InputOTP> }) => (
+                                render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Confirm PIN</FormLabel>
                                         <FormControl>
-                                            <InputOTP maxLength={4} {...field}>
+                                            <InputOTP maxLength={4} value={field.value} onChange={field.onChange} onBlur={field.onBlur} ref={field.ref}>
                                                 <InputOTPGroup>
                                                     <InputOTPSlot index={0} />
                                                     <InputOTPSlot index={1} />

@@ -1,6 +1,7 @@
 
 
 import { ChipiProvider } from "@chipi-stack/nextjs";
+import { WalletGuard } from "@/src/components/auth/wallet-guard";
 
 const CHIPI_PUBLIC_KEY = process.env.NEXT_PUBLIC_CHIPI_API_KEY!;
 
@@ -18,6 +19,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         apiPublicKey: CHIPI_PUBLIC_KEY,
       }}
     >
+      <WalletGuard />
       {children}
     </ChipiProvider>
   );
