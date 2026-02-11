@@ -1,5 +1,5 @@
-import CreateAssetView from "@/src/components/assets/create-asset";
+import MintEventAsset from "@/src/components/assets/mint-event-asset";
 
 export default function page() {
-  return <CreateAssetView />;
+  return <MintEventAsset />;
 }
