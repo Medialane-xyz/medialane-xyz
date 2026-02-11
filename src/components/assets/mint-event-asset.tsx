@@ -325,10 +325,9 @@ export default function MintEventAsset() {
                                                         <DialogDescription className="sr-only">Enter your wallet PIN to confirm the transaction.</DialogDescription>
                                                     </DialogHeader>
                                                     <PinInput
-                                                        length={4}
-                                                        onComplete={handlePinSubmit}
-                                                        disabled={isPinSubmitting}
-                                                        error={!!pinError}
+                                                        onSubmit={handlePinSubmit}
+                                                        isLoading={isPinSubmitting}
+                                                        error={pinError}
                                                         title="Enter Wallet PIN"
                                                         description="This transaction is gasless."
                                                     />
