@@ -46,7 +46,7 @@ export default function PortfolioView() {
   const [sortBy, setSortBy] = useState("recent");
   const [filterBy, setFilterBy] = useState("all");
   const publicKey = user?.publicMetadata?.publicKey as any;
-  
+
   console.log("User wallet:", publicKey)
 
   const {
@@ -151,8 +151,8 @@ export default function PortfolioView() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/10 to-background">
-      <main className="pb-6">
+    <div className="min-h-screen py-20">
+      <main className="">
         <div className="px-4 py-8">
           <div className="max-w-6xl mx-auto">
             {/* Header Section */}

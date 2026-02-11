@@ -306,8 +306,8 @@ export default function CreateAssetView() {
   }, [user]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/5 to-background">
-      <main className="pb-20">
+    <div className="min-h-screen py-20">
+      <main className="">
         <div className="px-4 py-6">
           <div className="max-w-2xl mx-auto">
             <div className="space-y-6">
