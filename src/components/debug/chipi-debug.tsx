@@ -21,11 +21,19 @@ export function ChipiDebug() {
         }
     });
 
+    const [chipiToken, setChipiToken] = useState<string | null>(null);
+
     useEffect(() => {
         const fetchToken = async () => {
             if (userId) {
                 const t = await getToken();
                 setToken(t);
+                try {
+                    const ct = await getToken({ template: "chipipay" });
+                    setChipiToken(ct);
+                } catch (e) {
+                    console.error("Failed to get chipi token", e);
+                }
             }
         };
         fetchToken();
@@ -51,6 +59,7 @@ export function ChipiDebug() {
                     <p>User ID: {userId || "Not Logged In"}</p>
                     <p>Email: {user?.primaryEmailAddress?.emailAddress}</p>
                     <p>Token: {token ? (token.substring(0, 10) + "...") : "No Token"}</p>
+                    <p>Chipi Token: {chipiToken ? (chipiToken.substring(0, 10) + "...") : <span className="text-red-500 font-bold">MISSING (Check Clerk Template)</span>}</p>
                 </div>
 
                 <div>
