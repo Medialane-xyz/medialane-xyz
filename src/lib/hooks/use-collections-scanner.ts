@@ -1,8 +1,7 @@
 "use client"
 
 import { useState, useCallback, useEffect, useRef } from "react"
-import { useContract } from "@starknet-react/core"
-import { RpcProvider, shortString } from "starknet"
+import { RpcProvider, shortString, Contract } from "starknet"
 import { ipCollectionAbi } from "@/src/abis/ip_collection"
 import { fetchIpfsJson, resolveMediaUrl } from "@/src/lib/ipfs"
 
@@ -97,10 +96,7 @@ export function useCollectionsScanner(pageSize: number = 12): UseCollectionsScan
     const [isScanning, setIsScanning] = useState(false)
     const hasInitialized = useRef(false)
 
-    const { contract } = useContract({
-        abi: ipCollectionAbi,
-        address: COLLECTION_ADDRESS as `0x${string}`,
-    })
+    // Removed useContract hook call
 
     // Fetch events for a specific block range
     const fetchEventsInRange = useCallback(async (fromBlock: number, toBlock: number) => {
@@ -300,6 +296,12 @@ export function useCollectionsScanner(pageSize: number = 12): UseCollectionsScan
 
             // Batch fetch details
             const batchSize = 5
+
+            // Setup provider and contract
+            const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || ""
+            const provider = new RpcProvider({ nodeUrl: rpcUrl })
+            const contract = new Contract(ipCollectionAbi, COLLECTION_ADDRESS!, provider)
+
             for (let i = 0; i < itemsToFetch.length; i += batchSize) {
                 const batch = itemsToFetch.slice(i, i + batchSize)
 
@@ -327,8 +329,8 @@ export function useCollectionsScanner(pageSize: number = 12): UseCollectionsScan
 
                                 if (metadata) {
                                     name = metadata.name || name
-                                    image = resolveMediaUrl(metadata.image || "")
-                                    headerImage = resolveMediaUrl(metadata.banner || metadata.headerImage || "")
+                                    image = resolveMediaUrl(metadata.image || "") || "/placeholder.svg"
+                                    headerImage = resolveMediaUrl(metadata.banner || metadata.headerImage || "") || ""
                                     description = metadata.description || ""
                                 }
                             } catch (e) {
@@ -340,7 +342,6 @@ export function useCollectionsScanner(pageSize: number = 12): UseCollectionsScan
                         let totalSupply = 0
                         let ipNft = parsed.collectionId // Default fallback if we can't get address (should fetch from contract)
 
-                        // TODO: optimize this call?
                         if (contract) {
                             try {
                                 const stats: any = await contract.get_collection_stats(parsed.collectionId)
@@ -381,7 +382,7 @@ export function useCollectionsScanner(pageSize: number = 12): UseCollectionsScan
         }
 
         processCollections()
-    }, [allParsedEvents, displayCount, contract])
+    }, [allParsedEvents, displayCount])
 
 
     const loadMore = async () => {

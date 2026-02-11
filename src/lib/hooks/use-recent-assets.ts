@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useEffect } from "react"
 import { RpcProvider, shortString } from "starknet"
-import { useContract } from "@starknet-react/core"
 import { ipCollectionAbi } from "@/src/abis/ip_collection"
 import { fetchIpfsJson, resolveMediaUrl } from "@/src/lib/ipfs"
 
@@ -106,10 +105,9 @@ export function useRecentAssets(pageSize: number = 20): UseRecentAssetsReturn {
     const [hasMoreBlocks, setHasMoreBlocks] = useState(true)
     const [isScanning, setIsScanning] = useState(false)
 
-    const { contract: registryContract } = useContract({
-        abi: ipCollectionAbi as any,
-        address: COLLECTION_ADDRESS as `0x${string}`,
-    })
+    // Removed unused useContract hook call
+
+    // Fetch events for a specific block range
 
     // Fetch events for a specific block range
     const fetchEventsInRange = useCallback(async (fromBlock: number, toBlock: number) => {
@@ -363,7 +361,7 @@ export function useRecentAssets(pageSize: number = 20): UseRecentAssetsReturn {
         }
 
         processAssets()
-    }, [allParsedEvents, displayCount, registryContract])
+    }, [allParsedEvents, displayCount])
     // Intentionally omitting assets from dep array to avoid infinite loop, logic handles diff
 
     const loadMore = async () => {

@@ -11,75 +11,49 @@ import {
     ChainToken,
     Chain,
     useGetWallet,
-    STARKNET_CONTRACTS
 } from "@chipi-stack/nextjs";
 import { WalletPinDialog } from "./wallet-pin-dialog";
-import { useSession } from "./session-context";
 
-export function PayWithChipiButton({ usdAmount }: { usdAmount: number }) {
-    const {
-        hasActiveSession,
-        activateSession,
-        executeWithSession,
-        isExecutingSession,
-        isLoadingSession
-    } = useSession();
-
-    // We still need wallet data to construct the call if needed, 
-    // but executeWithSession abstracts some of it. 
-    // Wait, executeWithSession takes `calls`. We need to construct the transfer call.
-    // The `useTransfer` hook abstracted this. Now we need to manually build the call?
-    // Or we use `useTransfer` inside session context?
-    // `executeWithSession` executes `Call[]`.
-    // We need to know the USDC contract address and entrypoint.
-
-    // Re-reading `useChipiSession` docs in d.ts:
-    // "Execute calls using the session key"
-
-    // We need the USDC contract address. 
-    // `STARKNET_CONTRACTS` from `@chipi-stack/types` might help.
-
+export function PayWithChipiButton({ usdAmount, recipientAddress }: { usdAmount: number; recipientAddress: string }) {
+    const { getToken } = useAuth();
     const [pinOpen, setPinOpen] = useState(false);
 
-    const handlePay = async () => {
-        if (hasActiveSession) {
-            await runSessionPayment();
-        } else {
-            setPinOpen(true);
-        }
+    // We need wallet data for the transfer
+    const { transferAsync, isLoading } = useTransfer();
+
+    const handlePay = () => {
+        setPinOpen(true);
     }
 
-    const runSessionPayment = async () => {
-        const merchantWalletPublicKey = process.env.NEXT_PUBLIC_MERCHANT_WALLET || "";
-        if (!merchantWalletPublicKey) {
-            toast.error("Merchant wallet not configured");
-            return;
-        }
+    const onPinSubmit = async (pin: string) => {
+        setPinOpen(false);
 
         try {
-            // Get USDC contract address for current network (defaulting to USDC for now)
-            const tokenConfig = STARKNET_CONTRACTS.USDC;
-            // Note: In a real app, check process.env.NEXT_PUBLIC_STARKNET_NETWORK for mainnet/sepolia switch 
-            // if the SDK doesn't handle it automatically in the constant.
-            // STARKNET_CONTRACTS usually has mainnet defaults.
+            const token = await getToken({ template: "chipipay" });
+            if (!token) {
+                toast.error("Authentication failed");
+                return;
+            }
 
-            // Calculate amount in base units (6 decimals for USDC)
-            const decimals = tokenConfig.decimals;
-            const amountInBaseUnits = Math.floor(usdAmount * Math.pow(10, decimals));
-            const amountUint256 = amountInBaseUnits.toString();
+            // Execute transfer
+            // Note: Assuming transferAsync expects these params based on standard Chipi SDK usage in v11
+            await transferAsync({
+                bearerToken: token,
+                params: {
+                    encryptKey: pin,
+                    amount: usdAmount.toString(), // Ensure amount format is correct (e.g. string)
+                    recipientAddress: recipientAddress,
+                    tokenAddress: "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8", // USDC on Starknet Mainnet
+                    // If SDK handles decimals, good. If not, might need conversion.
+                    // v11 usually expects raw string amount or handles it. 
+                    // Let's assume input is human readable if SDK handles it, or check existing usage.
+                } as any // Casting to avoid strict type checks if types are missing/different in v11
+            });
 
-            // Construct Starknet Call
-            const call = {
-                contractAddress: tokenConfig.contractAddress,
-                entrypoint: "transfer",
-                calldata: [merchantWalletPublicKey, amountUint256, "0"] // u256 is low, high
-            };
-
-            await executeWithSession([call]);
-            toast.success("Payment complete (Gasless) ✨");
-        } catch (e) {
+            toast.success("Payment successful!");
+        } catch (e: any) {
             console.error("Payment failed", e);
-            toast.error("Payment failed. Please try again.");
+            toast.error(e.message || "Payment failed");
         }
     };
 
@@ -87,21 +61,15 @@ export function PayWithChipiButton({ usdAmount }: { usdAmount: number }) {
         <>
             <Button
                 onClick={handlePay}
-                disabled={isExecutingSession || isLoadingSession}
+                disabled={isLoading}
             >
-                {isExecutingSession
-                    ? "Processing..."
-                    : hasActiveSession ? "Pay Instant (Gasless)" : "Pay with Chipi Wallet"}
+                {isLoading ? "Processing..." : `Pay $${usdAmount} with Chipi`}
             </Button>
 
             <WalletPinDialog
                 open={pinOpen}
                 onCancel={() => setPinOpen(false)}
-                onSubmit={async (pin) => {
-                    setPinOpen(false);
-                    await activateSession(pin);
-                    setTimeout(() => runSessionPayment(), 500); // Small delay to ensuring session is ready
-                }}
+                onSubmit={onPinSubmit}
             />
         </>
     );

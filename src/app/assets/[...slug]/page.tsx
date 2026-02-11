@@ -15,9 +15,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/ta
 import { Badge } from "@/src/components/ui/badge"
 import { RemixGenealogyTree } from "@/src/components/remix-genealogy-tree"
 import { useToken, useTokenByAddress } from "@/src/lib/hooks/use-collection-tokens"
-import { useAccount } from "@starknet-react/core"
 import { ListingDialog } from "@/src/components/listing-dialog"
 import { AssetsSkeleton } from "@/src/components/assets-skeleton"
+import { useAuth } from "@clerk/nextjs"
+import { useGetWallet } from "@chipi-stack/nextjs"
 
 // Glass Stat Card Component
 const GlassStatCard = ({ label, value, icon, subtext }: { label: string, value: string | number, icon?: React.ReactNode, subtext?: string }) => (
@@ -34,16 +35,17 @@ const GlassStatCard = ({ label, value, icon, subtext }: { label: string, value: 
     </div>
 )
 
-/**
- * Unified Asset Detail Page
- * Supports two URL formats:
- * 1. /assets/{collectionAddress}/{tokenId} - Industry standard on-chain format
- * 2. /assets/{identifier} - Legacy format where identifier is "collectionId:tokenId"
- */
 export default function AssetDetailPage() {
     const params = useParams()
     const router = useRouter()
-    const { account } = useAccount()
+
+    const { userId, getToken } = useAuth()
+    const { data: walletData } = useGetWallet({
+        getBearerToken: () => getToken({ template: "chipipay" }).then((t) => t || ""),
+        params: { externalUserId: userId || "" },
+        queryOptions: { enabled: !!userId },
+    })
+    const account = { address: (walletData as any)?.wallet?.publicKey }
 
     // Parse the slug array to determine which format we're using
     const slug = params.slug as string[] | undefined

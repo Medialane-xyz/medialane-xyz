@@ -39,35 +39,41 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/src/components/ui/drawer"
 import { Checkbox } from "@/src/components/ui/checkbox"
 import { Label } from "@/src/components/ui/label"
-import { useAccount } from "@starknet-react/core"
+import { useAuth } from "@clerk/nextjs"
+import { useGetWallet } from "@chipi-stack/nextjs"
 import { useUserCollections } from "@/src/lib/hooks/use-all-collections"
 import { useUserAssets } from "@/src/lib/hooks/use-collection-tokens"
 import { useMobile } from "@/src/hooks/use-mobile"
 
-const CATEGORIES = [
-  { id: "all", name: "All Categories", icon: <Grid3X3 className="h-4 w-4" />, count: 0 },
-  { id: "digital-art", name: "Digital Art", icon: <ImageIcon className="h-4 w-4" />, count: 0 },
-  { id: "music", name: "Music", icon: <Music className="h-4 w-4" />, count: 0 },
-  { id: "literature", name: "Literature", icon: <FileText className="h-4 w-4" />, count: 0 },
-  { id: "branding", name: "Branding", icon: <Palette className="h-4 w-4" />, count: 0 },
-  { id: "film-video", name: "Film & Video", icon: <Film className="h-4 w-4" />, count: 0 },
-  { id: "patents", name: "Patents", icon: <Lightbulb className="h-4 w-4" />, count: 0 },
-]
-
-const SORT_OPTIONS = [
-  { value: "newest", label: "Newest First" },
-  { value: "oldest", label: "Oldest First" },
-  { value: "price-high", label: "Price: High to Low" },
-  { value: "price-low", label: "Price: Low to High" },
-  { value: "most-liked", label: "Most Liked" },
-  { value: "most-viewed", label: "Most Viewed" },
-]
-
 export default function PortfolioPage() {
-  const { address } = useAccount()
+  const { userId, getToken } = useAuth()
+  const { data: walletData } = useGetWallet({
+    getBearerToken: () => getToken({ template: "chipipay" }).then((t) => t || ""),
+    params: { externalUserId: userId || "" },
+    queryOptions: { enabled: !!userId },
+  })
+  // Cast to any to avoid strict type checks on wallet property
+  const address = (walletData as any)?.wallet?.publicKey
   const isMobile = useMobile()
 
-  // Fetch real data
+  const CATEGORIES = [
+    { id: "all", name: "All Categories", icon: <Grid3X3 className="h-4 w-4" />, count: 0 },
+    { id: "digital-art", name: "Digital Art", icon: <ImageIcon className="h-4 w-4" />, count: 0 },
+    { id: "music", name: "Music", icon: <Music className="h-4 w-4" />, count: 0 },
+    { id: "literature", name: "Literature", icon: <FileText className="h-4 w-4" />, count: 0 },
+    { id: "branding", name: "Branding", icon: <Palette className="h-4 w-4" />, count: 0 },
+    { id: "film-video", name: "Film & Video", icon: <Film className="h-4 w-4" />, count: 0 },
+    { id: "patents", name: "Patents", icon: <Lightbulb className="h-4 w-4" />, count: 0 },
+  ]
+
+  const SORT_OPTIONS = [
+    { value: "newest", label: "Newest First" },
+    { value: "oldest", label: "Oldest First" },
+    { value: "price-high", label: "Price: High to Low" },
+    { value: "price-low", label: "Price: Low to High" },
+    { value: "most-liked", label: "Most Liked" },
+    { value: "most-viewed", label: "Most Viewed" },
+  ]
   const { collections: userCollections, isLoading: isLoadingCollections } = useUserCollections(address)
   const { assets: rawAssets, isLoading: isLoadingAssets } = useUserAssets(address)
 

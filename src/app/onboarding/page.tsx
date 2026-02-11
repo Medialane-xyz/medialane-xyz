@@ -86,12 +86,16 @@ export default function OnboardingComponent() {
 
       console.log('Wallet creation response:', JSON.stringify(response, null, 2));
 
-      // Check if response has publicKey directly (flat structure) or nested wallet (legacy/documented structure)
-      const walletPublicKey = response.wallet?.publicKey || response.publicKey;
-      const walletEncryptedPrivateKey = response.wallet?.encryptedPrivateKey || response.encryptedPrivateKey;
+      // Check if response has wallet property (v11 structure)
+      if (!response.wallet) {
+        throw new Error(`Failed to create wallet. response.wallet is missing. Response: ${JSON.stringify(response)}`);
+      }
+
+      const walletPublicKey = response.wallet.publicKey;
+      const walletEncryptedPrivateKey = response.wallet.encryptedPrivateKey;
 
       if (!walletPublicKey) {
-        throw new Error(`Failed to create wallet. Missing publicKey. Response: ${JSON.stringify(response)}`);
+        throw new Error(`Failed to create wallet. Missing publicKey in wallet object. Response: ${JSON.stringify(response)}`);
       }
 
       console.log('Updating Clerk metadata...');

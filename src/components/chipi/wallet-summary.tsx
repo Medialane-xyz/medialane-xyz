@@ -1,12 +1,9 @@
 import { useState } from "react";
-import Image from "next/image";
 import { toast } from "sonner";
-import { CopyIcon, LockIcon, UnlockIcon, QrCodeIcon, WalletIcon, ShieldCheckIcon, ClockIcon } from "lucide-react";
+import { CopyIcon, QrCodeIcon, WalletIcon } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/src/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/src/components/ui/card";
 import { UsdcBalance } from "@/src/components/chipi/usdc-balance";
-import { useSession } from "@/src/components/chipi/session-context";
-import { WalletPinDialog } from "@/src/components/chipi/wallet-pin-dialog";
 import {
     Dialog,
     DialogContent,
@@ -25,8 +22,6 @@ export function WalletSummary({
     normalizedPublicKey: string;
     walletPublicKey: string;
 }) {
-    const { hasActiveSession, session, activateSession, clearSession } = useSession();
-    const [pinOpen, setPinOpen] = useState(false);
     const [receiveOpen, setReceiveOpen] = useState(false);
 
     const shortWallet = normalizedPublicKey
@@ -39,22 +34,6 @@ export function WalletSummary({
         toast.success("Address copied to clipboard");
     };
 
-    const handleUnlock = () => {
-        setPinOpen(true);
-    };
-
-    const handleLock = () => {
-        clearSession();
-        toast.info("Session locked");
-    };
-
-    // Calculate time remaining if session exists
-    const getSessionExpiry = () => {
-        if (!session?.validUntil) return null;
-        const expiry = new Date(session.validUntil * 1000);
-        return expiry.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    };
-
     return (
         <Card className="border-primary/20 bg-background/40 backdrop-blur-md shadow-xl overflow-hidden">
             <CardHeader className="pb-4">
@@ -65,16 +44,8 @@ export function WalletSummary({
                         </div>
                         <CardTitle className="text-xl font-bold">Chipi Wallet</CardTitle>
                     </div>
-                    <Badge variant={hasActiveSession ? "default" : "outline"} className={hasActiveSession ? "bg-green-500/10 text-green-500 hover:bg-green-500/20 border-green-500/20" : "text-muted-foreground"}>
-                        {hasActiveSession ? (
-                            <div className="flex items-center gap-1">
-                                <span className="relative flex h-2 w-2 mr-1">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                                </span>
-                                Session Active
-                            </div>
-                        ) : "Session Locked"}
+                    <Badge variant="outline" className="text-muted-foreground border-primary/20 bg-primary/5">
+                        Active
                     </Badge>
                 </div>
             </CardHeader>
@@ -89,10 +60,10 @@ export function WalletSummary({
                 <Separator className="bg-primary/10" />
 
                 {/* Actions Grid */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="w-full">
                     <Dialog open={receiveOpen} onOpenChange={setReceiveOpen}>
                         <DialogTrigger asChild>
-                            <Button variant="outline" className="h-auto py-4 flex flex-col gap-2 border-primary/20 hover:bg-primary/5">
+                            <Button variant="outline" className="w-full py-4 flex flex-col gap-2 border-primary/20 hover:bg-primary/5 h-auto">
                                 <QrCodeIcon className="w-5 h-5 mb-1" />
                                 <span>Receive</span>
                             </Button>
@@ -125,41 +96,7 @@ export function WalletSummary({
                             </div>
                         </DialogContent>
                     </Dialog>
-
-                    {hasActiveSession ? (
-                        <Button
-                            variant="outline"
-                            className="h-auto py-4 flex flex-col gap-2 border-red-500/20 text-red-500 hover:bg-red-500/10 hover:text-red-400"
-                            onClick={handleLock}
-                        >
-                            <LockIcon className="w-5 h-5 mb-1" />
-                            <span>Lock Session</span>
-                        </Button>
-                    ) : (
-                        <Button
-                            variant="outline"
-                            className="h-auto py-4 flex flex-col gap-2 border-green-500/20 text-green-500 hover:bg-green-500/10 hover:text-green-400"
-                            onClick={handleUnlock}
-                        >
-                            <UnlockIcon className="w-5 h-5 mb-1" />
-                            <span>Unlock Session</span>
-                        </Button>
-                    )}
                 </div>
-
-                {/* Session Info */}
-                {hasActiveSession && (
-                    <div className="rounded-lg bg-primary/5 border border-primary/10 p-3 text-xs text-muted-foreground space-y-1">
-                        <div className="flex items-center gap-2 text-primary font-medium">
-                            <ShieldCheckIcon className="w-3 h-3" />
-                            Gasless Transactions Enabled
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <ClockIcon className="w-3 h-3" />
-                            Auto-lock at {getSessionExpiry()}
-                        </div>
-                    </div>
-                )}
             </CardContent>
 
             <CardFooter className="bg-muted/20 border-t border-primary/10 py-3">
@@ -173,15 +110,6 @@ export function WalletSummary({
                     </div>
                 </div>
             </CardFooter>
-
-            <WalletPinDialog
-                open={pinOpen}
-                onCancel={() => setPinOpen(false)}
-                onSubmit={async (pin) => {
-                    setPinOpen(false);
-                    await activateSession(pin);
-                }}
-            />
         </Card>
     );
 }

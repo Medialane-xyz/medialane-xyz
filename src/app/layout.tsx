@@ -9,7 +9,6 @@ import Footer from "@/src/components/footer"
 import FramerMotionProvider from "@/src/lib/framer-motion-provider"
 import { ClerkProvider } from '@clerk/nextjs'
 import { Providers } from "./providers";
-import StarknetProviderWrapper from "./starknet-provider-wrapper";
 
 const inter = Inter({ subsets: ["latin"], display: "swap" })
 
@@ -29,22 +28,20 @@ export default function RootLayout({
       afterSignOutUrl="/"
     >
       <Providers>
-        <StarknetProviderWrapper>
-          <html lang="en" suppressHydrationWarning>
-            <body className={`${inter.className}`}>
-              <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-                <FramerMotionProvider>
-                  <div className="relative min-h-screen flex flex-col">
-                    <FloatingNav />
-                    <main className="flex-1">{children}</main>
-                    {/* <Footer /> */}
-                    <Toaster />
-                  </div>
-                </FramerMotionProvider>
-              </ThemeProvider>
-            </body>
-          </html>
-        </StarknetProviderWrapper>
+        <html lang="en" suppressHydrationWarning>
+          <body className={`${inter.className}`}>
+            <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+              <FramerMotionProvider>
+                <div className="relative min-h-screen flex flex-col">
+                  <FloatingNav />
+                  <main className="flex-1">{children}</main>
+                  {/* <Footer /> */}
+                  <Toaster />
+                </div>
+              </FramerMotionProvider>
+            </ThemeProvider>
+          </body>
+        </html>
       </Providers>
     </ClerkProvider>
   )
