@@ -22,6 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/src/components/ui/dialog";
 import { PinInput } from "@/src/components/pin-input";
 import {
@@ -814,6 +815,9 @@ export default function CreateAssetView() {
                                 <DialogTitle className="sr-only">
                                   Authenticate Minting
                                 </DialogTitle>
+                                <DialogDescription className="sr-only">
+                                  Enter your PIN to authenticate the minting process.
+                                </DialogDescription>
                               </DialogHeader>
                               <PinInput
                                 onSubmit={(pin) => handlePinSubmit(pin, values)}
