@@ -1,37 +1,40 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Image from "next/image"
 import { useAuth } from "@clerk/nextjs"
 import { useGetWallet, useCallAnyContract } from "@chipi-stack/nextjs"
 import { Button } from "@/src/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/src/components/ui/card"
 import { toast } from "sonner"
-import { ipCollectionAbi } from "@/src/abis/ip_collection"
-import { Loader2, Sparkles, CheckCircle2, Wallet, ArrowRight } from "lucide-react"
+import { Loader2, Sparkles, CheckCircle2, Wallet, ArrowRight, PlusCircle } from "lucide-react"
 import { WalletPinDialog } from "@/src/components/chipi/wallet-pin-dialog"
+import { CreateWalletDialog } from "@/src/components/chipi/create-wallet-dialog"
 import { Badge } from "@/src/components/ui/badge"
 
 // Contract Configuration
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_MIP_CONTRACT_ADDRESS
 const COLLECTION_ID = "1" // Defaulting to 1 as per typical first collection, can be parameterized if needed
 // Using a placeholder token URI. ideally this should be dynamic or provided.
-// Since we are minting an "Event NFT", maybe it has a static metadata URI?
-const TOKEN_URI = "ipfs://bafyreicmz744kmj3q7q5m5d4df4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4" 
+const TOKEN_URI = "ipfs://bafyreicmz744kmj3q7q5m5d4df4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4"
 
 export default function MintPage() {
     const { userId, getToken } = useAuth()
     const [isMinting, setIsMinting] = useState(false)
     const [pinOpen, setPinOpen] = useState(false)
+    const [createWalletOpen, setCreateWalletOpen] = useState(false)
     const [txHash, setTxHash] = useState<string | null>(null)
 
     // 1. Get Wallet
-    const { data: walletData, isLoading: isWalletLoading } = useGetWallet({
+    const { data: walletData, isLoading: isWalletLoading, error: walletError } = useGetWallet({
         getBearerToken: () => getToken({ template: "chipipay" }).then((t) => t || ""),
         params: { externalUserId: userId || "" },
         queryOptions: { enabled: !!userId },
     })
-    
+
+    // Robust wallet access matching account page pattern
+    const wallet = walletData as any
+    const walletPublicKey = wallet?.publicKey || wallet?.wallet?.publicKey
+
     // 2. Setup Contract Call
     const { callAnyContractAsync } = useCallAnyContract()
 
@@ -40,10 +43,13 @@ export default function MintPage() {
             toast.error("Please sign in to mint")
             return
         }
-        if (!walletData) {
-             toast.error("Wallet not ready. Please refresh.")
-             return
+
+        // If wallet failed to load or is missing, prompt creation
+        if (!walletPublicKey && !isWalletLoading) {
+            setCreateWalletOpen(true)
+            return
         }
+
         setPinOpen(true)
     }
 
@@ -54,11 +60,10 @@ export default function MintPage() {
 
         try {
             if (!CONTRACT_ADDRESS) throw new Error("Contract address not configured")
-            
+
             const token = await getToken({ template: "chipipay" })
             if (!token) throw new Error("Authentication failed")
 
-            const walletPublicKey = (walletData as any)?.wallet?.publicKey
             if (!walletPublicKey) throw new Error("No wallet found")
 
             // Construct Call
@@ -70,21 +75,7 @@ export default function MintPage() {
                     COLLECTION_ID, // collection_id low
                     "0",           // collection_id high
                     walletPublicKey, // recipient
-                    // For ByteArray, starknet.js and most SDKs might handle string conversion differently.
-                    // If callAnyContractAsync uses staknet.js v6/v5 underneath with calldata compilation, existing string might work.
-                    // However, `token_uri` is likely expected as a ByteArray which is complex in raw calldata.
-                    // If the SDK supports automatic ABI encoding from the ABI, we should pass parameters as an array.
-                    // BUT `callAnyContractAsync` takes `calls` which are usually raw calldata or struct-based if using `Call` type.
-                    // Let's assume for now we need to pass basic types. 
-                    // Wait, ByteArray in calldata is length + data + pending_word + pending_word_len.
-                    // This is tricky without a proper library.
-                     // A safe bet for now is passing standard felt array if possible, or string if SDK handles it.
-                     // Given this is an urgent task, I'll try passing the string directly hoping the SDK/Provider handles ByteArray conversion 
-                     // or uses a high-level `Contract` calls invocation.
-                     // Looking at `useCreateCollection.ts`, it used `create_collection` which takes ByteArrays (name, symbol, base_uri).
-                     // It passed simple strings: `params.name`, `params.symbol`, `baseUri`.
-                     // So usage of strings seems supported!
-                    TOKEN_URI 
+                    TOKEN_URI
                 ],
             }
 
@@ -94,15 +85,15 @@ export default function MintPage() {
                     encryptKey: pin,
                     wallet: {
                         publicKey: walletPublicKey,
-                        encryptedPrivateKey: (walletData as any).wallet?.encryptedPrivateKey,
+                        encryptedPrivateKey: wallet?.encryptedPrivateKey || wallet?.wallet?.encryptedPrivateKey,
                     },
                     calls: [call],
                 } as any
             })
 
-            // The response might vary based on SDK version, assuming it returns tx hash string or object
+            // The response might vary based on SDK version
             const hash = typeof res === 'string' ? res : (res as any)?.transaction_hash
-            
+
             if (hash) {
                 setTxHash(hash)
                 toast.success("Mint submitted! 🚀")
@@ -118,17 +109,25 @@ export default function MintPage() {
         }
     }
 
+    const hasWallet = !!walletPublicKey
+
     return (
         <div className="min-h-screen bg-black text-white relative overflow-hidden flex flex-col items-center justify-center">
-            {/* Background Effects */}
+            {/* Background Effects - CSS Replacement for grid.svg */}
             <div className="absolute inset-0 z-0">
                 <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-[128px]" />
                 <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-[128px]" />
-                <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10 bg-center" />
+                <div
+                    className="absolute inset-0 opacity-20"
+                    style={{
+                        backgroundImage: `linear-gradient(to right, #333 1px, transparent 1px), linear-gradient(to bottom, #333 1px, transparent 1px)`,
+                        backgroundSize: '40px 40px'
+                    }}
+                />
             </div>
 
             <div className="container max-w-4xl px-4 relative z-10 py-12">
-                
+
                 {/* Header */}
                 <div className="text-center mb-12 space-y-4">
                     <Badge variant="outline" className="border-purple-500/50 text-purple-400 px-4 py-1 mb-4 backdrop-blur-md">
@@ -138,16 +137,16 @@ export default function MintPage() {
                         Mint Your access
                     </h1>
                     <p className="text-xl text-zinc-400 max-w-xl mx-auto">
-                         Unlock exclusive perks and proof of attendance with this limited edition digital collectible.
+                        Unlock exclusive perks and proof of attendance with this limited edition digital collectible.
                     </p>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-8 items-center bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl shadow-2xl">
-                    
+
                     {/* Visual Side */}
                     <div className="relative aspect-square rounded-2xl overflow-hidden border border-white/10 group">
                         <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-blue-500/10 z-10" />
-                        <Image 
+                        <Image
                             src="/placeholder.svg" // Replace with actual event NFT image if available
                             alt="Event NFT"
                             fill
@@ -165,8 +164,10 @@ export default function MintPage() {
                         <div>
                             <h2 className="text-2xl font-bold mb-2">Event Access Pass</h2>
                             <div className="flex items-center space-x-2 text-zinc-400">
-                                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                                <span className="text-sm">Minting is Live</span>
+                                <span className={`w-2 h-2 rounded-full ${hasWallet ? 'bg-green-500' : 'bg-yellow-500'} animate-pulse`} />
+                                <span className="text-sm">
+                                    {isWalletLoading ? "Checking wallet..." : hasWallet ? "Minting is Live" : "Wallet Setup Required"}
+                                </span>
                             </div>
                         </div>
 
@@ -175,7 +176,7 @@ export default function MintPage() {
                                 <span className="text-zinc-400">Price</span>
                                 <span className="text-xl font-bold text-white">Free</span>
                             </div>
-                             <div className="flex justify-between items-center p-4 rounded-xl bg-white/5 border border-white/5">
+                            <div className="flex justify-between items-center p-4 rounded-xl bg-white/5 border border-white/5">
                                 <span className="text-zinc-400">Gas Fees</span>
                                 <span className="text-xl font-bold text-green-400">Sponsored by Chipipay</span>
                             </div>
@@ -201,28 +202,37 @@ export default function MintPage() {
                                         Sign in to Mint
                                     </Button>
                                 ) : (
-                                    <Button 
-                                        onClick={handleMintClick} 
-                                        disabled={isMinting || isWalletLoading || !walletData}
-                                        className="w-full h-14 text-lg bg-white text-black hover:bg-white/90 transition-all font-bold shadow-lg shadow-white/10"
+                                    <Button
+                                        onClick={handleMintClick}
+                                        disabled={isMinting || isWalletLoading}
+                                        className={`w-full h-14 text-lg transition-all font-bold shadow-lg 
+                                            ${hasWallet
+                                                ? "bg-white text-black hover:bg-white/90 shadow-white/10"
+                                                : "bg-purple-600 text-white hover:bg-purple-700 shadow-purple-500/20"
+                                            }`}
                                     >
                                         {isMinting ? (
                                             <>
                                                 <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                                                 Minting...
                                             </>
-                                        ) : (
+                                        ) : hasWallet ? (
                                             <>
                                                 <Wallet className="w-5 h-5 mr-2" />
                                                 Mint Free NFT
                                             </>
+                                        ) : (
+                                            <>
+                                                <PlusCircle className="w-5 h-5 mr-2" />
+                                                Create Wallet to Mint
+                                            </>
                                         )}
                                     </Button>
                                 )}
-                                {userId && walletData && (
-                                     <p className="text-xs text-center text-zinc-500">
-                                        Wallet: {(walletData as any)?.wallet?.publicKey?.slice(0, 6)}...{(walletData as any)?.wallet?.publicKey?.slice(-4)}
-                                     </p>
+                                {hasWallet && (
+                                    <p className="text-xs text-center text-zinc-500 font-mono">
+                                        Wallet: {walletPublicKey.slice(0, 6)}...{walletPublicKey.slice(-4)}
+                                    </p>
                                 )}
                             </div>
                         )}
@@ -230,10 +240,15 @@ export default function MintPage() {
                 </div>
             </div>
 
-             <WalletPinDialog
+            <WalletPinDialog
                 open={pinOpen}
                 onCancel={() => setPinOpen(false)}
                 onSubmit={onPinSubmit}
+            />
+
+            <CreateWalletDialog
+                open={createWalletOpen}
+                onOpenChange={setCreateWalletOpen}
             />
         </div>
     )
