@@ -86,15 +86,19 @@ export default function OnboardingComponent() {
 
       console.log('Wallet creation response:', JSON.stringify(response, null, 2));
 
-      if (!response.txHash || !response.wallet) {
-        throw new Error(`Failed to create wallet. Response: ${JSON.stringify(response)}`);
+      // Check if response has publicKey directly (flat structure) or nested wallet (legacy/documented structure)
+      const walletPublicKey = response.wallet?.publicKey || response.publicKey;
+      const walletEncryptedPrivateKey = response.wallet?.encryptedPrivateKey || response.encryptedPrivateKey;
+
+      if (!walletPublicKey) {
+        throw new Error(`Failed to create wallet. Missing publicKey. Response: ${JSON.stringify(response)}`);
       }
 
       console.log('Updating Clerk metadata...');
 
       const result = await completeOnboarding({
-        publicKey: response.wallet.publicKey,
-        encryptedPrivateKey: response.wallet.encryptedPrivateKey,
+        publicKey: walletPublicKey,
+        encryptedPrivateKey: walletEncryptedPrivateKey,
       });
       console.log('Clerk update result:', result);
 
