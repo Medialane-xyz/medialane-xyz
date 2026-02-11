@@ -11,6 +11,7 @@ interface SessionContextType {
     session: SessionKeyData | null;
     activateSession: (pin: string) => Promise<void>;
     executeWithSession: (calls: Call[]) => Promise<string>;
+    clearSession: () => void;
     isLoadingSession: boolean;
     isCreatingSession: boolean;
     isExecutingSession: boolean;
@@ -36,6 +37,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         createSession,
         registerSession,
         executeWithSession: executeChipiSession,
+        clearSession,
         isLoadingStatus,
         isCreating: isCreatingSession,
         isExecuting: isExecutingSession,
@@ -83,6 +85,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
             session,
             activateSession,
             executeWithSession: handleExecute,
+            clearSession,
             isLoadingSession: isLoadingStatus,
             isCreatingSession,
             isExecutingSession

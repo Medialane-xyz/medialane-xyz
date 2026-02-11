@@ -15,10 +15,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <ChipiProvider
-      /* @ts-ignore - Config prop might be missing in type defs but required for SDK */
-      config={{
-        apiPublicKey: CHIPI_PUBLIC_KEY,
-      }}
+      apiPublicKey={CHIPI_PUBLIC_KEY}
     >
       <WalletGuard />
       <SessionProvider>
