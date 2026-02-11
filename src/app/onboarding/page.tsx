@@ -4,7 +4,7 @@ import * as React from "react";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { useCreateWallet } from "@chipi-stack/nextjs";
+import { useCreateWallet, Chain } from "@chipi-stack/nextjs";
 import { completeOnboarding } from "./_actions";
 
 export default function OnboardingComponent() {
@@ -79,24 +79,22 @@ export default function OnboardingComponent() {
         params: {
           encryptKey: pin,
           externalUserId: user?.id as any,
-          // chain: "STARKNET", // Removing chain param as it might be causing issues
+          chain: "STARKNET" as Chain,
         },
         bearerToken: token,
       });
 
       console.log('Wallet creation response:', JSON.stringify(response, null, 2));
 
-      // Check if response has wallet property (v11 structure)
-      if (!response.wallet) {
-        throw new Error(`Failed to create wallet. response.wallet is missing. Response: ${JSON.stringify(response)}`);
+      // Check if response has wallet property (v11 structure) or is the wallet itself (v13 structure)
+      const wallet = response.wallet || response;
+
+      if (!wallet || !wallet.publicKey) {
+        throw new Error(`Failed to create wallet. Invalid response structure. Response: ${JSON.stringify(response)}`);
       }
 
-      const walletPublicKey = response.wallet.publicKey;
-      const walletEncryptedPrivateKey = response.wallet.encryptedPrivateKey;
-
-      if (!walletPublicKey) {
-        throw new Error(`Failed to create wallet. Missing publicKey in wallet object. Response: ${JSON.stringify(response)}`);
-      }
+      const walletPublicKey = wallet.publicKey;
+      const walletEncryptedPrivateKey = wallet.encryptedPrivateKey;
 
       console.log('Updating Clerk metadata...');
 

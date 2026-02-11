@@ -166,15 +166,17 @@ export function CreateWalletDialog({ open, onOpenChange, trigger }: { open?: boo
                             <CheckCircleIcon />
                             <AlertTitle>Wallet Created Successfully!</AlertTitle>
                             <AlertDescription className="space-y-3">
-                                <div>
-                                    <p>Transaction Hash:</p>
-                                    <span className="break-all">{walletDetails.txHash}</span>
-                                </div>
+                                {walletDetails.txHash && (
+                                    <div>
+                                        <p>Transaction Hash:</p>
+                                        <span className="break-all">{walletDetails.txHash}</span>
+                                    </div>
+                                )}
 
                                 <div>
                                     <p>Wallet Public Key:</p>
                                     <span className="break-all">
-                                        {walletDetails.walletPublicKey}
+                                        {(walletDetails as any).publicKey || (walletDetails as any).walletPublicKey}
                                     </span>
                                 </div>
                             </AlertDescription>
