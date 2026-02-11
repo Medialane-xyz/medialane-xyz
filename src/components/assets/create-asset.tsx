@@ -271,7 +271,7 @@ export default function CreateAssetView() {
 
         // Force full reload to ensure latest data
         setTimeout(function () {
-          window.location.assign("/portfolio");
+          window.location.assign("/mint/portfolio");
         }, 7000);
 
       }

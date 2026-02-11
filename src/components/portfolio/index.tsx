@@ -46,7 +46,7 @@ export default function PortfolioView() {
   const [sortBy, setSortBy] = useState("recent");
   const [filterBy, setFilterBy] = useState("all");
   const publicKey = user?.publicMetadata?.publicKey as any;
-
+  
   console.log("User wallet:", publicKey)
 
   const {
@@ -62,12 +62,12 @@ export default function PortfolioView() {
     slug: `${nft.contractAddress}-${nft.tokenId}`,
     title: nft.metadata?.name || `Token #${nft.tokenId}`,
     author: "You", // Since these are owned assets
-    description: nft.metadata?.description || "Your NFT",
+    description: nft.metadata?.description || "Your NFT Asset",
     type: "NFT",
     template: "standard",
     collection:
       nft.contractAddress === process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_MIP
-        ? "Medialane"
+        ? "Mediolano"
         : "External",
     collectionSlug: nft.contractAddress,
     tags:
