@@ -79,6 +79,7 @@ export default function OnboardingComponent() {
         params: {
           encryptKey: pin,
           externalUserId: user?.id as any,
+          chain: "STARKNET" as any, // Cast to any or import Chain enum if strictly typed
         },
         bearerToken: token,
       });
@@ -122,8 +123,8 @@ export default function OnboardingComponent() {
           className="backdrop-blur-md bg-blue-400/10 p-8 rounded-2xl shadow-2xl max-w-md w-full  border border-blue-300/20 text-center"
         >
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-300 mx-auto mb-4"></div>
-          <div className=" font-semibold">Creating your account...</div>
-          <p className="text-sm  mt-2">Setting up your self-custody wallet.</p>
+          <div className=" font-semibold">Securing your account...</div>
+          <p className="text-sm  mt-2">Setting up your secure vault.</p>
         </motion.div>
       </main>
     );
@@ -139,7 +140,7 @@ export default function OnboardingComponent() {
           className="backdrop-blur-md bg-red-400/10 p-8 rounded-2xl shadow-2xl max-w-md w-full  border border-red-300/20 text-center"
         >
           <div className="text-red-300 font-semibold text-xl mb-2">⚠️ Error</div>
-          <p className="text-red-200/70">Failed to create wallet. Please try again or contact our support.</p>
+          <p className="text-red-200/70">Failed to secure account. Please try again or contact our support.</p>
           <button
             onClick={() => window.location.reload()}
             className="mt-4 px-4 py-2 bg-red-400/20 hover:bg-red-400/30 transition  rounded-lg font-medium"
@@ -159,8 +160,8 @@ export default function OnboardingComponent() {
         transition={{ duration: 0.6 }}
         className="backdrop-blur-md p-8 rounded-2xl shadow-2xl max-w-md w-full  border border-blue-300/20"
       >
-        <h1 className="text-3xl font-extrabold mb-4 ">Secure your assets</h1>
-        <p className=" mb-6">Create your secure code to get started</p>
+        <h1 className="text-3xl font-extrabold mb-4 ">Secure your account</h1>
+        <p className=" mb-6">Create your security PIN to get started</p>
 
         {generalError && (
           <motion.div
@@ -176,10 +177,10 @@ export default function OnboardingComponent() {
           <div className="space-y-4 mb-6">
             <div>
               <label className="block text-sm font-semibold  mb-2">
-                Create your PIN
+                Create Security PIN
               </label>
               <p className="text-xs  mb-3">
-                This code will protect and secure your assets. Choose 6-12 numbers that you'll remember.
+                This code will protect your assets. Choose 6-12 numbers.
               </p>
               <input
                 type="password"
@@ -207,7 +208,7 @@ export default function OnboardingComponent() {
               )}
               {!pinError && (
                 <p className="mt-2  text-xs">
-                  💡 Tip: Use a PIN code you can easily remember but others can't guess
+                  💡 Tip: Use a PIN code you can remember. It cannot be recovered.
                 </p>
               )}
             </div>
@@ -220,7 +221,7 @@ export default function OnboardingComponent() {
               : 'bg-blue-400/20 hover:bg-blue-400/30  hover:shadow-lg transform hover:scale-[1.02]'
               }`}
           >
-            {isSubmitting ? 'Creating wallet account...' : 'Create wallet account'}
+            {isSubmitting ? 'Securing account...' : 'Complete Setup'}
           </button>
         </form>
       </motion.div>

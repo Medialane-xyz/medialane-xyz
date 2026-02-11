@@ -1,12 +1,13 @@
 "use client";
 
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { useGetWallet } from "@chipi-stack/nextjs";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
 
 export function WalletGuard() {
     const { userId, isLoaded, getToken } = useAuth();
+    const { user } = useUser();
     const router = useRouter();
     const pathname = usePathname();
 
@@ -27,16 +28,24 @@ export function WalletGuard() {
         if (pathname?.startsWith("/onboarding")) return;
 
         // If wallet loading is finished
-        if (!isLoading) {
-            // If we have an error (likely 404) or no wallet data, redirect
-            // We assume that if useGetWallet fails for a logged in user, they need a wallet
+        if (!isLoading && user) {
+            // If we have an error (likely 404) or no wallet data
             if (error || !wallet) {
-                // Double check specific error if possible, but for now assuming error = 404/missing
-                console.log("WalletGuard: No wallet found, redirecting to onboarding.");
+                // CRITICAL: Check if Clerk metadata thinks we ALREADY have a wallet.
+                // If so, do NOT redirect to onboarding, as that causes a loop with middleware.
+                // This likely means an API/SDK issue (404 on existing wallet).
+                const hasWalletInMetadata = user.publicMetadata?.walletCreated === true;
+
+                if (hasWalletInMetadata) {
+                    console.error("WalletGuard: Wallet missing in SDK but exists in Metadata. Preventing redirect loop.");
+                    return;
+                }
+
+                console.log("WalletGuard: No wallet found and no metadata, redirecting to onboarding.");
                 router.push("/onboarding");
             }
         }
-    }, [isLoaded, userId, wallet, isLoading, error, pathname, router]);
+    }, [isLoaded, userId, wallet, isLoading, error, pathname, router, user]);
 
     return null;
 }

@@ -2,6 +2,7 @@
 
 import { ChipiProvider } from "@chipi-stack/nextjs";
 import { WalletGuard } from "@/src/components/auth/wallet-guard";
+import { SessionProvider } from "@/src/components/chipi/session-context";
 
 const CHIPI_PUBLIC_KEY = process.env.NEXT_PUBLIC_CHIPI_API_KEY!;
 
@@ -20,7 +21,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
       }}
     >
       <WalletGuard />
-      {children}
+      <SessionProvider>
+        {children}
+      </SessionProvider>
     </ChipiProvider>
   );
 }
