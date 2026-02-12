@@ -81,6 +81,17 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
     navigator.clipboard.writeText(url)
   }
 
+  const handleViewOnExplorer = () => {
+    const explorerUrl = process.env.NEXT_PUBLIC_EXPLORER_URL || "https://voyager.online"
+    if (asset.contractAddress && asset.tokenId) {
+      window.open(`${explorerUrl}/contract/${asset.contractAddress}/token/${asset.tokenId}`, "_blank")
+    } else if (asset.contractAddress) {
+      window.open(`${explorerUrl}/contract/${asset.contractAddress}`, "_blank")
+    } else {
+      window.open(explorerUrl, "_blank")
+    }
+  }
+
   const handleTransfer = () => {
     // Navigate to transfer page
     window.location.href = `/transfer?asset=${asset.slug}`
@@ -160,7 +171,7 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
                           <Copy className="w-4 h-4 mr-2" />
                           Copy Link
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleViewOnExplorer}>
                           <ExternalLink className="w-4 h-4 mr-2" />
                           View on Explorer
                         </DropdownMenuItem>
@@ -315,7 +326,7 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
                   <Share className="w-4 h-4 mr-2" />
                   Share
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleViewOnExplorer}>
                   <ExternalLink className="w-4 h-4 mr-2" />
                   View on Explorer
                 </DropdownMenuItem>

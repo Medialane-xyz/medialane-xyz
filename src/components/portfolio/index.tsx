@@ -73,7 +73,7 @@ export default function PortfolioView() {
     tags:
       nft.metadata?.attributes?.map((attr) => attr.value).join(", ") || "nft",
     mediaUrl: nft.metadata?.image || "/placeholder.svg",
-    externalUrl: `${process.env.NEXT_PUBLIC_EXPLORER_URL}/contract/${nft.contractAddress}/token/${nft.tokenId}`,
+    externalUrl: nft.metadata?.external_url || `${process.env.NEXT_PUBLIC_EXPLORER_URL}/contract/${nft.contractAddress}/token/${nft.tokenId}`,
     licenseType: "all-rights",
     licenseDetails: "Full ownership rights",
     ipVersion: "1.0",
@@ -81,9 +81,9 @@ export default function PortfolioView() {
     modifications: true,
     attribution: false,
     registrationDate: new Date().toISOString().split("T")[0],
-    protectionStatus: "Protected",
+    protectionStatus: "Onchain",
     protectionScope: "Global",
-    protectionDuration: "Permanent",
+    protectionDuration: "Immutable",
     creator: {
       id: "current-user",
       username: "you",
