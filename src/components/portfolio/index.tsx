@@ -423,12 +423,12 @@ function AssetGrid({
           No IP assets found
         </h3>
         <p className="text-muted-foreground mb-6">
-          Start tokenizing your intellectual property or adjust your filters
+          Create your frictionless NFT
         </p>
-        <Link href="/create">
+        <Link href="/mint">
           <Button className="hover:scale-105 transition-transform">
             <Plus className="w-4 h-4 mr-2" />
-            Create New IP
+            Mint New
           </Button>
         </Link>
       </div>

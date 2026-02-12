@@ -92,27 +92,27 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
         <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
           <div className="p-4">
             <div className="flex items-center space-x-4">
-              <Link href={`/asset/${asset.slug}`} className="relative flex-shrink-0">
-                <LazyMedia
-                  src={asset.mediaUrl || "/placeholder.svg"}
-                  alt={asset.title}
-                  width={96}
-                  height={96}
-                  className="w-24 h-24 rounded-xl shadow-sm group-hover:shadow-md transition-shadow"
-                />
-                <Badge className="absolute -top-2 -right-2 text-xs capitalize bg-primary/90 text-primary-foreground">
-                  {asset.type}
-                </Badge>
-              </Link>
+
+              <LazyMedia
+                src={asset.mediaUrl || "/placeholder.svg"}
+                alt={asset.title}
+                width={96}
+                height={96}
+                className="w-24 h-24 rounded-xl shadow-sm group-hover:shadow-md transition-shadow"
+              />
+              <Badge className="absolute -top-2 -right-2 text-xs capitalize bg-primary/90 text-primary-foreground">
+                {asset.type}
+              </Badge>
+
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <Link href={`/asset/${asset.slug}`}>
-                      <h3 className="font-semibold text-foreground truncate group-hover:text-primary transition-colors cursor-pointer text-lg">
-                        {asset.title}
-                      </h3>
-                    </Link>
+
+                    <h3 className="font-semibold text-foreground truncate group-hover:text-primary transition-colors cursor-pointer text-lg">
+                      {asset.title}
+                    </h3>
+
                     <p className="text-sm text-muted-foreground line-clamp-2 mt-1 mb-2">{asset.description}</p>
 
                     <div className="flex items-center space-x-4 mb-4">
@@ -142,12 +142,7 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
                     </CollapsibleTrigger>
 
 
-                    <Link href={`/asset/${asset.slug}`}>
-                      <Button variant="outline" size="sm" className="hover:scale-105 transition-transform">
-                        <Eye className="w-4 h-4 mr-1" />
-                        View
-                      </Button>
-                    </Link>
+
 
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -156,19 +151,7 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        {isOwner && (
-                          <>
-                            <DropdownMenuItem onClick={handleTransfer}>
-                              <Send className="w-4 h-4 mr-2" />
-                              Transfer
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Edit className="w-4 h-4 mr-2" />
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                          </>
-                        )}
+
                         <DropdownMenuItem onClick={handleShare}>
                           <Share className="w-4 h-4 mr-2" />
                           Share
@@ -211,37 +194,6 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-border/30">
 
 
-                {/* Creator Info
-                <div className="space-y-3">
-                  <h4 className="font-medium text-foreground text-sm">Creator</h4>
-                  <div className="flex items-center space-x-3">
-                    <Image
-                      src={asset.creator.avatar || "/placeholder.svg"}
-                      alt={asset.creator.name}
-                      width={40}
-                      height={40}
-                      className="w-10 h-10 rounded-full object-cover ring-2 ring-border/50"
-                    />
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2">
-                        <Link
-                          href={`/creator/${asset.creator.username}`}
-                          className="font-medium text-foreground hover:text-primary transition-colors text-sm"
-                        >
-                          {asset.creator.name}
-                        </Link>
-                        {asset.creator.verified && <Shield className="w-3 h-3 text-blue-500" />}
-                      </div>
-                      <p className="text-xs text-muted-foreground">@{asset.creator.username}</p>
-                    </div>
-                    <Link href={`/creator/${asset.creator.username}`}>
-                      <Button variant="outline" size="sm">
-                        <UserPlus className="w-3 h-3 mr-1" />
-                        View
-                      </Button>
-                    </Link>
-                  </div>
-                </div> */}
 
                 {/* Technical Details */}
                 <div className="space-y-3">
@@ -335,15 +287,15 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
     <Card className="overflow-hidden hover:shadow-xl transition-all duration-500 group border-border/50 bg-card/50 backdrop-blur-sm">
       <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
         <div className="relative">
-          <Link href={`/asset/${asset.slug}`}>
-            <LazyMedia
-              src={asset.mediaUrl || "/placeholder.svg"}
-              alt={asset.title}
-              width={400}
-              height={300}
-              className="w-full h-64"
-            />
-          </Link>
+
+          <LazyMedia
+            src={asset.mediaUrl || "/placeholder.svg"}
+            alt={asset.title}
+            width={400}
+            height={300}
+            className="w-full h-64"
+          />
+
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
           <div className="absolute top-3 right-3">
@@ -358,23 +310,7 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>
-                  <Eye className="w-4 h-4 mr-2" />
-                  View Details
-                </DropdownMenuItem>
-                {isOwner && (
-                  <>
-                    <DropdownMenuItem onClick={handleTransfer}>
-                      <Send className="w-4 h-4 mr-2" />
-                      Transfer
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Edit className="w-4 h-4 mr-2" />
-                      Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                  </>
-                )}
+
                 <DropdownMenuItem onClick={handleShare}>
                   <Share className="w-4 h-4 mr-2" />
                   Share
@@ -471,34 +407,6 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
           <CollapsibleContent className="mt-4">
             <div className="space-y-4 pt-4 border-t border-border/30">
 
-
-              {/* Creator Info 
-              <div>
-                <h4 className="font-medium text-foreground mb-3 text-sm">Creator</h4>
-                <div className="flex items-center space-x-3">
-                  <Image
-                    src={asset.creator.avatar || "/placeholder.svg"}
-                    alt={asset.creator.name}
-                    width={40}
-                    height={40}
-                    className="w-10 h-10 rounded-full object-cover ring-2 ring-border/50"
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2">
-                      <Link
-                        href={`/creator/${asset.creator.username}`}
-                        className="font-medium text-foreground hover:text-primary transition-colors text-sm"
-                      >
-                        {asset.creator.name}
-                      </Link>
-                      {asset.creator.verified && <Shield className="w-3 h-3 text-blue-500" />}
-                    </div>
-                    <p className="text-xs text-muted-foreground">@{asset.creator.username}</p>
-                  </div>
-                </div>
-              </div>
-              */}
-
               {/* Technical Info */}
               <div>
                 <h4 className="font-medium text-foreground mb-3 text-sm">Technical Details</h4>
@@ -556,22 +464,6 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
                   </div>
                 </div>
               </div>
-
-              {/* Actions 
-              <div className="flex space-x-2">
-                {isOwner && (
-                  <Button variant="outline" size="sm" className="flex-1" onClick={handleTransfer}>
-                    <Send className="w-4 h-4 mr-1" />
-                    Transfer
-                  </Button>
-                )}
-                
-                <Button variant="outline" size="sm" className="flex-1" onClick={handleShare}>
-                  <Share className="w-4 h-4 mr-1" />
-                  Share
-                </Button>
-              </div>*/}
-
 
             </div>
           </CollapsibleContent>
