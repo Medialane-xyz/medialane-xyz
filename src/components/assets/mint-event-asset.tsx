@@ -190,7 +190,7 @@ export default function MintEventAsset() {
     }, [user]);
 
     return (
-        <div className="min-h-screen py-20">
+        <div className="min-h-screen py-20 bg-gradient-to-br from-green-500 via-silver-500 to-red-500">
             <main className="px-4 pt-4">
                 <div className="max-w-4xl mx-auto space-y-12">
 
@@ -208,9 +208,9 @@ export default function MintEventAsset() {
 
                         {/* Asset Preview / Hero Card */}
                         <div className="relative group perspective-1000">
-                            <div className="absolute -inset-1 bg-gradient-to-r from-primary to-purple-600 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
-                            <Card className="relative bg-card/50 backdrop-blur-xl border-border/50 overflow-hidden transform transition-all duration-500 hover:rotate-y-12 shadow-2xl">
-                                <div className="aspect-square relative bg-gradient-to-br from-gray-900 to-black flex items-center justify-center overflow-hidden">
+                            <div className="absolute -inset-1 rounded-md group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
+                            <Card className="p-4 relative bg-card/10 backdrop-blur-xl border-green-500/50 overflow-hidden transform transition-all duration-500 hover:rotate-y-12 shadow-2xl">
+                                <div className="aspect-square relative flex items-center justify-center overflow-hidden">
                                     {/* Placeholder for visual if image load fails or is just a path */}
                                     <div className="absolute inset-0 bg-[url('/assets/grid-pattern.svg')] opacity-20" />
                                     <Sparkles className="w-32 h-32 text-primary/20 animate-pulse absolute" />
@@ -218,12 +218,13 @@ export default function MintEventAsset() {
                                     {/* We can use Next/Image if we have the asset, otherwise a fallback */}
                                     <Image
                                         src={PRE_CONFIGURED_ASSET.mediaUrl}
-                                        alt="Founder Key"
+                                        alt="Exclusive Mint"
                                         fill
                                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                                     />
 
                                     <div className="z-10 text-center space-y-2 p-6">
+                                        {/*
                                         <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto backdrop-blur-md border border-primary/30">
                                             <Sparkles className="w-10 h-10 text-primary" />
                                         </div>
@@ -231,28 +232,30 @@ export default function MintEventAsset() {
                                         <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30">
                                             {PRE_CONFIGURED_ASSET.type}
                                         </Badge>
+                                        */}
                                     </div>
+
                                 </div>
                                 <CardContent className="p-6 space-y-4">
                                     <div className="flex justify-between items-center text-sm">
-                                        <span className="text-muted-foreground">Collection</span>
+                                        <span className="text-foreground">Collection</span>
                                         <span className="font-medium">{PRE_CONFIGURED_ASSET.collection}</span>
                                     </div>
                                     <div className="flex justify-between items-center text-sm">
-                                        <span className="text-muted-foreground">License</span>
+                                        <span className="text-foreground">License</span>
                                         <span className="font-medium">{PRE_CONFIGURED_ASSET.licenceType}</span>
                                     </div>
-                                    <Separator />
+
                                     <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                                        <div className="bg-muted/50 p-2 rounded">
+                                        <div className="bg-white/10 p-2 rounded">
                                             <Clock className="w-4 h-4 mx-auto mb-1 text-primary" />
                                             <span>Onchain</span>
                                         </div>
-                                        <div className="bg-muted/50 p-2 rounded">
+                                        <div className="bg-white/10 p-2 rounded">
                                             <Globe className="w-4 h-4 mx-auto mb-1 text-green-500" />
                                             <span>Global</span>
                                         </div>
-                                        <div className="bg-muted/50 p-2 rounded">
+                                        <div className="bg-white/10 p-2 rounded">
                                             <Zap className="w-4 h-4 mx-auto mb-1 text-yellow-500" />
                                             <span>Instant</span>
                                         </div>
@@ -266,12 +269,12 @@ export default function MintEventAsset() {
 
                             <div className="space-y-4">
                                 <h2 className="text-2xl font-semibold">Mint Exclusivo del evento Starknet + Chipipay en el Tec de Monterrey 2026_02_12</h2>
-                                <p className="text-muted-foreground leading-relaxed">
+                                <p className="text-foreground leading-relaxed">
                                     {PRE_CONFIGURED_ASSET.description}
                                 </p>
                                 <div className="flex flex-wrap gap-2">
                                     {PRE_CONFIGURED_ASSET.tags.map(tag => (
-                                        <Badge key={tag} variant="outline" className="text-xs">
+                                        <Badge key={tag} variant="outline" className="text-xs border-white/10">
                                             #{tag}
                                         </Badge>
                                     ))}
@@ -285,7 +288,7 @@ export default function MintEventAsset() {
                                             <Shield className="w-6 h-6 text-primary" />
                                         </div>
                                         <div>
-                                            <p className="text-sm text-muted-foreground">Immutable ownership proved by zero-knowledge proofs on Starknet</p>
+                                            <p className="text-sm text-foreground">Immutable ownership proved by zero-knowledge proofs on Starknet</p>
                                         </div>
                                     </div>
 
