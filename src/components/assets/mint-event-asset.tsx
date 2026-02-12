@@ -36,14 +36,14 @@ const MEDIOLANO_CONTRACT = CONTRACTS.MEDIOLANO;
 
 // Pre-configured Asset Data
 const PRE_CONFIGURED_ASSET = {
-    title: "Medialane Founder's Key",
-    description: "Exclusive access to the Medialane Alpha. This key grants the holder early access to features, governance rights, and special community status.",
+    title: "Tec de Monterrey",
+    description: "Chipipay + Starknet + Medialane",
     mediaUrl: "/mint.jpg", // Default exclusive asset image
-    externalUrl: "https://medialane.xyz",
-    author: "Medialane Protocol",
-    type: "access-pass",
-    tags: ["founder", "access", "exclusive", "alpha"],
-    collection: "Mediolano Genesis",
+    externalUrl: "https://chipipay.com",
+    author: "Chipipay",
+    type: "event",
+    tags: ["event", "starknet", "chipipay"],
+    collection: "Chipipay",
     licenceType: "exclusive",
     licenseDetails: "Non-transferable rights to Alpha access.",
     ipVersion: "1.0",
@@ -53,7 +53,7 @@ const PRE_CONFIGURED_ASSET = {
     registrationDate: new Date().toISOString().split("T")[0],
     protectionStatus: "Protected",
     protectionScope: "Global",
-    protectionDuration: "Permanent",
+    protectionDuration: "Onchain",
 };
 
 export default function MintEventAsset() {
@@ -153,7 +153,7 @@ export default function MintEventAsset() {
 
                 toast({
                     title: "Asset Created!",
-                    description: "Your Founder's Key has been minted.",
+                    description: "Your NFT has been minted.",
                 });
 
                 // Redirect to portfolio
@@ -190,19 +190,19 @@ export default function MintEventAsset() {
     }, [user]);
 
     return (
-        <div className="min-h-screen py-20 bg-gradient-to-br from-background via-muted/5 to-background">
-            <main className="px-4">
+        <div className="min-h-screen py-20">
+            <main className="px-4 pt-4">
                 <div className="max-w-4xl mx-auto space-y-12">
 
-                    {/* Header */}
+                    {/* Header
                     <div className="text-center space-y-4">
                         <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-                            Exclusive Access
+                            Mint Exclusivo
                         </h1>
                         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                            Mint your Founder's Key to unlock the full potential of the Medialane Protocol.
+                            Frictionless + Free
                         </p>
-                    </div>
+                    </div>*/}
 
                     <div className="grid md:grid-cols-2 gap-12 items-center">
 
@@ -246,7 +246,7 @@ export default function MintEventAsset() {
                                     <div className="grid grid-cols-3 gap-2 text-center text-xs">
                                         <div className="bg-muted/50 p-2 rounded">
                                             <Clock className="w-4 h-4 mx-auto mb-1 text-primary" />
-                                            <span>Permanent</span>
+                                            <span>Onchain</span>
                                         </div>
                                         <div className="bg-muted/50 p-2 rounded">
                                             <Globe className="w-4 h-4 mx-auto mb-1 text-green-500" />
@@ -263,8 +263,9 @@ export default function MintEventAsset() {
 
                         {/* Mint Action / Details */}
                         <div className="space-y-8">
+
                             <div className="space-y-4">
-                                <h2 className="text-2xl font-semibold">About this Asset</h2>
+                                <h2 className="text-2xl font-semibold">Mint Exclusivo del evento Starknet + Chipipay en el Tec de Monterrey 2026_02_12</h2>
                                 <p className="text-muted-foreground leading-relaxed">
                                     {PRE_CONFIGURED_ASSET.description}
                                 </p>
@@ -284,8 +285,7 @@ export default function MintEventAsset() {
                                             <Shield className="w-6 h-6 text-primary" />
                                         </div>
                                         <div>
-                                            <h4 className="font-semibold">Protected on Starknet</h4>
-                                            <p className="text-sm text-muted-foreground"> Immutable ownership proved by cryptography.</p>
+                                            <p className="text-sm text-muted-foreground">Immutable ownership proved by zero-knowledge proofs on Starknet</p>
                                         </div>
                                     </div>
 
@@ -309,8 +309,12 @@ export default function MintEventAsset() {
                                     ) : (
                                         <div className="space-y-4">
                                             <div className="flex justify-between text-sm">
+                                                <span>Protocol Fee</span>
+                                                <span className="text-green-500 font-medium">Zero-fee</span>
+                                            </div>
+                                            <div className="flex justify-between text-sm">
                                                 <span>Gas Fee</span>
-                                                <span className="text-green-500 font-medium">Sponsored (Free)</span>
+                                                <span className="text-green-500 font-medium">Sponsored</span>
                                             </div>
                                             <Dialog open={showPinDialog} onOpenChange={setShowPinDialog}>
                                                 <DialogTrigger asChild>
