@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
     return {
-        name: 'MediaLane',
+        name: 'MediaLane.xyz',
         short_name: 'MediaLane',
         description: 'Monetization hub for the integrity web. Launch, share and monetize your creative works',
         start_url: '/',
