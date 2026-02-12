@@ -4,6 +4,16 @@ import { useState, useCallback, useEffect, useRef } from "react"
 import { RpcProvider, shortString, Contract } from "starknet"
 import { ipCollectionAbi } from "@/src/abis/ip_collection"
 import { fetchIpfsJson, resolveMediaUrl } from "@/src/lib/ipfs"
+import { num } from "starknet"
+
+// Helper to handle u256 from Starknet (can be BigInt or struct {low, high})
+function toBigInt(val: any): bigint {
+    if (typeof val === 'bigint') return val;
+    if (val && typeof val === 'object' && 'low' in val && 'high' in val) {
+        return BigInt(val.low) + (BigInt(val.high) * BigInt("340282366920938463463374607431768211456"));
+    }
+    return BigInt(0);
+}
 
 const COLLECTION_ADDRESS = process.env.NEXT_PUBLIC_COLLECTION_CONTRACT_ADDRESS
 // Start block where the registry was deployed (or reasonable recent block)
@@ -344,15 +354,15 @@ export function useCollectionsScanner(pageSize: number = 12): UseCollectionsScan
 
                         if (contract) {
                             try {
-                                const stats: any = await contract.get_collection_stats(parsed.collectionId)
-                                totalSupply = Number(stats.total_minted) || 0
+                                const stats: any = await contract.get_collection_stats(parsed.collectionId, { blockIdentifier: "latest" })
+                                totalSupply = Number(toBigInt(stats.total_minted) - toBigInt(stats.total_burned))
 
                                 // Ideally we get the address too if we want to be 100% sure, but event doesn't give address directly, 
                                 // wait, event gives owner but not ip_nft address. 
                                 // Actually we can compute or fetch. 
                                 // Let's fetch the struct to be safe and get the real address.
-                                const rawData: any = await contract.get_collection(parsed.collectionId)
-                                ipNft = typeof rawData.ip_nft === 'bigint' ? "0x" + rawData.ip_nft.toString(16) : String(rawData.ip_nft)
+                                const rawData: any = await contract.get_collection(parsed.collectionId, { blockIdentifier: "latest" })
+                                ipNft = num.toHex(rawData.ip_nft)
 
                             } catch (e) { }
                         }

@@ -301,7 +301,7 @@ export function AssetDetailPageClient() {
                                                 </div>
                                             </div>
                                             <div>
-                                                <h3 className="font-semibold text-lg text-primary">Not Listed For Sale</h3>
+                                                <h3 className="font-semibold text-lg text-primary">Not Listed</h3>
                                                 <p className="text-sm text-muted-foreground mt-2 max-w-xs mx-auto">
                                                     Make an offer to signal your interest to the owner.
                                                 </p>

@@ -65,11 +65,7 @@ function getProvider(): RpcProvider {
 // Get contract instance - matches use-all-collections.ts pattern
 function getContract(): Contract {
     const provider = getProvider()
-    return new Contract({
-        abi: ipCollectionAbi,
-        address: COLLECTION_CONTRACT_ADDRESS,
-        providerOrAccount: provider
-    })
+    return new Contract(ipCollectionAbi, COLLECTION_CONTRACT_ADDRESS, provider)
 }
 
 /**
@@ -80,7 +76,7 @@ export async function fetchTokenData(identifier: string, collectionBaseUri?: str
         const contract = getContract()
         // The contract expects ByteArray as argument
         console.log(`[fetchTokenData] Fetching token: ${identifier}`)
-        const tokenData = await contract.get_token(identifier)
+        const tokenData = await contract.get_token(identifier, { blockIdentifier: "latest" })
 
         // Check if token exists (owner is not 0)
         if (BigInt(tokenData.owner) === BigInt(0)) {
@@ -170,13 +166,13 @@ export function useCollectionTokens(collectionId: string | undefined) {
 
             // 0. First, get the collection's base_uri for composing token metadata URLs
             console.log("[useCollectionTokens] Fetching collection data for base_uri")
-            const collectionData = await contract.get_collection(collectionId)
+            const collectionData = await contract.get_collection(collectionId, { blockIdentifier: "latest" })
             const baseUri = decodeByteArray(collectionData.base_uri)
             console.log("[useCollectionTokens] Collection base_uri:", baseUri || "(empty)")
 
             // 1. Get stats to know how many tokens to fetch
             console.log("[useCollectionTokens] Fetching stats for collection:", collectionId)
-            const stats = await contract.get_collection_stats(collectionId)
+            const stats = await contract.get_collection_stats(collectionId, { blockIdentifier: "latest" })
             const totalMinted = Number(stats.total_minted)
             const totalBurned = Number(stats.total_burned)
             console.log("[useCollectionTokens] Stats:", { totalMinted, totalBurned })
@@ -302,7 +298,7 @@ export function useUserAssets(userAddress: string | undefined) {
                 try {
                     // Contract instance must be able to call list_user_tokens_per_collection
                     // list_user_tokens_per_collection(collection_id, user)
-                    const tokenIds = await contract.list_user_tokens_per_collection(col.collectionId, userAddress)
+                    const tokenIds = await contract.list_user_tokens_per_collection(col.collectionId, userAddress, { blockIdentifier: "latest" })
 
                     if (tokenIds && tokenIds.length > 0) {
                         // For each token ID, fetch data

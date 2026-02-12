@@ -18,6 +18,8 @@ import {
   Wallet,
   Stars,
   Shapes,
+  Award,
+  TvMinimalPlay,
 } from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/src/components/ui/button"
@@ -89,13 +91,13 @@ const FloatingNav = () => {
   // Main navigation items (simplified)
   const mainNavItems = [
     {
-      icon: <Compass className="w-4 h-4" />,
+      icon: <Award className="w-4 h-4" />,
       label: "Mint Event",
       href: "/mint",
       isActive: pathname.startsWith("/mint"),
     },
     {
-      icon: <Layers className="w-4 h-4" />,
+      icon: <TvMinimalPlay className="w-4 h-4" />,
       label: "Workshop",
       href: "/workshop",
       isActive: pathname.startsWith("/workshop"),

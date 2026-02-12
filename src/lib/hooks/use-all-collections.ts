@@ -5,6 +5,15 @@ import { RpcProvider, Contract, shortString, num } from "starknet"
 import { ipCollectionAbi } from "@/src/abis/ip_collection"
 import { fetchIpfsJson, resolveMediaUrl } from "@/src/lib/ipfs"
 
+// Helper to handle u256 from Starknet (might be BigInt or struct {low, high})
+function toBigInt(val: any): bigint {
+    if (typeof val === 'bigint') return val;
+    if (val && typeof val === 'object' && 'low' in val && 'high' in val) {
+        return BigInt(val.low) + (BigInt(val.high) * BigInt("340282366920938463463374607431768211456"));
+    }
+    return BigInt(0);
+}
+
 // Contract configuration
 const COLLECTION_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_COLLECTION_CONTRACT_ADDRESS || ""
 const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || ""
@@ -79,11 +88,7 @@ function getProvider(): RpcProvider {
 function getIPCollectionContract(): Contract {
     const provider = getProvider()
     const abi = ipCollectionAbi
-    return new Contract({
-        abi,
-        address: COLLECTION_CONTRACT_ADDRESS,
-        providerOrAccount: provider
-    })
+    return new Contract(abi, COLLECTION_CONTRACT_ADDRESS, provider)
 }
 
 /**
@@ -94,10 +99,11 @@ export async function fetchCollectionById(collectionId: number | bigint): Promis
         const contract = getIPCollectionContract()
 
         // Call get_collection
-        const collectionData = await contract.get_collection(collectionId)
+        const collectionData = await contract.get_collection(collectionId, { blockIdentifier: "latest" })
 
         // Call get_collection_stats for items count
-        const stats = await contract.get_collection_stats(collectionId)
+        const stats = await contract.get_collection_stats(collectionId, { blockIdentifier: "latest" })
+        console.log(`[Collection #${collectionId}] Stats raw:`, stats)
 
         const name = decodeByteArray(collectionData.name)
         const symbol = decodeByteArray(collectionData.symbol)
@@ -144,7 +150,7 @@ export async function fetchCollectionById(collectionId: number | bigint): Promis
             isActive: Boolean(collectionData.is_active),
             // UI fields
             creator: String(collectionData.owner).slice(0, 10) + "...",
-            items: Number(stats.total_minted) - Number(stats.total_burned),
+            items: Number(toBigInt(stats.total_minted) - toBigInt(stats.total_burned)),
             volume: "0 ETH", // Volume would need marketplace integration
             verified: false, // Would need verification system
             image: resolveMediaUrl(offChainMetadata.image),
@@ -164,7 +170,7 @@ export async function fetchCollectionById(collectionId: number | bigint): Promis
 export async function fetchCollectionAddressOnly(collectionId: number | bigint): Promise<{ ipNft: string, name: string } | null> {
     try {
         const contract = getIPCollectionContract()
-        const collectionData = await contract.get_collection(collectionId)
+        const collectionData = await contract.get_collection(collectionId, { blockIdentifier: "latest" })
 
         return {
             ipNft: num.toHex(collectionData.ip_nft),
@@ -399,7 +405,7 @@ export async function findCollectionIdByAddress(address: string): Promise<number
             // Parallel fetch of on-chain data ONLY
             const results = await Promise.all(batchIds.map(async (id) => {
                 try {
-                    const data = await contract.get_collection(id)
+                    const data = await contract.get_collection(id, { blockIdentifier: "latest" })
                     const ipNft = num.toHex(data.ip_nft).toLowerCase()
 
                     if (ipNft === normalizedAddr) {

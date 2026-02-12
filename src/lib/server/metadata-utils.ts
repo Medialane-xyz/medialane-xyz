@@ -128,7 +128,7 @@ async function findCollectionIdByAddress(address: string): Promise<number | null
 
         for (const id of ids) {
             try {
-                const data = await contract.get_collection(id)
+                const data = await contract.get_collection(id, { blockIdentifier: "latest" })
                 const ipNft = num.toHex(data.ip_nft).toLowerCase()
 
                 // Normalization check
@@ -182,7 +182,7 @@ export async function fetchTokenMetadataServer(slug: string[]) {
         const contract = getContract();
         const identifier = `${collectionId}:${tokenId}`;
 
-        const tokenData = await contract.get_token(identifier);
+        const tokenData = await contract.get_token(identifier, { blockIdentifier: "latest" });
 
         if (BigInt(tokenData.owner) === BigInt(0)) return null;
 
@@ -190,7 +190,7 @@ export async function fetchTokenMetadataServer(slug: string[]) {
 
         // If empty, try base URI
         if (!metadataUri) {
-            const collectionData = await contract.get_collection(collectionId);
+            const collectionData = await contract.get_collection(collectionId, { blockIdentifier: "latest" });
             const baseUri = decodeByteArray(collectionData.base_uri);
             if (baseUri) {
                 const cleanBaseUri = baseUri.endsWith('/') ? baseUri : `${baseUri}/`;
@@ -235,8 +235,8 @@ export async function fetchCollectionMetadataServer(address: string) {
         if (collectionId === null) return null;
 
         const contract = getContract();
-        const collectionData = await contract.get_collection(collectionId);
-        const stats = await contract.get_collection_stats(collectionId);
+        const collectionData = await contract.get_collection(collectionId, { blockIdentifier: "latest" });
+        const stats = await contract.get_collection_stats(collectionId, { blockIdentifier: "latest" });
 
         const baseUri = decodeByteArray(collectionData.base_uri);
         const name = decodeByteArray(collectionData.name);
