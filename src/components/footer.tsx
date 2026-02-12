@@ -83,7 +83,7 @@ export default function Footer() {
         { name: "Software", href: "/categories/software" },
         { name: "Videos", href: "/categories/videos" },
         { name: "NFTs", href: "/categories/nft" },
-        
+
       ],
     },
     {
@@ -192,7 +192,7 @@ export default function Footer() {
 
       {/* Main Navigation Section */}
       <div className="relative border-b border-gray-800/50">
-      
+
         <motion.div
           className="container mx-auto px-4 py-4"
           variants={containerVariants}
@@ -200,7 +200,7 @@ export default function Footer() {
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
         >
-          
+
           <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {mainNavigation.map((category, idx) => (
               <motion.div key={idx} className="space-y-4" variants={itemVariants}>
@@ -270,7 +270,7 @@ export default function Footer() {
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
       >
-        
+
 
         <motion.div className="grid grid-cols-2 md:grid-cols-4 gap-6" variants={itemVariants}>
           {stats.map((stat, index) => (
@@ -318,7 +318,7 @@ export default function Footer() {
             <div className="flex items-center space-x-3 mb-6">
               <div className="relative">
                 <LogoMedialane />
-              </div> 
+              </div>
             </div>
 
             <p className="text-gray-300 text-sm leading-relaxed mb-6 max-w-md">
@@ -363,7 +363,7 @@ export default function Footer() {
 
           {/* Quick Access Links */}
           <motion.div className="lg:col-span-4" variants={itemVariants}>
-            
+
 
             <div className="grid grid-cols-1 gap-3">
               {[
@@ -375,7 +375,7 @@ export default function Footer() {
                 },
                 { icon: Award, color: "from-amber-500 to-orange-500", text: "Creators", href: "/creators" },
                 { icon: Stars, color: "from-green-400 to-blue-500", text: "New Releases", href: "/new-releases" },
-                
+
               ].map((feature, index) => (
                 <Link key={index} href={feature.href}>
                   <motion.div
