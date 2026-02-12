@@ -37,8 +37,8 @@ const MEDIOLANO_CONTRACT = CONTRACTS.MEDIOLANO;
 // Pre-configured Asset Data
 const PRE_CONFIGURED_ASSET = {
     title: "Tec de Monterrey Campus CEM, Ship your first dapp",
-    description: "Ship your first dapp with Chipipay + Starknet + Medialane",
-    mediaUrl: "/mint.jpg", // Default exclusive asset image
+    description: "Ship your first dapp onchain, powered by Chipipay and Starknet",
+    mediaUrl: "/mint.jpg",
     externalUrl: "https://chipipay.com",
     author: "Chipipay",
     type: "event",
