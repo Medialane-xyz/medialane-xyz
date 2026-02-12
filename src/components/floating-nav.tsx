@@ -5,21 +5,12 @@ import { motion, AnimatePresence } from "framer-motion"
 import {
   Search,
   Home,
-  Layers,
-  Users,
   Menu,
   X,
   Plus,
-  Compass,
-  Sparkles,
-  User,
-  Settings,
-  LogOut,
-  Wallet,
-  Stars,
-  Shapes,
   Award,
   TvMinimalPlay,
+  Twitter,
 } from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/src/components/ui/button"
@@ -34,7 +25,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar"
 import { useMobile } from "@/src/hooks/use-mobile"
 import { cn } from "@/src/lib/utils"
-import NotificationsMenu from "@/src/components/notifications-menu"
+
 import { useToast } from "@/src/components/ui/use-toast"
 import { LogoMedialane } from "./logo-medialane"
 import { AccountButton } from "@/src/components/account-button"
@@ -155,6 +146,8 @@ const FloatingNav = () => {
 
             {/* Right section */}
             <div className="flex items-center pr-3 md:pr-4 space-x-2">
+
+              {/* Search Button 
               <Button
                 variant="ghost"
                 size="icon"
@@ -162,7 +155,7 @@ const FloatingNav = () => {
                 onClick={toggleSearch}
               >
                 <Search className="w-4 h-4" />
-              </Button>
+              </Button>*/}
 
               {/* Create Button - Desktop Only 
               {!isMobile && (
@@ -239,7 +232,7 @@ const FloatingNav = () => {
                       className="w-full justify-start bg-primary hover:bg-primary/90"
                       onClick={() => navigateTo("https://x.com/medialane_xyz")}
                     >
-                      <Plus className="w-4 h-4 mr-2" />
+                      <Twitter className="w-4 h-4 mr-2" />
                       X / Twitter
                     </Button>
                   </div>
