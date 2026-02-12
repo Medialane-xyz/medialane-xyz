@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useCallback, useEffect } from "react"
-import { RpcProvider, shortString } from "starknet"
+import { RpcProvider, shortString, Contract, num } from "starknet"
 import { ipCollectionAbi } from "@/src/abis/ip_collection"
 import { fetchIpfsJson, resolveMediaUrl } from "@/src/lib/ipfs"
 
@@ -92,6 +92,33 @@ function parseByteArray(dataIter: IterableIterator<string>): string {
     return result
 }
 
+// Local helper to fetch collection address
+async function resolveCollectionAddress(collectionId: string): Promise<{ ipNft: string, name: string } | null> {
+    try {
+        const rpcUrl = process.env.NEXT_PUBLIC_RPC_URL || ""
+        const provider = new RpcProvider({ nodeUrl: rpcUrl })
+
+        if (!COLLECTION_ADDRESS) return null
+
+        const contract = new Contract(ipCollectionAbi, COLLECTION_ADDRESS, provider)
+
+        // Use BigInt for the ID
+        const id = BigInt(collectionId)
+
+        // IMPORTANT: Use 'latest' block to avoid Alchemy 'pending' block errors
+        const collectionData = await contract.get_collection(id, { blockIdentifier: "latest" })
+
+        return {
+            ipNft: num.toHex(collectionData.ip_nft),
+            name: `Collection #${collectionId}` // Simplified name resolution for now
+        }
+    } catch (e) {
+        console.error(`Error resolving collection address for ID ${collectionId}:`, e)
+        return null
+    }
+}
+
+
 export function useRecentAssets(pageSize: number = 20): UseRecentAssetsReturn {
     const [allParsedEvents, setAllParsedEvents] = useState<ParsedEvent[]>([])
     const [assets, setAssets] = useState<RecentAsset[]>([])
@@ -104,10 +131,6 @@ export function useRecentAssets(pageSize: number = 20): UseRecentAssetsReturn {
     const [lastScannedBlock, setLastScannedBlock] = useState<number | null>(null)
     const [hasMoreBlocks, setHasMoreBlocks] = useState(true)
     const [isScanning, setIsScanning] = useState(false)
-
-    // Removed unused useContract hook call
-
-    // Fetch events for a specific block range
 
     // Fetch events for a specific block range
     const fetchEventsInRange = useCallback(async (fromBlock: number, toBlock: number) => {
@@ -156,6 +179,7 @@ export function useRecentAssets(pageSize: number = 20): UseRecentAssetsReturn {
                         // Parse metadata_uri (ByteArray)
                         const metadataUri = parseByteArray(dataIter)
 
+                        // Placeholder address using ID
                         const collectionAddress = "0x" + (BigInt(collectionIdLow) + (BigInt(collectionIdHigh) * BigInt("340282366920938463463374607431768211456"))).toString(16)
 
                         rangeEvents.push({
@@ -204,7 +228,7 @@ export function useRecentAssets(pageSize: number = 20): UseRecentAssetsReturn {
 
             const newEvents: ParsedEvent[] = []
             let attempts = 0
-            const maxAttempts = 5 // Reduced attempts to prevent long load times
+            const maxAttempts = 20
 
             while (newEvents.length < targetCount && attempts < maxAttempts && currentToBlock > REGISTRY_START_BLOCK) {
                 const currentFromBlock = Math.max(REGISTRY_START_BLOCK, currentToBlock - BLOCK_WINDOW_SIZE)
@@ -236,7 +260,7 @@ export function useRecentAssets(pageSize: number = 20): UseRecentAssetsReturn {
                     // Deduplicate
                     const uniqueMap = new Map()
                     for (const event of combined) {
-                        const key = `${event.collectionAddress}-${event.tokenId}`
+                        const key = `${event.collectionId}-${event.tokenId}` // Stable key
                         if (!uniqueMap.has(key)) {
                             uniqueMap.set(key, event)
                         }
@@ -265,16 +289,26 @@ export function useRecentAssets(pageSize: number = 20): UseRecentAssetsReturn {
         const processAssets = async () => {
             const eventsToProcess = allParsedEvents.slice(0, displayCount)
 
-            // Map event ID to existing asset to avoid re-fetching
-            const existingAssetsMap = new Map(assets.map(a => [a.id, a]))
+            // Fix map key to be stable (collectionId-tokenId)
+            const existingAssetsMap = new Map(assets.map(a => [`${a.collectionId}-${a.tokenId}`, a]))
             const processedAssets: RecentAsset[] = []
             const itemsToFetch: { event: ParsedEvent, index: number }[] = []
 
             for (let i = 0; i < eventsToProcess.length; i++) {
                 const evt = eventsToProcess[i]
-                const id = `${evt.collectionAddress}-${evt.tokenId}`
-                if (existingAssetsMap.has(id)) {
-                    processedAssets[i] = existingAssetsMap.get(id)!
+
+                // Stable lookup key
+                const lookupKey = `${evt.collectionId}-${evt.tokenId}`
+
+                const existing = existingAssetsMap.get(lookupKey)
+
+                // Only reuse if we have a valid resolved address (not the ID fallback)
+                // ID fallback usually starts with "0x" and is short (< 10 chars usually for small IDs)
+                // Real address is 60+ chars.
+                const hasValidAddress = existing && existing.collectionAddress && existing.collectionAddress.length > 40
+
+                if (existing && hasValidAddress) {
+                    processedAssets[i] = existing
                 } else {
                     itemsToFetch.push({ event: evt, index: i })
                 }
@@ -283,7 +317,11 @@ export function useRecentAssets(pageSize: number = 20): UseRecentAssetsReturn {
             if (itemsToFetch.length === 0) {
                 // Just update list order if needed
                 if (processedAssets.length !== assets.length) {
-                    setAssets(processedAssets)
+                    // Filter holes
+                    const cleanList = processedAssets.filter(Boolean)
+                    if (cleanList.length !== assets.length || cleanList.some((a, idx) => a.id !== assets[idx].id)) {
+                        setAssets(cleanList)
+                    }
                 }
                 return
             }
@@ -293,14 +331,29 @@ export function useRecentAssets(pageSize: number = 20): UseRecentAssetsReturn {
             for (let i = 0; i < itemsToFetch.length; i += batchSize) {
                 const batch = itemsToFetch.slice(i, i + batchSize)
 
-                await Promise.all(batch.map(async ({ event: parsed, index }) => {
+                // Accumulate results from this batch
+                const batchResults = await Promise.all(batch.map(async ({ event: parsed, index }) => {
                     let name = `Asset #${parsed.tokenId}`
                     let image = "/placeholder.svg"
                     let description = ""
                     let category = "Digital Asset"
                     let collectionName = `Collection #${parsed.collectionId}`
+                    let realCollectionAddress = parsed.collectionAddress; // Default to ID-as-hex
 
-                    // Fetch metadata
+                    // 1. Fetch real collection address
+                    try {
+                        const colData = await resolveCollectionAddress(parsed.collectionId);
+                        if (colData) {
+                            collectionName = colData.name;
+                            realCollectionAddress = colData.ipNft;
+                        } else {
+                            console.warn(`Could not resolve address for collection ${parsed.collectionId}`)
+                        }
+                    } catch (e) {
+                        console.warn("Failed to fetch collection details for recent asset", e);
+                    }
+
+                    // 2. Fetch metadata
                     if (parsed.metadataUri) {
                         try {
                             const metadata = await fetchIpfsJson(parsed.metadataUri)
@@ -314,55 +367,47 @@ export function useRecentAssets(pageSize: number = 20): UseRecentAssetsReturn {
                                 }
                             }
                         } catch (e) {
-                            console.warn(`Failed to fetch metadata for ${parsed.metadataUri}`)
+                            // console.warn(`Failed to fetch metadata for ${parsed.metadataUri}`)
                         }
                     }
 
-                    // Try to fetch collection details to get the real address and name
-                    let realCollectionAddress = parsed.collectionAddress;
-
-                    try {
-                        // Dynamically import to avoid circular dependency issues if possible, or just use the one we'll add to imports
-                        const { fetchCollectionById } = await import("./use-all-collections");
-                        const colData = await fetchCollectionById(BigInt(parsed.collectionId));
-                        if (colData) {
-                            collectionName = colData.name;
-                            realCollectionAddress = colData.ipNft;
+                    return {
+                        index,
+                        asset: {
+                            id: `${realCollectionAddress}-${parsed.tokenId}`,
+                            tokenId: parsed.tokenId,
+                            collectionId: parsed.collectionId,
+                            name,
+                            image,
+                            owner: parsed.owner,
+                            txHash: parsed.txHash,
+                            metadataUri: parsed.metadataUri,
+                            blockNumber: parsed.blockNumber,
+                            collectionAddress: realCollectionAddress,
+                            collectionName,
+                            description,
+                            category,
+                            creator: parsed.owner?.length > 10 ? `${parsed.owner.slice(0, 6)}...${parsed.owner.slice(-4)}` : parsed.owner,
+                            creatorId: parsed.owner,
+                            creatorAvatar: "/placeholder-avatar.png",
+                            price: "Not Listed",
+                            isRemix: false
                         }
-                    } catch (e) {
-                        console.warn("Failed to fetch collection details for recent asset", e);
-                    }
-
-                    processedAssets[index] = {
-                        id: `${realCollectionAddress}-${parsed.tokenId}`,
-                        tokenId: parsed.tokenId,
-                        collectionId: parsed.collectionId,
-                        name,
-                        image,
-                        owner: parsed.owner,
-                        txHash: parsed.txHash,
-                        metadataUri: parsed.metadataUri,
-                        blockNumber: parsed.blockNumber,
-                        collectionAddress: realCollectionAddress,
-                        collectionName,
-                        description,
-                        category,
-                        creator: parsed.owner?.length > 10 ? `${parsed.owner.slice(0, 6)}...${parsed.owner.slice(-4)}` : parsed.owner,
-                        creatorId: parsed.owner,
-                        creatorAvatar: "/placeholder-avatar.png",
-                        price: "Not Listed",
-                        isRemix: false
                     }
                 }))
 
-                // Update state incrementally to show progress
+                // Place results into processedAssets
+                batchResults.forEach(res => {
+                    processedAssets[res.index] = res.asset
+                })
+
+                // Update state incrementally
                 setAssets([...processedAssets.filter(Boolean)])
             }
         }
 
         processAssets()
     }, [allParsedEvents, displayCount])
-    // Intentionally omitting assets from dep array to avoid infinite loop, logic handles diff
 
     const loadMore = async () => {
         if (loadingMore) return

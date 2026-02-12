@@ -90,15 +90,15 @@ const FloatingNav = () => {
   const mainNavItems = [
     {
       icon: <Compass className="w-4 h-4" />,
-      label: "Explore",
-      href: "/assets",
-      isActive: pathname.startsWith("/explore") || pathname.startsWith("/assets"),
+      label: "Mint Event",
+      href: "/mint",
+      isActive: pathname.startsWith("/mint"),
     },
     {
       icon: <Layers className="w-4 h-4" />,
-      label: "Collections",
-      href: "/collections",
-      isActive: pathname.startsWith("/collections"),
+      label: "Workshop",
+      href: "/workshop",
+      isActive: pathname.startsWith("/workshop"),
     },
   ]
 
