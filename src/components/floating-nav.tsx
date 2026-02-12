@@ -237,10 +237,10 @@ const FloatingNav = () => {
                   <div className="pt-2">
                     <Button
                       className="w-full justify-start bg-primary hover:bg-primary/90"
-                      onClick={() => navigateTo("/create")}
+                      onClick={() => navigateTo("https://x.com/medialane_xyz")}
                     >
                       <Plus className="w-4 h-4 mr-2" />
-                      Create
+                      X / Twitter
                     </Button>
                   </div>
                 </div>
