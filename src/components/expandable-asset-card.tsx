@@ -222,7 +222,7 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
 
                 {/* License Permissions */}
                 <div className="space-y-3">
-                  <h4 className="font-medium text-foreground text-sm">License Permissions</h4>
+                  <h4 className="font-medium text-foreground text-sm">License</h4>
                   <div className="grid grid-cols-3 gap-2">
                     <div className="text-center p-2 bg-muted/20 rounded-lg">
                       <div className="flex justify-center mb-1">

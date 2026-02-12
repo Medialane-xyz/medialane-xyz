@@ -160,11 +160,9 @@ export default function PortfolioView() {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                 <div>
                   <h1 className="text-3xl font-bold text-foreground mb-2">
-                    My Portfolio
+                    Mint Portfolio
                   </h1>
-                  <p className="text-muted-foreground">
-                    Manage your tokenized intellectual property
-                  </p>
+
                   {user && (
                     <div className="flex items-center space-x-2 mt-2">
                       <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
@@ -226,7 +224,7 @@ export default function PortfolioView() {
               {/* Stats Cards */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
                 <Card
-                  className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 border-blue-200 dark:border-blue-800 hover:scale-105 transition-transform duration-300 animate-fade-in-up"
+                  className="bg-gradient-to-br from-blue-50 to-cyan-100 dark:from-blue-950 dark:to-cyan-900 border-blue-200 dark:border-blue-800 hover:scale-105 transition-transform duration-300 animate-fade-in-up"
                   style={{ animationDelay: "100ms" }}
                 >
                   <CardContent className="p-4 text-center">
@@ -245,7 +243,7 @@ export default function PortfolioView() {
                 </Card>
 
                 <Card
-                  className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 border-green-200 dark:border-green-800 hover:scale-105 transition-transform duration-300 animate-fade-in-up"
+                  className="bg-gradient-to-br from-green-50 to-blue-100 dark:from-green-950 dark:to-blue-900 border-green-200 dark:border-green-800 hover:scale-105 transition-transform duration-300 animate-fade-in-up"
                   style={{ animationDelay: "200ms" }}
                 >
                   <CardContent className="p-4 text-center">
@@ -264,7 +262,7 @@ export default function PortfolioView() {
                 </Card>
 
                 <Card
-                  className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900 border-purple-200 dark:border-purple-800 hover:scale-105 transition-transform duration-300 animate-fade-in-up"
+                  className="bg-gradient-to-br from-purple-50 to-red-100 dark:from-purple-950 dark:to-red-900 border-purple-200 dark:border-purple-800 hover:scale-105 transition-transform duration-300 animate-fade-in-up"
                   style={{ animationDelay: "300ms" }}
                 >
                   <CardContent className="p-4 text-center">
@@ -283,7 +281,7 @@ export default function PortfolioView() {
                 </Card>
 
                 <Card
-                  className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900 border-orange-200 dark:border-orange-800 hover:scale-105 transition-transform duration-300 animate-fade-in-up"
+                  className="bg-gradient-to-br from-orange-50 to-purple-100 dark:from-orange-950 dark:to-purple-900 border-orange-200 dark:border-orange-800 hover:scale-105 transition-transform duration-300 animate-fade-in-up"
                   style={{ animationDelay: "400ms" }}
                 >
                   <CardContent className="p-4 text-center">
