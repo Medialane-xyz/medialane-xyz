@@ -292,7 +292,7 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
             src={asset.mediaUrl || "/placeholder.svg"}
             alt={asset.title}
             width={400}
-            height={300}
+            height={400}
             className="w-full h-64"
           />
 
