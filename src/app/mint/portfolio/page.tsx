@@ -2,8 +2,11 @@ import PortfolioView from "@/src/components/portfolio";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "My Portfolio",
-  description: "Manage your MediaLane assets and collections",
+  title: "Mint Portfolio",
+  description: "Check your minted assets onchain",
+  alternates: {
+    canonical: "/mint/portfolio",
+  },
 };
 
 export default function page() {
