@@ -38,9 +38,9 @@ const MEDIOLANO_CONTRACT = CONTRACTS.MEDIOLANO;
 const PRE_CONFIGURED_ASSET = {
     title: "Medialane Founder's Key",
     description: "Exclusive access to the Medialane Alpha. This key grants the holder early access to features, governance rights, and special community status.",
-    mediaUrl: "/assets/founders_key.png", // Ensure this image exists in public/assets or use a placeholder
+    mediaUrl: "/mint.jpg", // Default exclusive asset image
     externalUrl: "https://medialane.xyz",
-    author: "Medialane Protocol", // Fixed author for the event
+    author: "Medialane Protocol",
     type: "access-pass",
     tags: ["founder", "access", "exclusive", "alpha"],
     collection: "Mediolano Genesis",
@@ -93,13 +93,16 @@ export default function MintEventAsset() {
                 throw new Error("No bearer token found. Please try to login again.");
             }
 
+            // Fetch the default image to upload it to IPFS
+            const response = await fetch(PRE_CONFIGURED_ASSET.mediaUrl);
+            const blob = await response.blob();
+            const file = new File([blob], "founders_key.jpg", { type: "image/jpeg" });
+
             // Create metadata object
             const metadata = {
                 name: PRE_CONFIGURED_ASSET.title,
                 description: PRE_CONFIGURED_ASSET.description,
-                image: PRE_CONFIGURED_ASSET.mediaUrl, // Will be replaced by IPFS URL if we upload it, but for pre-config we might want to just host it? 
-                // Logic: useIpfsUpload usually uploads a file. access to file object here is hard since it's pre-conf.
-                // We will pass null as file, and use the mediaUrl as the image link.
+                image: PRE_CONFIGURED_ASSET.mediaUrl, // Will be replaced by IPFS URL
                 external_url: PRE_CONFIGURED_ASSET.externalUrl,
                 attributes: [
                     { trait_type: "Type", value: PRE_CONFIGURED_ASSET.type },
@@ -115,12 +118,8 @@ export default function MintEventAsset() {
                 },
             };
 
-            // In this case, since we don't have a File object, uploadToIpfs will just upload the metadata JSON
-            // The image inside metadata will point to the public URL or we need to ensure it's an IPFS url.
-            // For this MVP, we'll rely on the existing image URL being accessible or if user wants it purely on-chain/IPFS we'd need to fetch and blob it.
-            // Assuming 'uploadToIpfs' handles null file by skipping file upload and just using metadata.image.
-
-            const result = await uploadToIpfs(null, metadata);
+            // Upload both file and metadata to IPFS
+            const result = await uploadToIpfs(file, metadata);
 
             // Mint NFT using Chipi SDK's callAnyContract
             const mintResult = await callAnyContractAsync({
@@ -217,7 +216,12 @@ export default function MintEventAsset() {
                                     <Sparkles className="w-32 h-32 text-primary/20 animate-pulse absolute" />
 
                                     {/* We can use Next/Image if we have the asset, otherwise a fallback */}
-                                    {/* <Image src={PRE_CONFIGURED_ASSET.mediaUrl} alt="Founder Key" fill className="object-cover" /> */}
+                                    <Image
+                                        src={PRE_CONFIGURED_ASSET.mediaUrl}
+                                        alt="Founder Key"
+                                        fill
+                                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                                    />
 
                                     <div className="z-10 text-center space-y-2 p-6">
                                         <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto backdrop-blur-md border border-primary/30">

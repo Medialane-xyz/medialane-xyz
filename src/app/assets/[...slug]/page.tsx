@@ -17,7 +17,7 @@ import { RemixGenealogyTree } from "@/src/components/remix-genealogy-tree"
 import { useToken, useTokenByAddress } from "@/src/lib/hooks/use-collection-tokens"
 import { ListingDialog } from "@/src/components/listing-dialog"
 import { AssetsSkeleton } from "@/src/components/assets-skeleton"
-import { useAuth } from "@clerk/nextjs"
+import { useAuth, useUser } from "@clerk/nextjs"
 import { useGetWallet } from "@chipi-stack/nextjs"
 
 // Glass Stat Card Component
@@ -39,13 +39,22 @@ export default function AssetDetailPage() {
     const params = useParams()
     const router = useRouter()
 
+    const { user } = useUser() // We need useUser to get metadata
     const { userId, getToken } = useAuth()
+
+    // Get wallet from metadata first (faster, reliable for Chipipay)
+    const publicKey = user?.publicMetadata?.publicKey as string;
+
     const { data: walletData } = useGetWallet({
         getBearerToken: () => getToken({ template: "chipipay" }).then((t) => t || ""),
         params: { externalUserId: userId || "" },
-        queryOptions: { enabled: !!userId },
+        queryOptions: { enabled: !!userId && !publicKey }, // Only fetch if not in metadata
     })
-    const account = { address: (walletData as any)?.wallet?.publicKey }
+
+    // Construct account object using metadata key if available, otherwise wallet fetch result
+    const account = {
+        address: publicKey || (walletData as any)?.wallet?.publicKey
+    }
 
     // Parse the slug array to determine which format we're using
     const slug = params.slug as string[] | undefined

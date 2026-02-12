@@ -16,17 +16,27 @@ export default function AccountPage() {
     const { getToken, userId } = useAuth();
     const router = useRouter();
 
+    const publicKey = user?.publicMetadata?.publicKey as string;
+
+    // Use useGetWallet only if we don't have the key in metadata (fallback)
     const { data: wallet, isLoading: isWalletLoading } = useGetWallet({
         getBearerToken: () => getToken({ template: "chipipay" }).then((t) => t || ""),
         params: {
             externalUserId: userId || "",
         },
         queryOptions: {
-            enabled: !!userId,
+            enabled: !!userId && !publicKey,
         },
     });
 
-    if (!isUserLoaded || isWalletLoading) {
+    const displayWallet = publicKey ? {
+        wallet: {
+            publicKey: publicKey,
+            normalizedPublicKey: publicKey
+        }
+    } : wallet;
+
+    if (!isUserLoaded) {
         return (
             <div className="flex items-center justify-center min-h-[60vh]">
                 <div className="flex flex-col items-center gap-4">
@@ -95,11 +105,11 @@ export default function AccountPage() {
 
                 {/* Wallet Section */}
                 <div className="space-y-6">
-                    {wallet ? (
+                    {displayWallet ? (
                         <div className="space-y-4">
                             <WalletSummary
-                                normalizedPublicKey={(wallet as any).normalizedPublicKey || wallet.wallet?.normalizedPublicKey}
-                                walletPublicKey={(wallet as any).publicKey || wallet.wallet?.publicKey}
+                                normalizedPublicKey={(displayWallet as any).wallet?.normalizedPublicKey || (displayWallet as any)?.wallet?.publicKey || (displayWallet as any).normalizedPublicKey || ""}
+                                walletPublicKey={(displayWallet as any).wallet?.publicKey || (displayWallet as any)?.publicKey || ""}
                             />
                             <p className="text-xs text-muted-foreground text-center px-4">
                                 Your Chipi Wallet is a smart contract wallet secured by your PIN and passkeys.
