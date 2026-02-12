@@ -358,11 +358,11 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
         <CardContent className="p-6">
           <div className="space-y-4">
             <div>
-              <Link href={`/asset/${asset.slug}`}>
-                <h3 className="font-semibold text-foreground mb-2 truncate group-hover:text-primary transition-colors cursor-pointer text-lg">
-                  {asset.title}
-                </h3>
-              </Link>
+
+              <h3 className="font-semibold text-foreground mb-2 truncate group-hover:text-primary transition-colors cursor-pointer text-lg">
+                {asset.title}
+              </h3>
+
 
               <p className="text-sm text-muted-foreground line-clamp-2">{asset.description}</p>
             </div>
@@ -383,16 +383,7 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
             <div className="flex space-x-2">
 
 
-              <Link href={`/asset/${asset.slug}`} className="flex-1">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full hover:bg-primary hover:text-primary-foreground hover:scale-105 transition-all"
-                >
-                  <Eye className="w-4 h-4 mr-1" />
-                  View Asset
-                </Button>
-              </Link>
+
 
 
 
