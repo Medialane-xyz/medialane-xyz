@@ -268,7 +268,7 @@ export default function MintEventAsset() {
                         <div className="space-y-8">
 
                             <div className="space-y-4">
-                                <h2 className="text-2xl font-semibold">Mint Exclusivo del evento Starknet + Chipipay en el Tec de Monterrey 2026_02_12</h2>
+                                <h2 className="text-2xl font-semibold">{PRE_CONFIGURED_ASSET.title}</h2>
                                 <p className="text-foreground leading-relaxed">
                                     {PRE_CONFIGURED_ASSET.description}
                                 </p>
