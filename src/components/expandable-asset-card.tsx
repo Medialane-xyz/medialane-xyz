@@ -84,9 +84,9 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
   const handleViewOnExplorer = () => {
     const explorerUrl = process.env.NEXT_PUBLIC_EXPLORER_URL || "https://voyager.online"
     if (asset.contractAddress && asset.tokenId) {
-      window.open(`${explorerUrl}/contract/${asset.contractAddress}/token/${asset.tokenId}`, "_blank")
+      window.open(`${explorerUrl}/nft/${asset.contractAddress}/${asset.tokenId}`, "_blank")
     } else if (asset.contractAddress) {
-      window.open(`${explorerUrl}/contract/${asset.contractAddress}`, "_blank")
+      window.open(`${explorerUrl}/nft/${asset.contractAddress}`, "_blank")
     } else {
       window.open(explorerUrl, "_blank")
     }
