@@ -82,14 +82,8 @@ const FloatingNav = () => {
   // Main navigation items (simplified)
   const mainNavItems = [
     {
-      icon: <Award className="w-4 h-4" />,
-      label: "Mint Event",
-      href: "/mint",
-      isActive: pathname.startsWith("/mint"),
-    },
-    {
       icon: <TvMinimalPlay className="w-4 h-4" />,
-      label: "Workshop",
+      label: "Workshop PT-BR",
       href: "/workshop",
       isActive: pathname.startsWith("/workshop"),
     },
