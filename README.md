@@ -1,4 +1,5 @@
-<img width="1920" height="1080" alt="Medialane" src="https://mediolano.xyz/wp-content/uploads/2026/01/medialane-monetization-hub-programmable-ip.jpg" />
+<img width="1280" height="640" alt="image" src="https://github.com/user-attachments/assets/197ced01-1e62-46dd-a848-abcbf1ac8a06" />
+
 
 ### Medialane: Creators Capital Markets on the Integrity Web
 
@@ -64,7 +65,7 @@ NEXT_PUBLIC_CHIPI_API_KEY=your_chipi_api_key
 - [X] Medialane Protocol @ Starknet Sepolia **25.11**
 - [X] Medialane Dapp @ Starknet Sepolia **25.11**
 - [X] Medialane Onboarding @ Starknet Mainnet **26.01**
-- [ ] Medialane Protocol @ Starknet Mainnet **26.02**
+- [X] Medialane Protocol @ Starknet Mainnet **26.02**
 - [ ] Medialane Creator Launchpad @ Starknet Mainnet **26.03**
 - [ ] Medialane Marketplace @ Starknet Mainnet **26.03**
 
