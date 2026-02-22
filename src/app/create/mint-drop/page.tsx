@@ -38,6 +38,7 @@ import { useCallAnyContract } from "@chipi-stack/nextjs"
 import { useIpfsUpload } from "@/src/hooks/useIpfs"
 import { CONTRACTS } from "@/src/services/constant"
 import { PinInput } from "@/src/components/pin-input"
+import { CallData, byteArray } from "starknet"
 import {
     Dialog,
     DialogContent,
@@ -187,6 +188,18 @@ export default function CreateMintDropPage() {
             // Upload both file and metadata to IPFS
             const result = await uploadToIpfs(assetFile, metadata)
 
+            // Format strings to Starknet ByteArrays
+            const nameBa = byteArray.byteArrayFromString(assetName);
+            const symbolBa = byteArray.byteArrayFromString("DROP");
+            const baseUriBa = byteArray.byteArrayFromString(result.cid);
+
+            // Compile into raw felts array expected by Chipi API
+            const formattedCalldata = CallData.compile({
+                name: nameBa,
+                symbol: symbolBa,
+                base_uri: baseUriBa,
+            });
+
             // Call create_collection on factory
             const txHash = await callAnyContractAsync({
                 params: {
@@ -200,11 +213,7 @@ export default function CreateMintDropPage() {
                         {
                             contractAddress: CONTRACTS.COLLECTION_FACTORY,
                             entrypoint: "create_collection",
-                            calldata: [
-                                assetName, // name
-                                "DROP",    // symbol
-                                result.cid, // base_uri
-                            ],
+                            calldata: formattedCalldata,
                         },
                     ],
                 },

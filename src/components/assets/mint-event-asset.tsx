@@ -30,6 +30,7 @@ import { CONTRACTS } from "@/src/services/constant";
 import { useIpfsUpload } from "@/src/hooks/useIpfs";
 import { Confetti } from "@/src/components/ui/animation-confetti";
 import Image from "next/image";
+import { CallData, byteArray } from "starknet";
 
 // Mediolano Protocol default contract address
 const MEDIOLANO_CONTRACT = CONTRACTS.MEDIOLANO;
@@ -151,6 +152,18 @@ export default function MintEventAsset({ asset, contractAddress }: MintEventAsse
             // Upload both file and metadata to IPFS
             const result = await uploadToIpfs(file, metadata);
 
+            // Format to Starknet types
+            const tokenUriBa = byteArray.byteArrayFromString(result.cid);
+            // Starknet u256 is expected to be { low, high }
+            const collectionIdU256 = { low: activeAsset.collectionId || "0", high: "0" };
+
+            // Compile into raw felts array expected by Chipi API (without ABI processing)
+            const formattedCalldata = CallData.compile({
+                collection_id: collectionIdU256,
+                recipient: publicKey,
+                token_uri: tokenUriBa,
+            });
+
             // Mint NFT using Chipi SDK's callAnyContract to the IP Collection Protocol Contract
             const mintResult = await callAnyContractAsync({
                 params: {
@@ -164,11 +177,7 @@ export default function MintEventAsset({ asset, contractAddress }: MintEventAsse
                         {
                             contractAddress: CONTRACTS.COLLECTION_FACTORY,
                             entrypoint: "mint",
-                            calldata: [
-                                activeAsset.collectionId || "0", // collection_id
-                                publicKey, // recipient
-                                result.cid, // tokenURI (metadata IPFS CID)
-                            ],
+                            calldata: formattedCalldata,
                         },
                     ],
                 },
