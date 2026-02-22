@@ -411,7 +411,7 @@ function AssetGrid({
   viewMode: "grid" | "list";
   isOwner?: boolean;
 }) {
-  if (assets?.length === 0) {
+  if (!assets || assets.length === 0) {
     return (
       <div className="text-center py-16 animate-fade-in-up">
         <div className="w-20 h-20 bg-muted/50 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
@@ -421,12 +421,12 @@ function AssetGrid({
           No IP assets found
         </h3>
         <p className="text-muted-foreground mb-6">
-          Create your frictionless NFT
+          Create your own frictionless drop
         </p>
-        <Link href="/mint">
+        <Link href="/create/mint-drop">
           <Button className="hover:scale-105 transition-transform">
             <Plus className="w-4 h-4 mr-2" />
-            Mint New
+            Create Mint Drop
           </Button>
         </Link>
       </div>

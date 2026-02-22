@@ -1,11 +1,11 @@
 import { RpcProvider, Contract, CallData, num, validateAndParseAddress } from "starknet"
 import { starknetService } from "./starknet.service"
 import type { Collection, AssetIP } from "@/src/types/asset"
-import { ip_collection_abi } from "@/src/abi/ip_collection"
+import { ipCollectionAbi } from "@/src/abis/ip_collection"
 import { rateLimiter } from "./rate-limiter.service"
 
 // MIP Protocol Contract ABI for collections
-const MIP_COLLECTIONS_ABI = ip_collection_abi;
+const MIP_COLLECTIONS_ABI = ipCollectionAbi;
 // MIP Protocol Contract Address (from environment or default)
 const MIP_COLLECTIONS_CONTRACT = process.env.NEXT_PUBLIC_COLLECTION_FACTORY_ADDRESS;
 
@@ -117,7 +117,7 @@ export class CollectionsService {
         discovery: { data: [], timestamp: 0, expiresAt: 0, version: '1.0' },
         lastDiscovery: 0
     }
-    
+
     // Configuration
     private readonly CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
     private readonly DISCOVERY_CACHE_DURATION = 10 * 60 * 1000 // 10 minutes
@@ -148,7 +148,7 @@ export class CollectionsService {
                         data: this.serializeForStorage(entry.data)
                     }
                 ])
-                
+
                 const assetsData = Array.from(this.cache.assets.entries()).map(([key, entry]) => [
                     key,
                     {
@@ -156,7 +156,7 @@ export class CollectionsService {
                         data: entry.data.map(asset => this.serializeForStorage(asset))
                     }
                 ])
-                
+
                 const statsData = Array.from(this.cache.stats.entries()).map(([key, entry]) => [
                     key,
                     {
@@ -164,7 +164,7 @@ export class CollectionsService {
                         data: this.serializeForStorage(entry.data)
                     }
                 ])
-                
+
                 const cacheData = {
                     collections: collectionsData,
                     assets: assetsData,
@@ -188,15 +188,15 @@ export class CollectionsService {
         if (data === null || data === undefined) {
             return data
         }
-        
+
         if (typeof data === 'bigint') {
             return data.toString()
         }
-        
+
         if (Array.isArray(data)) {
             return data.map(item => this.serializeForStorage(item))
         }
-        
+
         if (typeof data === 'object') {
             const serialized: any = {}
             for (const [key, value] of Object.entries(data)) {
@@ -204,7 +204,7 @@ export class CollectionsService {
             }
             return serialized
         }
-        
+
         return data
     }
 
@@ -218,7 +218,7 @@ export class CollectionsService {
                 if (cached) {
                     const cacheData = JSON.parse(cached)
                     const now = Date.now()
-                    
+
                     // Only load if cache is not too old (24 hours)
                     if (now - cacheData.timestamp < 24 * 60 * 60 * 1000) {
                         this.cache.collections = new Map(cacheData.collections)
@@ -257,7 +257,7 @@ export class CollectionsService {
         setInterval(() => {
             this.persistCache()
         }, 5 * 60 * 1000)
-        
+
         // Also persist on page unload
         if (typeof window !== 'undefined') {
             window.addEventListener('beforeunload', () => {
@@ -278,7 +278,7 @@ export class CollectionsService {
         const now = Date.now()
         const contractStatus = this.getContractStatus()
         const cacheStats = this.getCacheStats()
-        
+
         return {
             contract: contractStatus,
             cache: cacheStats,
@@ -327,7 +327,7 @@ export class CollectionsService {
      */
     private async discoverCollections(): Promise<number[]> {
         const now = Date.now()
-        
+
         // Check if we have recent discovery data
         if (this.cache.discovery.expiresAt > now) {
             console.log("Using cached collection discovery data")
@@ -336,7 +336,7 @@ export class CollectionsService {
 
         console.log("Starting new collection discovery...")
         const discoveredIds: number[] = []
-        
+
         // Use binary search approach to find the highest collection ID
         let low = 1
         let high = this.MAX_DISCOVERY_RANGE
@@ -363,14 +363,14 @@ export class CollectionsService {
         // Now check all collections up to the highest valid ID
         if (highestValidId > 0) {
             const checkPromises: Promise<{ id: number; isValid: boolean }>[] = []
-            
+
             for (let id = 1; id <= highestValidId; id++) {
                 checkPromises.push(
                     this.contract!.call("is_valid_collection", [id])
                         .then(isValid => ({ id, isValid: Boolean(isValid) }))
                         .catch(() => ({ id, isValid: false }))
                 )
-                
+
                 // Process in batches to avoid overwhelming RPC
                 if (checkPromises.length >= this.DISCOVERY_BATCH_SIZE) {
                     const results = await Promise.all(checkPromises)
@@ -379,7 +379,7 @@ export class CollectionsService {
                     await this.delay(100)
                 }
             }
-            
+
             // Process remaining promises
             if (checkPromises.length > 0) {
                 const results = await Promise.all(checkPromises)
@@ -438,7 +438,7 @@ export class CollectionsService {
 
             for (const collectionId of collectionIds) {
                 fetchPromises.push(this.getCollectionWithCache(collectionId.toString()))
-                
+
                 // Process in batches
                 if (fetchPromises.length >= this.DISCOVERY_BATCH_SIZE) {
                     const results = await Promise.all(fetchPromises)
@@ -489,7 +489,7 @@ export class CollectionsService {
     private async getCollectionWithCache(collectionId: string): Promise<Collection | null> {
         const cacheKey = `collection_${collectionId}`
         const now = Date.now()
-        
+
         // Check cache first
         const cached = this.cache.collections.get(cacheKey)
         if (cached && cached.expiresAt > now) {
@@ -499,8 +499,8 @@ export class CollectionsService {
 
         // Fetch from contract
         const collection = await this.getCollection(collectionId)
-        
-                        if (collection) {
+
+        if (collection) {
             // Update cache
             this.cache.collections.set(cacheKey, {
                 data: collection,
@@ -523,14 +523,14 @@ export class CollectionsService {
             }
 
             const id = Number(collectionId)
-            
+
             // Check validity with rate limiting
             const isValid = await rateLimiter.executeWithRateLimit(
                 () => this.contract!.call("is_valid_collection", [id]),
                 `is_valid_collection_${id}`,
                 30000 // 30 second cache
             )
-            
+
             if (!isValid) {
                 console.log(`Collection ${id} is not valid`)
                 return null
@@ -542,7 +542,7 @@ export class CollectionsService {
                 `get_collection_${id}`,
                 60000 // 1 minute cache for collection data
             ) as ContractCollection
-            
+
             return await this.parseCollectionData(collectionResult, id)
         } catch (error) {
             console.error(`Error fetching collection ${collectionId}:`, error)
@@ -561,7 +561,7 @@ export class CollectionsService {
 
             const cacheKey = `assets_${collectionId}`
             const now = Date.now()
-            
+
             // Check cache first
             const cached = this.cache.assets.get(cacheKey)
             if (cached && cached.expiresAt > now) {
@@ -575,7 +575,7 @@ export class CollectionsService {
             // Get collection stats to determine token range
             const stats = await this.getCollectionStatsWithCache(collectionId)
             const totalMinted = Number(stats?.total_minted || 0)
-            
+
             if (totalMinted === 0) {
                 console.log(`Collection ${id} has no minted tokens`)
                 return []
@@ -583,17 +583,17 @@ export class CollectionsService {
 
             // Use smart token discovery
             const discoveredTokens = await this.discoverTokens(id, totalMinted)
-            
+
             // Fetch token data in batches
             for (let i = 0; i < discoveredTokens.length; i += this.TOKEN_BATCH_SIZE) {
                 const batch = discoveredTokens.slice(i, i + this.TOKEN_BATCH_SIZE)
-                const batchPromises = batch.map(tokenId => 
+                const batchPromises = batch.map(tokenId =>
                     this.getTokenWithCache(`${id}:${tokenId}`)
                 )
-                
+
                 const batchResults = await Promise.all(batchPromises)
                 assets.push(...batchResults.filter((asset): asset is AssetIP => asset !== null))
-                
+
                 if (i + this.TOKEN_BATCH_SIZE < discoveredTokens.length) {
                     await this.delay(50)
                 }
@@ -621,15 +621,15 @@ export class CollectionsService {
     private async discoverTokens(collectionId: number, totalMinted: number): Promise<number[]> {
         const discoveredTokens: number[] = []
         const maxCheck = Math.min(totalMinted, 200) // Cap at 200 tokens
-        
+
         // Use binary search to find valid token ranges
         let low = 1
         let high = maxCheck
-        
+
         while (low <= high) {
             const mid = Math.floor((low + high) / 2)
             const tokenIdentifier = `${collectionId}:${mid}`
-            
+
             try {
                 const isValid = await this.contract!.call("is_valid_token", [tokenIdentifier])
                 if (isValid) {
@@ -664,17 +664,17 @@ export class CollectionsService {
     private async getTokenWithCache(tokenIdentifier: string): Promise<AssetIP | null> {
         const cacheKey = `token_${tokenIdentifier}`
         const now = Date.now()
-        
+
         // Check cache first
         const cached = this.cache.assets.get(cacheKey)
         if (cached && cached.expiresAt > now) {
             return cached.data[0] // Single token stored as array
         }
-                        
-                        try {
-                            const token = await this.contract!.call("get_token", [tokenIdentifier]) as ContractToken
+
+        try {
+            const token = await this.contract!.call("get_token", [tokenIdentifier]) as ContractToken
             const asset = await this.parseTokenToAsset(token, tokenIdentifier)
-            
+
             if (asset) {
                 // Cache single token
                 this.cache.assets.set(cacheKey, {
@@ -684,10 +684,10 @@ export class CollectionsService {
                     version: '1.0'
                 })
             }
-            
+
             return asset
-                        } catch (error) {
-                        return null
+        } catch (error) {
+            return null
         }
     }
 
@@ -697,7 +697,7 @@ export class CollectionsService {
     private async getCollectionStatsWithCache(collectionId: string): Promise<CollectionStats | null> {
         const cacheKey = `stats_${collectionId}`
         const now = Date.now()
-        
+
         // Check cache first
         const cached = this.cache.stats.get(cacheKey)
         if (cached && cached.expiresAt > now) {
@@ -710,7 +710,7 @@ export class CollectionsService {
                 `get_collection_stats_${collectionId}`,
                 60000 // 1 minute cache
             ) as CollectionStats
-            
+
             // Update cache
             this.cache.stats.set(cacheKey, {
                 data: stats,
@@ -718,7 +718,7 @@ export class CollectionsService {
                 expiresAt: now + this.CACHE_DURATION,
                 version: '1.0'
             })
-            
+
             return stats
         } catch (error) {
             console.warn(`Could not fetch stats for collection ${collectionId}:`, error)
@@ -785,58 +785,58 @@ export class CollectionsService {
                     const metadata = await this.fetchIPFSMetadata(token.metadata_uri)
                     if (metadata) {
                         console.log(`Successfully fetched metadata for token ${tokenIdentifier}:`, metadata)
-                        
+
                         // Update asset with IPFS metadata
                         asset.title = metadata.name || asset.title
                         asset.description = metadata.description || asset.description
-                        
+
                         // Handle image from either 'image' or 'coverImage' field
                         if (metadata.image) {
-                        asset.mediaUrl = this.processImageData(metadata.image)
+                            asset.mediaUrl = this.processImageData(metadata.image)
                         } else if (metadata.coverImage) {
                             asset.mediaUrl = this.processImageData(metadata.coverImage)
                         }
-                        
+
                         asset.externalUrl = metadata.external_url || asset.externalUrl
-                        
+
                         // Handle asset type and tags from attributes
                         if (metadata.attributes && Array.isArray(metadata.attributes)) {
                             const typeAttr = metadata.attributes.find(attr => attr.trait_type.toLowerCase() === 'type' || attr.trait_type.toLowerCase() === 'category')
                             if (typeAttr) {
                                 asset.type = typeAttr.value.toLowerCase()
                             }
-                            
+
                             const tagAttrs = metadata.attributes.filter(attr => attr.trait_type.toLowerCase() === 'tag')
                             if (tagAttrs.length > 0) {
                                 asset.tags = tagAttrs.map(attr => attr.value).join(", ")
                             }
-                            
+
                             // Handle IP-specific data from attributes
                             const licenseTypeAttr = metadata.attributes.find(attr => attr.trait_type.toLowerCase() === 'license_type')
                             if (licenseTypeAttr) {
                                 asset.licenseType = licenseTypeAttr.value
                             }
-                            
+
                             const licenseDetailsAttr = metadata.attributes.find(attr => attr.trait_type.toLowerCase() === 'license_details')
                             if (licenseDetailsAttr) {
                                 asset.licenseDetails = licenseDetailsAttr.value
                             }
-                            
+
                             const ipVersionAttr = metadata.attributes.find(attr => attr.trait_type.toLowerCase() === 'ip_version')
                             if (ipVersionAttr) {
                                 asset.ipVersion = ipVersionAttr.value
                             }
-                            
+
                             const commercialUseAttr = metadata.attributes.find(attr => attr.trait_type.toLowerCase() === 'commercial_use')
                             if (commercialUseAttr) {
                                 asset.commercialUse = commercialUseAttr.value.toLowerCase() === 'true'
                             }
-                            
+
                             const modificationsAttr = metadata.attributes.find(attr => attr.trait_type.toLowerCase() === 'modifications')
                             if (modificationsAttr) {
                                 asset.modifications = modificationsAttr.value.toLowerCase() === 'true'
                             }
-                            
+
                             const attributionAttr = metadata.attributes.find(attr => attr.trait_type.toLowerCase() === 'attribution')
                             if (attributionAttr) {
                                 asset.attribution = attributionAttr.value.toLowerCase() === 'true'
@@ -881,7 +881,7 @@ export class CollectionsService {
     public async getUserTokens(userAddress: string): Promise<AssetIP[]> {
         try {
             console.log(`🔗 Getting tokens for user wallet: ${userAddress}`)
-            
+
             if (!this.contractAvailable || !this.contract) {
                 console.log(`❌ Contract not available for user tokens: ${userAddress}`)
                 return []
@@ -898,7 +898,7 @@ export class CollectionsService {
             // Get user's collections first
             const userCollections = await this.getUserCollections(userAddress)
             console.log(`📋 Found ${userCollections.length} collections for user tokens: ${validAddress}`)
-            
+
             const allTokens: AssetIP[] = []
 
             // Get tokens from each collection
@@ -910,9 +910,9 @@ export class CollectionsService {
                         `list_user_tokens_per_collection_${collection.id}_${validAddress}`,
                         60000 // 1 minute cache
                     )
-                    
+
                     console.log(`🎯 Found ${Array.isArray(tokenIds) ? tokenIds.length : 0} tokens in collection ${collection.id} for user: ${validAddress}`)
-                    
+
                     if (Array.isArray(tokenIds) && tokenIds.length > 0) {
                         for (const tokenId of tokenIds) {
                             try {
@@ -923,7 +923,7 @@ export class CollectionsService {
                                     `get_token_${tokenIdentifier}`,
                                     300000 // 5 minute cache for token data
                                 ) as ContractToken
-                                
+
                                 const asset = await this.parseTokenToAsset(token, tokenIdentifier)
                                 if (asset) {
                                     allTokens.push(asset)
@@ -953,7 +953,7 @@ export class CollectionsService {
     public async isCollectionOwner(collectionId: string, userAddress: string): Promise<boolean> {
         try {
             console.log(`🔗 Checking ownership for collection ${collectionId} and user: ${userAddress}`)
-            
+
             if (!this.contractAvailable || !this.contract) {
                 console.log(`❌ Contract not available for ownership check: ${userAddress}`)
                 return false
@@ -973,7 +973,7 @@ export class CollectionsService {
                 `is_collection_owner_${id}_${validAddress}`,
                 60000 // 1 minute cache
             )
-            
+
             const ownershipResult = Boolean(isOwner)
             console.log(`👑 User ${validAddress} ${ownershipResult ? 'IS' : 'is NOT'} owner of collection ${collectionId}`)
             return ownershipResult
@@ -989,7 +989,7 @@ export class CollectionsService {
     public async getUserTokenBalance(userAddress: string, collectionId?: string): Promise<number> {
         try {
             console.log(`🔗 Getting token balance for user: ${userAddress}${collectionId ? ` in collection ${collectionId}` : ''}`)
-            
+
             if (!this.contractAvailable || !this.contract) {
                 console.log(`❌ Contract not available for balance check: ${userAddress}`)
                 return 0
@@ -1043,24 +1043,24 @@ export class CollectionsService {
             }
 
             console.log(`Fetching metadata from: ${url}`)
-            
+
             const response = await fetch(url, {
                 method: 'GET',
-                        headers: {
+                headers: {
                     'Accept': 'application/json, image/*, */*',
-                        },
+                },
                 // Add timeout
                 signal: AbortSignal.timeout(10000) // 10 second timeout
-                    })
+            })
 
-                    if (!response.ok) {
+            if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`)
             }
 
             // Check if the response is JSON or an image
             const contentType = response.headers.get('content-type')
             console.log(`Content-Type: ${contentType}`)
-            
+
             // If content-type is explicitly image, treat as direct image
             if (contentType && contentType.startsWith('image/')) {
                 console.log(`IPFS hash ${ipfsHash} contains a direct image (${contentType}), not JSON metadata`)
@@ -1068,13 +1068,13 @@ export class CollectionsService {
             }
 
             // Try to parse as JSON regardless of content-type (some IPFS gateways return wrong content-type)
-                    try {
-                        const text = await response.text()
+            try {
+                const text = await response.text()
                 console.log(`Response text preview: ${text.substring(0, 200)}...`)
-                
+
                 // Check if it looks like JSON
                 if (text.trim().startsWith('{') || text.trim().startsWith('[')) {
-                        const metadata = JSON.parse(text)
+                    const metadata = JSON.parse(text)
                     console.log(`Successfully parsed JSON metadata from ${ipfsHash}`)
                     return metadata as CollectionMetadata
                 } else {
@@ -1097,7 +1097,7 @@ export class CollectionsService {
     private formatAddressAsHex(address: any): string {
         try {
             if (!address) return "0x0"
-            
+
             // Handle different address formats
             if (typeof address === 'string') {
                 if (address.startsWith('0x')) {
@@ -1105,12 +1105,12 @@ export class CollectionsService {
                 }
                 return `0x${address.toLowerCase()}`
             }
-            
+
             // Handle bigint or number
             if (typeof address === 'bigint' || typeof address === 'number') {
                 return `0x${address.toString(16)}`
             }
-            
+
             return "0x0"
         } catch (error) {
             console.warn("Error formatting address:", error)
@@ -1146,29 +1146,29 @@ export class CollectionsService {
      */
     private processImageData(imageData: string): string {
         if (!imageData) return "/placeholder.svg"
-        
+
         // Handle IPFS URLs with ipfs:// protocol
         if (imageData.startsWith('ipfs://')) {
             return this.getIPFSGatewayUrl(imageData)
         }
-        
+
         // Handle IPFS URLs with different gateways (production might use different gateways)
-        if (imageData.includes('ipfs.io/ipfs/') || 
+        if (imageData.includes('ipfs.io/ipfs/') ||
             imageData.includes('gateway.pinata.cloud/ipfs/') ||
             imageData.includes('cloudflare-ipfs.com/ipfs/')) {
             return imageData
         }
-        
+
         // Handle IPFS hashes (Qm... or bafy... or bafk...)
         if (imageData.match(/^(Qm[1-9A-HJ-NP-Za-km-z]{44}|bafy[a-z2-7]{55}|bafk[a-z2-7]{55,59})$/)) {
             return this.getIPFSGatewayUrl(imageData)
         }
-        
+
         // Handle relative URLs
         if (imageData.startsWith('/')) {
             return imageData
         }
-        
+
         // Handle data URLs
         if (imageData.startsWith('data:')) {
             return imageData
@@ -1183,7 +1183,7 @@ export class CollectionsService {
         if (imageData.length > 40 && !imageData.includes('/') && !imageData.includes('.')) {
             return this.getIPFSGatewayUrl(imageData)
         }
-        
+
         // Default fallback
         return "/placeholder.svg"
     }
@@ -1308,8 +1308,8 @@ export class CollectionsService {
                 if (stats) {
                     collection.assets = Number(stats.total_minted || 0)
                 }
-            } catch (statsError) {}
-            
+            } catch (statsError) { }
+
             if (!collection.createdAt) {
                 collection.createdAt = "";
             }
@@ -1335,7 +1335,7 @@ export class CollectionsService {
                 collection.category,
                 collection.tags
             ].join(' ').toLowerCase()
-            
+
             if (!searchableText.includes(searchTerm)) {
                 return false
             }
@@ -1375,7 +1375,7 @@ export class CollectionsService {
     private sortCollections(collections: Collection[], sortBy?: string): Collection[] {
         const sorted = [...collections]
 
-            switch (sortBy) {
+        switch (sortBy) {
             case 'name':
                 return sorted.sort((a, b) => a.name.localeCompare(b.name))
             case 'assets':
@@ -1385,7 +1385,7 @@ export class CollectionsService {
             case 'likes':
                 return sorted.sort((a, b) => (b.likes || 0) - (a.likes || 0))
             case 'recent':
-                default:
+            default:
                 return sorted.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
         }
     }
@@ -1396,7 +1396,7 @@ export class CollectionsService {
     public async getUserCollections(userAddress: string): Promise<Collection[]> {
         try {
             console.log(`🔗 Connected user wallet address: ${userAddress}`)
-            
+
             if (!this.contractAvailable || !this.contract) {
                 console.log(`❌ Contract not available for user: ${userAddress}`)
                 return []
@@ -1409,7 +1409,7 @@ export class CollectionsService {
             }
 
             console.log(`✅ Valid wallet address: ${validAddress}`)
-            
+
             const collectionIds = await rateLimiter.executeWithRateLimit(
                 () => this.contract!.call("list_user_collections", [validAddress]),
                 `list_user_collections_${validAddress}`,
@@ -1485,7 +1485,7 @@ export class CollectionsService {
         discoveryAge: number
     } {
         const now = Date.now()
-                return {
+        return {
             collections: this.cache.collections.size,
             assets: this.cache.assets.size,
             stats: this.cache.stats.size,

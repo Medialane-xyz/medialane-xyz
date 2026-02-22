@@ -31,11 +31,32 @@ import { useIpfsUpload } from "@/src/hooks/useIpfs";
 import { Confetti } from "@/src/components/ui/animation-confetti";
 import Image from "next/image";
 
-// Mediolano Protocol contract address
+// Mediolano Protocol default contract address
 const MEDIOLANO_CONTRACT = CONTRACTS.MEDIOLANO;
 
-// Pre-configured Asset Data
-const PRE_CONFIGURED_ASSET = {
+export interface MintDropAsset {
+    title: string;
+    description: string;
+    mediaUrl: string;
+    externalUrl: string;
+    author: string;
+    type: string;
+    tags: string[];
+    collection: string;
+    licenceType: string;
+    licenseDetails: string;
+    ipVersion: string;
+    commercialUse: boolean;
+    modifications: boolean;
+    attribution: boolean;
+    registrationDate: string;
+    protectionStatus: string;
+    protectionScope: string;
+    protectionDuration: string;
+}
+
+// Pre-configured Asset Data (Default)
+export const DEMO_MINT_DROP_ASSET: MintDropAsset = {
     title: "Tec de Monterrey Campus CEM, Ship your first dapp",
     description: "Ship your first dapp onchain, powered by Chipipay and Starknet",
     mediaUrl: "/mint.jpg",
@@ -56,7 +77,12 @@ const PRE_CONFIGURED_ASSET = {
     protectionDuration: "Onchain",
 };
 
-export default function MintEventAsset() {
+interface MintEventAssetProps {
+    asset?: MintDropAsset;
+    contractAddress?: string;
+}
+
+export default function MintEventAsset({ asset, contractAddress }: MintEventAssetProps) {
     const { getToken } = useAuth();
     const { user } = useUser();
     const publicKey = user?.publicMetadata?.publicKey as string;
@@ -73,6 +99,9 @@ export default function MintEventAsset() {
     const [pinError, setPinError] = useState("");
     const [txHash, setTxHash] = useState("");
     const [tokenId, setTokenId] = useState("");
+
+    const activeAsset = asset || DEMO_MINT_DROP_ASSET;
+    const activeContract = contractAddress || MEDIOLANO_CONTRACT;
 
     // Handle PIN submission for minting
     const handlePinSubmit = async (pin: string) => {
@@ -94,27 +123,27 @@ export default function MintEventAsset() {
             }
 
             // Fetch the default image to upload it to IPFS
-            const response = await fetch(PRE_CONFIGURED_ASSET.mediaUrl);
+            const response = await fetch(activeAsset.mediaUrl);
             const blob = await response.blob();
             const file = new File([blob], "founders_key.jpg", { type: "image/jpeg" });
 
             // Create metadata object
             const metadata = {
-                name: PRE_CONFIGURED_ASSET.title,
-                description: PRE_CONFIGURED_ASSET.description,
-                image: PRE_CONFIGURED_ASSET.mediaUrl, // Will be replaced by IPFS URL
-                external_url: PRE_CONFIGURED_ASSET.externalUrl,
+                name: activeAsset.title,
+                description: activeAsset.description,
+                image: activeAsset.mediaUrl, // Will be replaced by IPFS URL
+                external_url: activeAsset.externalUrl,
                 attributes: [
-                    { trait_type: "Type", value: PRE_CONFIGURED_ASSET.type },
-                    { trait_type: "License", value: PRE_CONFIGURED_ASSET.licenceType },
-                    { trait_type: "Scope", value: PRE_CONFIGURED_ASSET.protectionScope },
-                    { trait_type: "Tags", value: PRE_CONFIGURED_ASSET.tags.join(", ") },
+                    { trait_type: "Type", value: activeAsset.type },
+                    { trait_type: "License", value: activeAsset.licenceType },
+                    { trait_type: "Scope", value: activeAsset.protectionScope },
+                    { trait_type: "Tags", value: activeAsset.tags.join(", ") },
                 ],
                 properties: {
-                    creator: PRE_CONFIGURED_ASSET.author,
-                    collection: PRE_CONFIGURED_ASSET.collection,
-                    license_details: PRE_CONFIGURED_ASSET.licenseDetails,
-                    registration_date: PRE_CONFIGURED_ASSET.registrationDate,
+                    creator: activeAsset.author,
+                    collection: activeAsset.collection,
+                    license_details: activeAsset.licenseDetails,
+                    registration_date: activeAsset.registrationDate,
                 },
             };
 
@@ -129,10 +158,10 @@ export default function MintEventAsset() {
                         publicKey: publicKey,
                         encryptedPrivateKey: encryptedPrivateKey,
                     },
-                    contractAddress: MEDIOLANO_CONTRACT,
+                    contractAddress: activeContract,
                     calls: [
                         {
-                            contractAddress: MEDIOLANO_CONTRACT,
+                            contractAddress: activeContract,
                             entrypoint: "mint_item",
                             calldata: [
                                 publicKey, //
@@ -193,57 +222,33 @@ export default function MintEventAsset() {
         <div className="min-h-screen py-20 bg-gradient-to-br from-green-500 via-silver-500 to-red-500">
             <main className="px-4 pt-4">
                 <div className="max-w-4xl mx-auto space-y-12">
-
-                    {/* Header
-                    <div className="text-center space-y-4">
-                        <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-                            Mint Exclusivo
-                        </h1>
-                        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                            Frictionless + Free
-                        </p>
-                    </div>*/}
-
                     <div className="grid md:grid-cols-2 gap-12 items-center">
 
                         {/* Asset Preview / Hero Card */}
                         <div className="relative group perspective-1000">
                             <div className="absolute -inset-1 rounded-md group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
                             <Card className="p-4 relative bg-card/10 backdrop-blur-xl border-green-500/50 overflow-hidden transform transition-all duration-500 hover:rotate-y-12 shadow-2xl">
-                                <div className="aspect-square relative flex items-center justify-center overflow-hidden">
-                                    {/* Placeholder for visual if image load fails or is just a path */}
+                                <div className="aspect-square relative flex items-center justify-center overflow-hidden bg-black/50 rounded-md">
                                     <div className="absolute inset-0 bg-[url('/assets/grid-pattern.svg')] opacity-20" />
                                     <Sparkles className="w-32 h-32 text-primary/20 animate-pulse absolute" />
 
-                                    {/* We can use Next/Image if we have the asset, otherwise a fallback */}
-                                    <Image
-                                        src={PRE_CONFIGURED_ASSET.mediaUrl}
-                                        alt="Exclusive Mint"
-                                        fill
-                                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                                    />
-
-                                    <div className="z-10 text-center space-y-2 p-6">
-                                        {/*
-                                        <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto backdrop-blur-md border border-primary/30">
-                                            <Sparkles className="w-10 h-10 text-primary" />
-                                        </div>
-                                        <h3 className="text-2xl font-bold text-white">{PRE_CONFIGURED_ASSET.title}</h3>
-                                        <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30">
-                                            {PRE_CONFIGURED_ASSET.type}
-                                        </Badge>
-                                        */}
-                                    </div>
-
+                                    {activeAsset.mediaUrl && (
+                                        <Image
+                                            src={activeAsset.mediaUrl}
+                                            alt={activeAsset.title}
+                                            fill
+                                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                                        />
+                                    )}
                                 </div>
                                 <CardContent className="p-6 space-y-4">
                                     <div className="flex justify-between items-center text-sm">
                                         <span className="text-foreground">Collection</span>
-                                        <span className="font-medium">{PRE_CONFIGURED_ASSET.collection}</span>
+                                        <span className="font-medium">{activeAsset.collection}</span>
                                     </div>
                                     <div className="flex justify-between items-center text-sm">
                                         <span className="text-foreground">License</span>
-                                        <span className="font-medium">{PRE_CONFIGURED_ASSET.licenceType}</span>
+                                        <span className="font-medium">{activeAsset.licenceType}</span>
                                     </div>
 
                                     <div className="grid grid-cols-3 gap-2 text-center text-xs">
@@ -266,14 +271,13 @@ export default function MintEventAsset() {
 
                         {/* Mint Action / Details */}
                         <div className="space-y-8">
-
                             <div className="space-y-4">
-                                <h2 className="text-2xl font-semibold">{PRE_CONFIGURED_ASSET.title}</h2>
+                                <h2 className="text-2xl font-semibold">{activeAsset.title}</h2>
                                 <p className="text-foreground leading-relaxed">
-                                    {PRE_CONFIGURED_ASSET.description}
+                                    {activeAsset.description}
                                 </p>
                                 <div className="flex flex-wrap gap-2">
-                                    {PRE_CONFIGURED_ASSET.tags.map(tag => (
+                                    {activeAsset.tags?.map(tag => (
                                         <Badge key={tag} variant="outline" className="text-xs border-white/10">
                                             #{tag}
                                         </Badge>
@@ -327,7 +331,7 @@ export default function MintEventAsset() {
                                                         onClick={handleMintClick}
                                                         disabled={!user || isMinting}
                                                     >
-                                                        {isMinting ? "Minting..." : "Mint Event Asset"}
+                                                        {isMinting ? "Minting..." : "Mint Drop"}
                                                     </Button>
                                                 </DialogTrigger>
                                                 <DialogContent>

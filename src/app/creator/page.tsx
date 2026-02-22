@@ -73,6 +73,17 @@ const creativeActions = [
         iconColor: "text-pink-400",
     },
     {
+        id: "mint-drop",
+        title: "Create Mint Drop",
+        description: "Setup an exclusive mint drop for events, digital milestones, or special rewards.",
+        icon: Sparkles,
+        href: "/create/mint-drop",
+        featured: false,
+        status: "available",
+        gradient: "from-teal-500/10 to-emerald-500/10",
+        iconColor: "text-teal-400",
+    },
+    {
         id: "create-listing",
         title: "Create Listing",
         description: "List your assets for sale on the marketplace.",

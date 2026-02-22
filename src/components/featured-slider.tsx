@@ -45,7 +45,6 @@ export function FeaturedSlider({ items, autoPlay = true, interval = 5000 }: Feat
 
     return (
         <div className="relative min-h-[100vh] h-[100vh] overflow-hidden">
-            {/* Background Images */}
             <AnimatePresence mode="wait">
                 <motion.div
                     key={currentSlide}

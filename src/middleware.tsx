@@ -7,6 +7,10 @@ const isPublicRoute = createRouteMatcher([
   '/collections(.*)',
   '/onboarding',
   '/api/proxy(.*)',
+  '/mint(.*)',
+  '/creator(.*)',
+  '/assets(.*)',
+  '/create(.*)',
 ])
 //const isPublicRoute = createRouteMatcher(['/(.*)'])
 
