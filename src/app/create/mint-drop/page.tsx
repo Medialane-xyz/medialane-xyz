@@ -196,6 +196,12 @@ export default function CreateMintDropPage() {
             ]);
 
             // Call create_collection on factory
+            console.log("[ChipiDebug] Submitting create_collection:", {
+                contractAddress: CONTRACTS.COLLECTION_FACTORY,
+                entrypoint: "create_collection",
+                calldata: formattedCalldata,
+            });
+
             const txHash = await callAnyContractAsync({
                 params: {
                     encryptKey: pin,
@@ -214,6 +220,8 @@ export default function CreateMintDropPage() {
                 },
                 bearerToken: token,
             })
+
+            console.log("[ChipiDebug] Transaction Hash Received:", txHash);
 
             if (txHash) {
                 setShowPinDialog(false)

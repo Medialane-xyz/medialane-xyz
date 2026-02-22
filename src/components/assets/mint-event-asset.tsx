@@ -160,6 +160,12 @@ export default function MintEventAsset({ asset, contractAddress }: MintEventAsse
             ]);
 
             // Mint NFT using Chipi SDK's callAnyContract to the IP Collection Protocol Contract
+            console.log("[ChipiDebug] Submitting mint:", {
+                contractAddress: CONTRACTS.COLLECTION_FACTORY,
+                entrypoint: "mint",
+                calldata: formattedCalldata,
+            });
+
             const mintResult = await callAnyContractAsync({
                 params: {
                     encryptKey: pin,
@@ -178,6 +184,8 @@ export default function MintEventAsset({ asset, contractAddress }: MintEventAsse
                 },
                 bearerToken: token,
             });
+
+            console.log("[ChipiDebug] Mint Result Hash:", mintResult);
 
             console.log("Mint result:", mintResult);
 

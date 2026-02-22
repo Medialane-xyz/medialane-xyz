@@ -39,6 +39,7 @@ import { useGetPortfolioAssets } from "@/src/hooks/use-wallet-assets";
 import { useUser } from "@clerk/nextjs";
 import { useCollectionsScanner } from "@/src/lib/hooks/use-collections-scanner";
 import CollectionCard from "@/src/components/collection-card";
+import ChipiDebugger from "@/src/components/debug/chipi-debugger";
 
 export default function PortfolioView() {
   const { user } = useUser();
@@ -414,6 +415,11 @@ export default function PortfolioView() {
                   <CollectionGrid collections={userCreatedCollections} viewMode={viewMode} />
                 </TabsContent>
               </Tabs>
+            </div>
+
+            {/* Debugging Section */}
+            <div className="mt-20 border-t border-dashed pt-20">
+              <ChipiDebugger />
             </div>
           </div>
         </div>
