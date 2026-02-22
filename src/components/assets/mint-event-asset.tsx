@@ -152,17 +152,12 @@ export default function MintEventAsset({ asset, contractAddress }: MintEventAsse
             // Upload both file and metadata to IPFS
             const result = await uploadToIpfs(file, metadata);
 
-            // Format to Starknet types
-            const tokenUriBa = byteArray.byteArrayFromString(result.cid);
-            // Starknet u256 is expected to be { low, high }
-            const collectionIdU256 = { low: activeAsset.collectionId || "0", high: "0" };
-
-            // Compile into raw felts array expected by Chipi API (without ABI processing)
-            const formattedCalldata = CallData.compile({
-                collection_id: collectionIdU256,
-                recipient: publicKey,
-                token_uri: tokenUriBa,
-            });
+            // Format parameters to Starknet types and compile to raw felts
+            const formattedCalldata = CallData.compile([
+                { low: activeAsset.collectionId || "0", high: "0" }, // collection_id
+                publicKey, // recipient
+                byteArray.byteArrayFromString(result.cid), // token_uri
+            ]);
 
             // Mint NFT using Chipi SDK's callAnyContract to the IP Collection Protocol Contract
             const mintResult = await callAnyContractAsync({

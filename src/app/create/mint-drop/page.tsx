@@ -117,7 +117,7 @@ export default function CreateMintDropPage() {
     )
 
     const isFormValid = () => {
-        return assetFile && assetName.length >= 3 && assetDescription.length >= 10
+        return assetFile && assetName.length >= 3 && assetDescription.length > 0
     }
 
     const handleSubmit = async () => {
@@ -188,17 +188,12 @@ export default function CreateMintDropPage() {
             // Upload both file and metadata to IPFS
             const result = await uploadToIpfs(assetFile, metadata)
 
-            // Format strings to Starknet ByteArrays
-            const nameBa = byteArray.byteArrayFromString(assetName);
-            const symbolBa = byteArray.byteArrayFromString("DROP");
-            const baseUriBa = byteArray.byteArrayFromString(result.cid);
-
-            // Compile into raw felts array expected by Chipi API
-            const formattedCalldata = CallData.compile({
-                name: nameBa,
-                symbol: symbolBa,
-                base_uri: baseUriBa,
-            });
+            // Format parameters to Starknet types and compile to raw felts
+            const formattedCalldata = CallData.compile([
+                byteArray.byteArrayFromString(assetName), // name
+                byteArray.byteArrayFromString("DROP"), // symbol
+                byteArray.byteArrayFromString(result.cid), // base_uri
+            ]);
 
             // Call create_collection on factory
             const txHash = await callAnyContractAsync({

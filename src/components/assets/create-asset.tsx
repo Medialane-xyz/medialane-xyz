@@ -61,6 +61,7 @@ import { handleNewTagChange, handleNewTagKeyDown, tryAddTag } from "./util";
 import MediaUploader, { MediaUploaderRef } from "../mediaUploader";
 import { useIpfsUpload } from "@/src/hooks/useIpfs";
 import { Confetti } from "@/src/components/ui/animation-confetti";
+import { CallData, byteArray } from "starknet";
 
 // Mediolano Protocol contract address
 const MEDIOLANO_CONTRACT = CONTRACTS.MEDIOLANO;
@@ -214,6 +215,12 @@ export default function CreateAssetView() {
       const result = await uploadToIpfs(file || null, metadata);
       //console.log("Uploaded:", result);
 
+      // Format parameters to Starknet types and compile to raw felts
+      const formattedCalldata = CallData.compile([
+        publicKey, //
+        byteArray.byteArrayFromString(result.cid), // tokenURI (metadata)
+      ]);
+
       // Mint NFT using Chipi SDK's callAnyContract
       const mintResult = await callAnyContractAsync({
         params: {
@@ -227,10 +234,7 @@ export default function CreateAssetView() {
             {
               contractAddress: MEDIOLANO_CONTRACT,
               entrypoint: "mint_item",
-              calldata: [
-                publicKey, //
-                result.cid, // tokenURI (metadata)
-              ],
+              calldata: formattedCalldata,
             },
           ],
         },
@@ -478,11 +482,11 @@ export default function CreateAssetView() {
                                 label="Collection"
                                 data={collections || []}
                                 objKey="label"
-                                handleChange={(val) => [
+                                handleChange={(val: any) => [
                                   setFieldValue("collection", val.label),
                                 ]}
                                 defaultValue={collections?.[0]?.label}
-                                handleSubText={(item) => item.description}
+                                handleSubText={(item: any) => item.description}
                                 name="collection"
                                 labelClass="text-sm font-medium flex items-center space-x-2"
                               />
@@ -596,9 +600,9 @@ export default function CreateAssetView() {
                                 label="License Type"
                                 data={licenseType || []}
                                 objKey=""
-                                handleRenderValue={(val) => val}
+                                handleRenderValue={(val: any) => val}
                                 defaultValue={licenseType?.[0]}
-                                handleChange={(val) => [
+                                handleChange={(val: any) => [
                                   setFieldValue("licenceType", val),
                                 ]}
                                 name="licenceType"

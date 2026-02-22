@@ -37,6 +37,8 @@ import Link from "next/link";
 import { ExpandableAssetCard } from "@/src/components/expandable-asset-card";
 import { useGetPortfolioAssets } from "@/src/hooks/use-wallet-assets";
 import { useUser } from "@clerk/nextjs";
+import { useCollectionsScanner } from "@/src/lib/hooks/use-collections-scanner";
+import CollectionCard from "@/src/components/collection-card";
 
 export default function PortfolioView() {
   const { user } = useUser();
@@ -55,6 +57,11 @@ export default function PortfolioView() {
     error: asset_error,
     refetchAsset,
   } = useGetPortfolioAssets(publicKey || null);
+
+  const {
+    collections: scannedCollections,
+    loading: scanner_loading,
+  } = useCollectionsScanner(50); // Scan a decent chunk to find user collections
 
   // Transform NFTs to asset format for display
   const portfolioAssets = portfolioAsset?.map((nft) => ({
@@ -111,6 +118,11 @@ export default function PortfolioView() {
       asset.contractAddress === process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_MIP
   ); // Only assets from Mediolano contract are "created" by user
 
+  // Find collections created by this user via the scanner
+  const userCreatedCollections = scannedCollections.filter(c =>
+    c.owner.toLowerCase() === publicKey?.toLowerCase()
+  );
+
   const currentAssets = selectedTab === "owned" ? ownedAssets : createdAssets;
 
   const filteredAssets = currentAssets?.filter((asset) => {
@@ -140,14 +152,12 @@ export default function PortfolioView() {
 
   // Portfolio statistics
   const stats = {
-    totalAssets: portfolioAssets?.length,
-    totalCollections: 1,
+    totalAssets: portfolioAssets?.length || 0,
+    totalCollections: userCreatedCollections.length,
     totalValue: 0,
-    // totalCollections: tokens.length,
-    // totalValue: walletAssets?.totalValueUSD || 0,
     uniqueCollections: new Set(
-      portfolioAssets?.map((asset) => asset.collection)
-    ).size,
+      portfolioAssets?.map((asset) => asset.contractAddress)
+    ).size + userCreatedCollections.length,
   };
 
   return (
@@ -319,7 +329,13 @@ export default function PortfolioView() {
                       value="created"
                       className="data-[state=active]:bg-background"
                     >
-                      Created ({createdAssets?.length})
+                      Created Assets ({createdAssets?.length})
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="collections"
+                      className="data-[state=active]:bg-background"
+                    >
+                      Collections ({userCreatedCollections.length})
                     </TabsTrigger>
                   </TabsList>
 
@@ -393,6 +409,10 @@ export default function PortfolioView() {
                     isOwner={true}
                   />
                 </TabsContent>
+
+                <TabsContent value="collections" className="mt-6">
+                  <CollectionGrid collections={userCreatedCollections} viewMode={viewMode} />
+                </TabsContent>
               </Tabs>
             </div>
           </div>
@@ -461,3 +481,61 @@ function AssetGrid({
     </div>
   );
 }
+
+function CollectionGrid({
+  collections,
+  viewMode,
+}: {
+  collections: any[];
+  viewMode: "grid" | "list";
+}) {
+  if (!collections || collections.length === 0) {
+    return (
+      <div className="text-center py-16 animate-fade-in-up">
+        <div className="w-20 h-20 bg-muted/50 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+          <Users className="w-10 h-10 text-muted-foreground" />
+        </div>
+        <h3 className="text-xl font-semibold text-foreground mb-3">
+          No collections found
+        </h3>
+        <p className="text-muted-foreground mb-6">
+          Start your first Mint Drop collection
+        </p>
+        <Link href="/create/mint-drop">
+          <Button className="hover:scale-105 transition-transform">
+            <Plus className="w-4 h-4 mr-2" />
+            Create Mint Drop
+          </Button>
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={
+        viewMode === "grid"
+          ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          : "flex flex-col gap-4"
+      }
+    >
+      {collections.map((collection) => (
+        <CollectionCard
+          key={collection.id}
+          collection={
+            {
+              ...collection,
+              itemCount: collection.totalSupply || 0,
+              items: collection.totalSupply || 0,
+              image: collection.image,
+              banner: collection.headerImage,
+              ipNft: collection.nftAddress,
+              type: collection.type,
+            } as any
+          }
+        />
+      ))}
+    </div>
+  );
+}
+

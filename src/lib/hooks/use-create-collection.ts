@@ -7,6 +7,7 @@ import { useAuth } from "@clerk/nextjs"
 import { useCallAnyContract, useGetWallet } from "@chipi-stack/nextjs"
 import { useToast } from "@/src/components/ui/use-toast"
 import { uploadToIPFS, uploadMetadata } from "@/src/lib/services/upload"
+import { CallData, byteArray } from "starknet"
 
 const COLLECTION_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_COLLECTION_CONTRACT_ADDRESS || ""
 
@@ -106,14 +107,18 @@ export function useCreateCollection() {
 
             // 3. Prepare contract call
             setStep("sign")
+
+            // Format parameters to Starknet types and compile to raw felts
+            const formattedCalldata = CallData.compile([
+                byteArray.byteArrayFromString(params.name),
+                byteArray.byteArrayFromString(params.symbol),
+                byteArray.byteArrayFromString(baseUri),
+            ]);
+
             const call = {
                 contractAddress: COLLECTION_CONTRACT_ADDRESS,
                 entrypoint: "create_collection",
-                calldata: [
-                    params.name,
-                    params.symbol,
-                    baseUri,
-                ],
+                calldata: formattedCalldata,
             }
 
             let transaction_hash: string | undefined
