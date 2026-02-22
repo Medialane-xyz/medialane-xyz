@@ -14,6 +14,7 @@ import {
     Eye,
     Check,
     Plus,
+    Loader2,
 } from "lucide-react"
 import { Button } from "@/src/components/ui/button"
 import { Input } from "@/src/components/ui/input"
@@ -23,9 +24,14 @@ import { Badge } from "@/src/components/ui/badge"
 import { Label } from "@/src/components/ui/label"
 import { useToast } from "@/src/components/ui/use-toast"
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/src/components/ui/sheet"
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "@/src/components/ui/accordion"
 import { useMobile } from "@/src/hooks/use-mobile"
 import PageTransition from "@/src/components/page-transition"
-import { CollectionSelector } from "@/src/components/collection-selector"
 
 import { useAuth, useUser } from "@clerk/nextjs"
 import { useCallAnyContract } from "@chipi-stack/nextjs"
@@ -45,10 +51,12 @@ export default function CreateMintDropPage() {
     const [assetPreview, setAssetPreview] = useState<string | null>(null)
     const [assetName, setAssetName] = useState("")
     const [assetDescription, setAssetDescription] = useState("")
+    const [eventLocation, setEventLocation] = useState("")
+    const [eventDate, setEventDate] = useState("")
+    const [customTraits, setCustomTraits] = useState<{ trait_type: string, value: string }[]>([])
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isDragOver, setIsDragOver] = useState(false)
     const [showPreview, setShowPreview] = useState(false)
-    const [selectedCollection, setSelectedCollection] = useState<string | null>(null)
 
     const router = useRouter()
     const { toast } = useToast()
@@ -153,15 +161,23 @@ export default function CreateMintDropPage() {
             }
 
             // Create metadata object
+            const baseAttributes = [
+                { trait_type: "Type", value: "event" },
+                { trait_type: "Platform", value: "Medialane" },
+            ]
+
+            if (eventLocation.trim()) baseAttributes.push({ trait_type: "Location", value: eventLocation.trim() })
+            if (eventDate) baseAttributes.push({ trait_type: "Date", value: eventDate })
+
+            // Filter out empty custom traits
+            const validCustomTraits = customTraits.filter(t => t.trait_type.trim() !== "" && t.value.trim() !== "")
+
             const metadata = {
                 name: assetName,
                 description: assetDescription,
                 image: "", // Will be replaced by IPFS URL of assetFile
                 external_url: "https://medialane.xyz",
-                attributes: [
-                    { trait_type: "Type", value: "event" },
-                    { trait_type: "Platform", value: "Medialane" },
-                ],
+                attributes: [...baseAttributes, ...validCustomTraits],
                 properties: {
                     creator: publicKey,
                     registration_date: new Date().toISOString().split("T")[0],
@@ -224,50 +240,47 @@ export default function CreateMintDropPage() {
     const PreviewContent = () => (
         <div className="space-y-4">
             {/* NFT Preview */}
-            <div className="aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-zinc-800 to-zinc-900 border border-white/10">
+            <div className="aspect-square rounded-xl overflow-hidden bg-muted/30 border border-border/50">
                 {assetPreview ? (
                     <img src={assetPreview || "/placeholder.svg"} alt="Drop preview" className="w-full h-full object-cover" />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center">
                         <div className="text-center">
-                            <ImageIcon className="h-12 w-12 text-zinc-600 mx-auto mb-2" />
-                            <p className="text-sm text-zinc-500">Upload file to preview</p>
+                            <ImageIcon className="h-10 w-10 text-muted-foreground/50 mx-auto mb-2" />
+                            <p className="text-sm text-muted-foreground">Upload file to preview</p>
                         </div>
                     </div>
                 )}
             </div>
 
             {/* Asset Info */}
-            <div className="space-y-3">
-                <div>
-                    <h3 className="font-bold text-lg">{assetName || "Untitled Drop"}</h3>
-                    <div className="flex items-center gap-2 mt-1">
-                        <Badge className="text-xs bg-primary/20 text-primary border-primary/20">Mint Drop</Badge>
-                    </div>
+            <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                    <h3 className="font-semibold text-lg text-foreground line-clamp-1">{assetName || "Untitled Drop"}</h3>
+                    <Badge variant="secondary" className="text-xs font-normal">Mint Drop</Badge>
                 </div>
-
-                <p className="text-sm text-zinc-400 leading-relaxed line-clamp-3">
+                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
                     {assetDescription || "Add a description to see it here..."}
                 </p>
             </div>
 
             {/* Benefits */}
-            <div className="bg-green-500/10 rounded-lg p-3 border border-green-500/20">
-                <h4 className="text-sm font-medium text-green-400 mb-2 flex items-center gap-2">
-                    <Zap className="h-4 w-4" />
+            <div className="bg-muted/40 rounded-xl p-4 border border-border/50">
+                <h4 className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
+                    <Zap className="h-4 w-4 text-green-500" />
                     Frictionless Mint
                 </h4>
-                <div className="space-y-1 text-xs">
+                <div className="space-y-2 text-xs text-muted-foreground">
                     <div className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-500/80"></div>
                         <span>Zero gas fees for claimants</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-500/80"></div>
                         <span>Seamless ChipiPay onboarding</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-500/80"></div>
                         <span>ERC-721 Starknet Standard</span>
                     </div>
                 </div>
@@ -277,27 +290,24 @@ export default function CreateMintDropPage() {
 
     return (
         <PageTransition>
-            <div className="min-h-screen bg-black">
+            <div className="min-h-screen bg-background">
                 {/* Mobile Header */}
                 {isMobile && (
-                    <div className="sticky top-0 z-50 bg-black/95 backdrop-blur-xl border-b border-white/10">
+                    <div className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/50">
                         <div className="flex items-center justify-between px-4 py-3">
-                            <Button variant="ghost" size="sm" onClick={() => router.back()} className="p-2">
-                                <ArrowLeft className="h-5 w-5" />
+                            <Button variant="ghost" size="icon" onClick={() => router.back()} className="h-8 w-8">
+                                <ArrowLeft className="h-4 w-4" />
                             </Button>
-                            <h1 className="text-lg font-semibold">Setup Mint Drop</h1>
+                            <h1 className="text-base font-medium">Setup Mint Drop</h1>
                             <Sheet open={showPreview} onOpenChange={setShowPreview}>
                                 <SheetTrigger asChild>
-                                    <Button variant="ghost" size="sm" className="p-2">
-                                        <Eye className="h-5 w-5" />
+                                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                                        <Eye className="h-4 w-4" />
                                     </Button>
                                 </SheetTrigger>
                                 <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl">
                                     <SheetHeader className="mb-4">
-                                        <SheetTitle className="flex items-center gap-2 text-left">
-                                            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                                            Live Preview
-                                        </SheetTitle>
+                                        <SheetTitle className="text-left">Live Preview</SheetTitle>
                                     </SheetHeader>
                                     <div className="overflow-y-auto h-full pb-6">
                                         <PreviewContent />
@@ -310,72 +320,55 @@ export default function CreateMintDropPage() {
 
                 {/* Desktop Header */}
                 {!isMobile && (
-                    <div className="text-center pt-20 md:pt-24 pb-8 px-4">
-                        <div className="inline-flex items-center justify-center p-3 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-full mb-6">
-                            <Sparkles className="w-6 h-6 mr-2 text-primary" />
-                            <span className="text-sm font-medium">Exclusive Drop</span>
+                    <div className="pt-24 pb-12 px-4 max-w-6xl mx-auto">
+                        <div className="flex flex-col mb-2 max-w-2xl">
+                            <Badge variant="secondary" className="w-fit mb-4 font-normal text-xs px-3 py-1">
+                                <Sparkles className="w-3 h-3 mr-2 text-primary" />
+                                Exclusive Drop
+                            </Badge>
+                            <h1 className="text-3xl md:text-5xl font-semibold tracking-tight mb-4 text-foreground">
+                                Setup Your Mint Drop
+                            </h1>
+                            <p className="text-base text-muted-foreground leading-relaxed">
+                                Launch a frictionless ERC721 mint page for milestones or exclusive rewards powered by our IP Collections Protocol.
+                            </p>
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-primary to-purple-400 bg-clip-text text-transparent">
-                            Setup Your Mint Drop
-                        </h1>
-                        <p className="text-sm text-zinc-400 max-w-3xl mx-auto leading-relaxed">
-                            Launch a frictionless ERC721 mint page for milestones or exclusive rewards powered by our IP Collections Protocol.
-                        </p>
                     </div>
                 )}
 
-                <div className={`${isMobile ? "px-3 pb-20" : "px-4 md:px-8 pb-24 md:pb-32"}`}>
-                    <div className={`max-w-6xl mx-auto ${isMobile ? "" : "grid grid-cols-1 lg:grid-cols-3 gap-8"}`}>
+                <div className={`${isMobile ? "px-4 pb-20 mt-6" : "px-4 md:px-8 pb-24 md:pb-32"}`}>
+                    <div className={`max-w-6xl mx-auto ${isMobile ? "" : "grid grid-cols-1 lg:grid-cols-3 gap-10 items-start"}`}>
                         {/* Main Form */}
-                        <div className={isMobile ? "" : "lg:col-span-2"}>
-                            {/* Mobile Header Info */}
-                            {isMobile && (
-                                <div className="text-center mb-6 px-2">
-                                    <div className="inline-flex items-center justify-center p-2 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-full mb-3">
-                                        <Sparkles className="w-4 h-4 mr-1 text-primary" />
-                                        <span className="text-xs font-medium">Mint Drop</span>
-                                    </div>
-                                    <h1 className="text-2xl font-bold mb-2 bg-gradient-to-r from-white via-primary to-purple-400 bg-clip-text text-transparent">
-                                        Create Exclusive Mint
-                                    </h1>
-                                </div>
-                            )}
+                        <div className={isMobile ? "" : "lg:col-span-2 space-y-8"}>
 
-                            <Card className="premium-glass border-primary/20 overflow-hidden">
-                                <CardContent className={`${isMobile ? "p-4" : "p-8"} space-y-6`}>
+                            <Card className="border border-border/50 shadow-sm bg-card overflow-hidden">
+                                <CardContent className={`${isMobile ? "p-5" : "p-8"} space-y-8`}>
                                     {/* Upload Section */}
-                                    <div className="space-y-3">
-                                        <div className="flex items-center gap-2 mb-3">
-                                            <div className="p-1.5 rounded-lg bg-primary/20 text-primary">
-                                                <Upload className="h-4 w-4" />
-                                            </div>
-                                            <div>
-                                                <h2 className={`${isMobile ? "text-base" : "text-xl"} font-semibold`}>Drop Media</h2>
-                                                <p className="text-xs text-zinc-400">Choose the file representing your drop</p>
-                                            </div>
+                                    <div className="space-y-4">
+                                        <div className="flex flex-col mb-1">
+                                            <h2 className="text-lg font-semibold text-foreground">Drop Media</h2>
+                                            <p className="text-sm text-muted-foreground">Upload the cover file representing your drop</p>
                                         </div>
 
                                         {!assetFile ? (
                                             <div
-                                                className={`border-2 border-dashed rounded-xl ${isMobile ? "p-6" : "p-12"} text-center transition-all duration-300 ${isDragOver
-                                                    ? "border-primary bg-primary/10 scale-[1.02]"
-                                                    : "border-white/20 hover:border-primary/50 hover:bg-primary/5"
+                                                className={`border-2 border-dashed rounded-xl ${isMobile ? "p-8" : "p-12"} text-center transition-all duration-200 ${isDragOver
+                                                    ? "border-primary bg-muted/50 scale-[1.01]"
+                                                    : "border-border/60 hover:border-border hover:bg-muted/30"
                                                     }`}
                                                 onDragOver={handleDragOver}
                                                 onDragLeave={handleDragLeave}
                                                 onDrop={handleDrop}
                                             >
                                                 <div className="space-y-4">
-                                                    <div
-                                                        className={`${isMobile ? "w-12 h-12" : "w-20 h-20"} rounded-full bg-gradient-to-r from-primary/20 to-purple-500/20 flex items-center justify-center mx-auto`}
-                                                    >
-                                                        <Upload className={`${isMobile ? "h-6 w-6" : "h-10 w-10"} text-primary`} />
+                                                    <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto">
+                                                        <Upload className="h-5 w-5 text-muted-foreground" />
                                                     </div>
                                                     <div>
-                                                        <p className={`${isMobile ? "text-base" : "text-xl"} font-medium mb-2`}>
-                                                            {isMobile ? "Tap to upload" : "Drag and drop your media here"}
+                                                        <p className="text-sm font-medium text-foreground mb-1">
+                                                            {isMobile ? "Tap to upload media" : "Drag and drop your media here"}
                                                         </p>
-                                                        <p className="text-zinc-400 mb-4 text-sm">
+                                                        <p className="text-xs text-muted-foreground">
                                                             {!isMobile && "or "}
                                                             <label className="text-primary cursor-pointer hover:underline font-medium">
                                                                 browse files
@@ -391,102 +384,211 @@ export default function CreateMintDropPage() {
                                                 </div>
                                             </div>
                                         ) : (
-                                            <div className="flex items-center justify-between p-3 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-xl border border-green-500/20">
-                                                <div className="flex items-center">
-                                                    <div
-                                                        className={`${isMobile ? "w-10 h-10" : "w-16 h-16"} rounded-xl bg-green-500/20 flex items-center justify-center mr-3`}
+                                            <div className="relative group w-full aspect-video sm:aspect-[2/1] rounded-xl overflow-hidden border border-border/50 bg-black/5 flex items-center justify-center">
+                                                {assetPreview ? (
+                                                    <img src={assetPreview} alt="Uploaded Media Preview" className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <div className="flex items-center gap-2">
+                                                        <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                                                        <span className="text-sm font-medium text-muted-foreground">{assetFile.name} ({(assetFile.size / 1024 / 1024).toFixed(2)} MB)</span>
+                                                    </div>
+                                                )}
+
+                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                    <Button
+                                                        variant="destructive"
+                                                        size="sm"
+                                                        onClick={() => {
+                                                            setAssetFile(null)
+                                                            setAssetPreview(null)
+                                                        }}
+                                                        className="shadow-xl"
                                                     >
-                                                        <Check className={`${isMobile ? "h-5 w-5" : "h-8 w-8"} text-green-400`} />
-                                                    </div>
-                                                    <div>
-                                                        <p className={`font-semibold ${isMobile ? "text-sm" : "text-lg"} line-clamp-1`}>
-                                                            {assetFile.name}
-                                                        </p>
-                                                        <p className="text-xs text-zinc-400">{(assetFile.size / 1024 / 1024).toFixed(2)} MB</p>
-                                                    </div>
+                                                        <X className="h-4 w-4 mr-2" />
+                                                        Remove Media
+                                                    </Button>
                                                 </div>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={() => {
-                                                        setAssetFile(null)
-                                                        setAssetPreview(null)
-                                                    }}
-                                                    className="hover:bg-red-500/20 hover:text-red-400 p-2"
-                                                >
-                                                    <X className="h-4 w-4" />
-                                                </Button>
+
+                                                {/* Mobile quick-remove (visible without hover) */}
+                                                {isMobile && (
+                                                    <Button
+                                                        variant="destructive"
+                                                        size="icon"
+                                                        onClick={() => {
+                                                            setAssetFile(null)
+                                                            setAssetPreview(null)
+                                                        }}
+                                                        className="absolute top-2 right-2 h-8 w-8 rounded-full shadow-lg"
+                                                    >
+                                                        <X className="h-4 w-4" />
+                                                    </Button>
+                                                )}
                                             </div>
                                         )}
                                     </div>
 
                                     {/* Drop Details */}
-                                    <div className="space-y-4">
-                                        <div className="flex items-center gap-2 mb-3">
-                                            <div className="p-1.5 rounded-lg bg-primary/20 text-primary">
-                                                <FileText className="h-4 w-4" />
-                                            </div>
-                                            <div>
-                                                <h2 className={`${isMobile ? "text-base" : "text-xl"} font-semibold`}>Drop Details</h2>
-                                                <p className="text-xs text-zinc-400">Name and description</p>
-                                            </div>
+                                    <div className="space-y-4 pt-2">
+                                        <div className="flex flex-col mb-1">
+                                            <h2 className="text-lg font-semibold text-foreground">Drop Details</h2>
+                                            <p className="text-sm text-muted-foreground">Configure the metadata for your new collection</p>
                                         </div>
 
-                                        <div className="space-y-4">
+                                        <div className="space-y-5">
                                             <div className="space-y-2">
-                                                <Label htmlFor="assetName" className="text-sm font-medium">
-                                                    Drop Name <span className="text-red-500">*</span>
+                                                <Label htmlFor="assetName" className="text-sm font-medium text-foreground">
+                                                    Drop Name <span className="text-destructive">*</span>
                                                 </Label>
                                                 <Input
                                                     id="assetName"
                                                     placeholder="E.g., Devcon Attendance, Hacker House Access"
                                                     value={assetName}
                                                     onChange={(e) => setAssetName(e.target.value)}
-                                                    className={`${isMobile ? "h-11" : "h-12"} text-sm`}
+                                                    className="h-11 bg-background"
                                                 />
                                             </div>
 
                                             <div className="space-y-2">
-                                                <Label htmlFor="assetDescription" className="text-sm font-medium">
-                                                    Description <span className="text-red-500">*</span>
+                                                <Label htmlFor="assetDescription" className="text-sm font-medium text-foreground">
+                                                    Description <span className="text-destructive">*</span>
                                                 </Label>
                                                 <Textarea
                                                     id="assetDescription"
                                                     placeholder="Describe the milestone or event for this mint drop..."
-                                                    rows={isMobile ? 3 : 4}
+                                                    rows={4}
                                                     value={assetDescription}
                                                     onChange={(e) => setAssetDescription(e.target.value)}
-                                                    className="text-sm"
+                                                    className="resize-none bg-background"
                                                 />
-                                                <p className="text-xs text-zinc-500">{assetDescription.length}/500 characters</p>
+                                                <div className="flex justify-end">
+                                                    <p className="text-xs text-muted-foreground">{assetDescription.length}/500</p>
+                                                </div>
                                             </div>
 
-                                            {/* Collection Selector */}
-                                            <div className="border-t border-white/10 pt-6">
-                                                <CollectionSelector
-                                                    selectedCollection={selectedCollection}
-                                                    onCollectionSelect={setSelectedCollection}
-                                                />
-                                            </div>
+                                            {/* Advanced Details Accordion */}
+                                            <Accordion type="single" collapsible className="w-full pt-2">
+                                                <AccordionItem value="advanced-details" className="border-border/50">
+                                                    <AccordionTrigger className="text-sm font-semibold hover:no-underline">
+                                                        <div className="flex flex-col items-start gap-1">
+                                                            <span>Advanced Details (Optional)</span>
+                                                            <span className="text-xs text-muted-foreground font-normal overflow-hidden whitespace-nowrap overflow-ellipsis">Add specific attributes to your drop metadata</span>
+                                                        </div>
+                                                    </AccordionTrigger>
+                                                    <AccordionContent className="space-y-6 pt-4 pb-2">
+
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                            <div className="space-y-2">
+                                                                <Label htmlFor="eventLocation" className="text-sm font-medium text-foreground">
+                                                                    Location
+                                                                </Label>
+                                                                <Input
+                                                                    id="eventLocation"
+                                                                    placeholder="e.g. Bogota, Colombia"
+                                                                    value={eventLocation}
+                                                                    onChange={(e) => setEventLocation(e.target.value)}
+                                                                    className="h-10 bg-background"
+                                                                />
+                                                            </div>
+                                                            <div className="space-y-2">
+                                                                <Label htmlFor="eventDate" className="text-sm font-medium text-foreground">
+                                                                    Date
+                                                                </Label>
+                                                                <Input
+                                                                    id="eventDate"
+                                                                    type="date"
+                                                                    value={eventDate}
+                                                                    onChange={(e) => setEventDate(e.target.value)}
+                                                                    className="h-10 bg-background"
+                                                                />
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Custom Traits Section */}
+                                                        <div className="space-y-3 pt-4 border-t border-border/50">
+                                                            <div className="flex items-center justify-between">
+                                                                <div>
+                                                                    <Label className="text-sm font-medium text-foreground">Other Custom Traits</Label>
+                                                                </div>
+                                                                <Button
+                                                                    type="button"
+                                                                    variant="outline"
+                                                                    size="sm"
+                                                                    onClick={() => setCustomTraits([...customTraits, { trait_type: "", value: "" }])}
+                                                                    className="text-xs"
+                                                                >
+                                                                    <Plus className="h-3 w-3 mr-1" /> Add Trait
+                                                                </Button>
+                                                            </div>
+
+                                                            {customTraits.length > 0 ? (
+                                                                <div className="space-y-2">
+                                                                    {customTraits.map((trait, index) => (
+                                                                        <div key={index} className="flex items-center gap-2">
+                                                                            <Input
+                                                                                placeholder="Type (e.g. Tier)"
+                                                                                value={trait.trait_type}
+                                                                                onChange={(e) => {
+                                                                                    const newTraits = [...customTraits];
+                                                                                    newTraits[index].trait_type = e.target.value;
+                                                                                    setCustomTraits(newTraits);
+                                                                                }}
+                                                                                className="h-9 bg-background text-sm"
+                                                                            />
+                                                                            <Input
+                                                                                placeholder="Value (e.g. VIP)"
+                                                                                value={trait.value}
+                                                                                onChange={(e) => {
+                                                                                    const newTraits = [...customTraits];
+                                                                                    newTraits[index].value = e.target.value;
+                                                                                    setCustomTraits(newTraits);
+                                                                                }}
+                                                                                className="h-9 bg-background text-sm"
+                                                                            />
+                                                                            <Button
+                                                                                type="button"
+                                                                                variant="ghost"
+                                                                                size="icon"
+                                                                                className="h-9 w-9 text-muted-foreground hover:text-destructive shrink-0"
+                                                                                onClick={() => {
+                                                                                    const newTraits = [...customTraits];
+                                                                                    newTraits.splice(index, 1);
+                                                                                    setCustomTraits(newTraits);
+                                                                                }}
+                                                                            >
+                                                                                <X className="h-4 w-4" />
+                                                                            </Button>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            ) : (
+                                                                <div className="text-center py-4 rounded-xl border border-dashed border-border text-sm text-muted-foreground bg-muted/20">
+                                                                    Click 'Add Trait' to define extra key-value pairs.
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </AccordionContent>
+                                                </AccordionItem>
+                                            </Accordion>
                                         </div>
                                     </div>
 
                                     {/* Desktop Create Button */}
                                     {!isMobile && (
-                                        <div className="pt-6">
+                                        <div className="pt-6 border-t border-border/50">
                                             <Button
+                                                size="lg"
                                                 onClick={handleSubmit}
                                                 disabled={!isFormValid() || isSubmitting}
-                                                className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 disabled:opacity-50"
+                                                className="w-full text-base font-medium h-12 rounded-xl"
                                             >
                                                 {isSubmitting ? (
                                                     <>
-                                                        <div className="w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin mr-3"></div>
-                                                        Deploying Match Drop...
+                                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                        Deploying Drop...
                                                     </>
                                                 ) : (
                                                     <>
-                                                        <Sparkles className="mr-3 h-6 w-6" />
+                                                        <Plus className="mr-2 h-4 w-4" />
                                                         Launch Mint Drop
                                                     </>
                                                 )}
@@ -501,17 +603,10 @@ export default function CreateMintDropPage() {
                         {!isMobile && (
                             <div className="lg:col-span-1">
                                 <div className="sticky top-24 space-y-6">
-                                    <Card className="premium-glass border-primary/20">
-                                        <CardHeader className="pb-4">
-                                            <CardTitle className="text-lg flex items-center gap-2">
-                                                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                                                Live Preview
-                                            </CardTitle>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <PreviewContent />
-                                        </CardContent>
-                                    </Card>
+                                    <div className="flex flex-col space-y-4">
+                                        <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Live Preview</h3>
+                                        <PreviewContent />
+                                    </div>
                                 </div>
                             </div>
                         )}
@@ -520,21 +615,22 @@ export default function CreateMintDropPage() {
 
                 {/* Mobile Bottom Action Bar */}
                 {isMobile && (
-                    <div className="fixed bottom-0 left-0 right-0 bg-black/95 backdrop-blur-xl border-t border-white/10 p-3">
+                    <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-t border-border/50 p-4">
                         <Button
+                            size="lg"
                             onClick={handleSubmit}
                             disabled={!isFormValid() || isSubmitting}
-                            className="w-full h-12 text-sm font-semibold bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 disabled:opacity-50"
+                            className="w-full text-base font-medium h-12 rounded-xl"
                         >
                             {isSubmitting ? (
                                 <>
-                                    <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin mr-2"></div>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                     Deploying...
                                 </>
                             ) : (
                                 <>
                                     <Plus className="mr-2 h-4 w-4" />
-                                    Launch Mint Drop
+                                    Launch Drop
                                 </>
                             )}
                         </Button>

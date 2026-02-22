@@ -39,6 +39,7 @@ export default function MintDropPage({ params }: { params: { address: string } }
                         mediaUrl: collection.coverImage || DEMO_MINT_DROP_ASSET.mediaUrl,
                         author: typeof collection.creator === 'object' && collection.creator !== null ? collection.creator.id || "Creator" : (collection.creator as string || "Creator"),
                         collection: collection.name,
+                        collectionId: collection.id,
                         tags: tags,
                     });
                     setLoading(false);

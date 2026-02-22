@@ -43,6 +43,7 @@ export interface MintDropAsset {
     type: string;
     tags: string[];
     collection: string;
+    collectionId?: string;
     licenceType: string;
     licenseDetails: string;
     ipVersion: string;
@@ -150,7 +151,7 @@ export default function MintEventAsset({ asset, contractAddress }: MintEventAsse
             // Upload both file and metadata to IPFS
             const result = await uploadToIpfs(file, metadata);
 
-            // Mint NFT using Chipi SDK's callAnyContract
+            // Mint NFT using Chipi SDK's callAnyContract to the IP Collection Protocol Contract
             const mintResult = await callAnyContractAsync({
                 params: {
                     encryptKey: pin,
@@ -158,13 +159,14 @@ export default function MintEventAsset({ asset, contractAddress }: MintEventAsse
                         publicKey: publicKey,
                         encryptedPrivateKey: encryptedPrivateKey,
                     },
-                    contractAddress: activeContract,
+                    contractAddress: CONTRACTS.COLLECTION_FACTORY,
                     calls: [
                         {
-                            contractAddress: activeContract,
-                            entrypoint: "mint_item",
+                            contractAddress: CONTRACTS.COLLECTION_FACTORY,
+                            entrypoint: "mint",
                             calldata: [
-                                publicKey, //
+                                activeAsset.collectionId || "0", // collection_id
+                                publicKey, // recipient
                                 result.cid, // tokenURI (metadata IPFS CID)
                             ],
                         },
