@@ -153,17 +153,18 @@ export default function MintEventAsset({ asset, contractAddress }: MintEventAsse
             const result = await uploadToIpfs(file, metadata);
 
             // Format parameters to Starknet types and compile to raw felts
+            // Match the working create-asset.tsx pattern: mint_item(recipient, tokenURI)
             const formattedCalldata = CallData.compile([
-                { low: activeAsset.collectionId || "0", high: "0" }, // collection_id
                 publicKey, // recipient
-                byteArray.byteArrayFromString(result.cid), // token_uri
+                byteArray.byteArrayFromString(result.cid), // tokenURI (metadata)
             ]);
 
-            // Mint NFT using Chipi SDK's callAnyContract to the IP Collection Protocol Contract
+            // Mint NFT using Chipi SDK's callAnyContract on the Mediolano contract
             console.log("[ChipiDebug] Submitting mint:", {
-                contractAddress: CONTRACTS.COLLECTION_FACTORY,
-                entrypoint: "mint",
+                contractAddress: activeContract,
+                entrypoint: "mint_item",
                 calldata: formattedCalldata,
+                calldataLength: formattedCalldata.length,
             });
 
             const mintResult = await callAnyContractAsync({
@@ -173,11 +174,11 @@ export default function MintEventAsset({ asset, contractAddress }: MintEventAsse
                         publicKey: publicKey,
                         encryptedPrivateKey: encryptedPrivateKey,
                     },
-                    contractAddress: CONTRACTS.COLLECTION_FACTORY,
+                    contractAddress: activeContract,
                     calls: [
                         {
-                            contractAddress: CONTRACTS.COLLECTION_FACTORY,
-                            entrypoint: "mint",
+                            contractAddress: activeContract,
+                            entrypoint: "mint_item",
                             calldata: formattedCalldata,
                         },
                     ],
