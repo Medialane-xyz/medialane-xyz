@@ -14,7 +14,8 @@ export const CONTRACTS = {
 
 export const provider = new RpcProvider({
   nodeUrl:
+    process.env.NEXT_PUBLIC_RPC_URL ||
     process.env.NEXT_PUBLIC_STARKNET_RPC_URL ||
-    "https://starknet.drpc.org",
+    "https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_10/tOTwt1ug3YNOsaPjinDvS",
 });
 export const IPFS_URL = process.env.NEXT_PUBLIC_PINATA_HOST!;

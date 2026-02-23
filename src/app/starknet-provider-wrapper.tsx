@@ -11,7 +11,7 @@ const connectors = [
 
 export default function StarknetProviderWrapper({ children }: { children: ReactNode }) {
   // Use the same env var as useRecentAssets to ensure consistency and use the working RPC
-  const nodeUrl = process.env.NEXT_PUBLIC_RPC_URL || process.env.NEXT_PUBLIC_STARKNET_RPC_URL || 'https://starknet-mainnet.public.blastapi.io/rpc/v0_8';
+  const nodeUrl = process.env.NEXT_PUBLIC_RPC_URL || process.env.NEXT_PUBLIC_STARKNET_RPC_URL || 'https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_10/tOTwt1ug3YNOsaPjinDvS';
 
   return (
     <StarknetConfig

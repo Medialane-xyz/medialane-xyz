@@ -48,9 +48,7 @@ export default function ChipiDebugger() {
         try {
             // Check via our default provider and a backup one
             const providers = [
-                { name: "App Default", provider: defaultProvider },
-                { name: "Public dRPC", provider: new RpcProvider({ nodeUrl: "https://starknet.drpc.org" }) },
-                { name: "Nethermind", provider: new RpcProvider({ nodeUrl: "https://free-rpc.nethermind.io/mainnet-juno/v0_7" }) }
+                { name: "App Default", provider: defaultProvider }
             ];
 
             const results = await Promise.all(providers.map(async (p) => {
