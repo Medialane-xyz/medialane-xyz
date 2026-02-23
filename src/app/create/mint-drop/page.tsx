@@ -188,19 +188,20 @@ export default function CreateMintDropPage() {
             // Upload both file and metadata to IPFS
             const result = await uploadToIpfs(assetFile, metadata)
 
-            // Format parameters to Starknet types and compile to raw felts
+            // Format parameters using CallData.compile (same pattern as working create-asset.tsx)
             const formattedCalldata = CallData.compile([
                 byteArray.byteArrayFromString(assetName), // name
                 byteArray.byteArrayFromString("DROP"), // symbol
                 byteArray.byteArrayFromString(result.cid), // base_uri
-            ]);
+            ])
 
-            // Call create_collection on factory
-            console.log("[ChipiDebug] Submitting create_collection:", {
+            const call = {
                 contractAddress: CONTRACTS.COLLECTION_FACTORY,
                 entrypoint: "create_collection",
                 calldata: formattedCalldata,
-            });
+            }
+
+            console.log("[ChipiDebug] Submitting create_collection:", call);
 
             const txHash = await callAnyContractAsync({
                 params: {
@@ -210,16 +211,10 @@ export default function CreateMintDropPage() {
                         encryptedPrivateKey: encryptedPrivateKey,
                     },
                     contractAddress: CONTRACTS.COLLECTION_FACTORY,
-                    calls: [
-                        {
-                            contractAddress: CONTRACTS.COLLECTION_FACTORY,
-                            entrypoint: "create_collection",
-                            calldata: formattedCalldata,
-                        },
-                    ],
+                    calls: [call],
                 },
                 bearerToken: token,
-            })
+            });
 
             console.log("[ChipiDebug] Transaction Hash Received:", txHash);
 
@@ -235,12 +230,16 @@ export default function CreateMintDropPage() {
                     router.push("/mint/portfolio")
                 }, 3000)
             }
-        } catch (error) {
-            console.error("Deployment failed:", error)
+        } catch (error: any) {
+            console.error("[ChipiDebug] Deployment failed:", {
+                message: error?.message,
+                stack: error?.stack,
+                error,
+            })
             setPinError(error instanceof Error ? error.message : "Deployment failed")
             toast({
                 title: "Deployment Failed",
-                description: "PIN incorrect or network error. Please try again.",
+                description: error?.message || "PIN incorrect or network error. Please try again.",
                 variant: "destructive",
             })
         } finally {

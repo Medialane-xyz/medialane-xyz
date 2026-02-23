@@ -204,15 +204,19 @@ export default function MintEventAsset({ asset, contractAddress }: MintEventAsse
                     window.location.assign("/mint/portfolio");
                 }, 7000);
             }
-        } catch (error) {
-            console.error("Minting failed:", error);
+        } catch (error: any) {
+            console.error("[ChipiDebug] Minting failed:", {
+                message: error?.message,
+                stack: error?.stack,
+                error,
+            });
             const errorMessage =
                 error instanceof Error ? error.message : "Minting failed";
             setPinError(errorMessage);
 
             toast({
                 title: "Minting Failed",
-                description: "PIN incorrect or network error. Please try again.",
+                description: error?.message || "PIN incorrect or network error. Please try again.",
                 variant: "destructive",
             });
         } finally {
