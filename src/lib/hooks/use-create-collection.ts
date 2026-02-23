@@ -4,7 +4,8 @@ import { useState, useEffect } from "react"
 import { useAccount, useSendTransaction, useTransactionReceipt } from "@starknet-react/core"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@clerk/nextjs"
-import { useCallAnyContract, useGetWallet } from "@chipi-stack/nextjs"
+import { useGetWallet } from "@chipi-stack/nextjs"
+import { useChipiTransaction } from "@/src/lib/hooks/use-chipi-transaction"
 import { useToast } from "@/src/components/ui/use-toast"
 import { uploadToIPFS, uploadMetadata } from "@/src/lib/services/upload"
 import { CallData, byteArray } from "starknet"
@@ -45,7 +46,7 @@ export function useCreateCollection() {
         getBearerToken: () => getToken({ template: "chipipay" }).then(t => t || ""),
         params: { externalUserId: clerkUserId || "" },
     })
-    const { callAnyContractAsync } = useCallAnyContract()
+    const { executeTransaction } = useChipiTransaction()
 
     const { sendAsync: createCollectionOnChain } = useSendTransaction({
         calls: undefined,
@@ -128,20 +129,17 @@ export function useCreateCollection() {
                 const res = await createCollectionOnChain([call])
                 transaction_hash = res.transaction_hash
             } else if (customerWallet && pin) {
-                const jwtToken = await getToken()
-                if (!jwtToken) throw new Error("No token found")
-
-                transaction_hash = await callAnyContractAsync({
-                    params: {
-                        encryptKey: pin,
-                        wallet: {
-                            publicKey: (customerWallet as any).walletPublicKey,
-                            encryptedPrivateKey: (customerWallet as any).encryptedPrivateKey || "",
-                        },
-                        calls: [call],
-                    } as any,
-                    bearerToken: jwtToken,
+                const txResult = await executeTransaction({
+                    pin,
+                    contractAddress: COLLECTION_CONTRACT_ADDRESS,
+                    calls: [call],
+                    wallet: {
+                        publicKey: (customerWallet as any).walletPublicKey,
+                        encryptedPrivateKey: (customerWallet as any).encryptedPrivateKey || "",
+                    },
                 })
+
+                transaction_hash = txResult.txHash
             }
 
             if (transaction_hash) {

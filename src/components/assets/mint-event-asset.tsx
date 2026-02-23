@@ -24,8 +24,8 @@ import {
     ExternalLink,
 } from "lucide-react";
 import { toast } from "@/src/hooks/use-toast";
-import { useCallAnyContract } from "@chipi-stack/nextjs";
-import { useAuth, useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
+import { useChipiTransaction } from "@/src/lib/hooks/use-chipi-transaction";
 import { CONTRACTS } from "@/src/services/constant";
 import { useIpfsUpload } from "@/src/hooks/useIpfs";
 import { Confetti } from "@/src/components/ui/animation-confetti";
@@ -85,15 +85,9 @@ interface MintEventAssetProps {
 }
 
 export default function MintEventAsset({ asset, contractAddress }: MintEventAssetProps) {
-    const { getToken } = useAuth();
     const { user } = useUser();
     const publicKey = user?.publicMetadata?.publicKey as string;
-    const encryptedPrivateKey = user?.publicMetadata
-        ?.encryptedPrivateKey as string;
-    const {
-        callAnyContractAsync,
-        isLoading: isMinting,
-    } = useCallAnyContract();
+    const { executeTransaction, isSubmitting: isMinting } = useChipiTransaction();
     const { uploadToIpfs, loading } = useIpfsUpload();
 
     const [showPinDialog, setShowPinDialog] = useState(false);
@@ -116,14 +110,6 @@ export default function MintEventAsset({ asset, contractAddress }: MintEventAsse
         setPinError("");
 
         try {
-            const token = await getToken({
-                template: process.env.NEXT_PUBLIC_CLERK_TEMPLATE_NAME,
-            });
-
-            if (!token) {
-                throw new Error("No bearer token found. Please try to login again.");
-            }
-
             // Fetch the default image to upload it to IPFS
             const response = await fetch(activeAsset.mediaUrl);
             const blob = await response.blob();
@@ -133,7 +119,7 @@ export default function MintEventAsset({ asset, contractAddress }: MintEventAsse
             const metadata = {
                 name: activeAsset.title,
                 description: activeAsset.description,
-                image: activeAsset.mediaUrl, // Will be replaced by IPFS URL
+                image: activeAsset.mediaUrl,
                 external_url: activeAsset.externalUrl,
                 attributes: [
                     { trait_type: "Type", value: activeAsset.type },
@@ -152,47 +138,28 @@ export default function MintEventAsset({ asset, contractAddress }: MintEventAsse
             // Upload both file and metadata to IPFS
             const result = await uploadToIpfs(file, metadata);
 
-            // Format parameters to Starknet types and compile to raw felts
-            // Match the working create-asset.tsx pattern: mint_item(recipient, tokenURI)
+            // Format calldata: mint_item(recipient, tokenURI)
             const formattedCalldata = CallData.compile([
-                publicKey, // recipient
-                byteArray.byteArrayFromString(result.cid), // tokenURI (metadata)
+                publicKey,
+                byteArray.byteArrayFromString(result.cid),
             ]);
 
-            // Mint NFT using Chipi SDK's callAnyContract on the Mediolano contract
-            console.log("[ChipiDebug] Submitting mint:", {
+            // Execute via centralized hook (handles auth, wallet, L2 confirmation)
+            const txResult = await executeTransaction({
+                pin,
                 contractAddress: activeContract,
-                entrypoint: "mint_item",
-                calldata: formattedCalldata,
-                calldataLength: formattedCalldata.length,
-            });
-
-            const mintResult = await callAnyContractAsync({
-                params: {
-                    encryptKey: pin,
-                    wallet: {
-                        publicKey: publicKey,
-                        encryptedPrivateKey: encryptedPrivateKey,
+                calls: [
+                    {
+                        contractAddress: activeContract,
+                        entrypoint: "mint_item",
+                        calldata: formattedCalldata,
                     },
-                    contractAddress: activeContract,
-                    calls: [
-                        {
-                            contractAddress: activeContract,
-                            entrypoint: "mint_item",
-                            calldata: formattedCalldata,
-                        },
-                    ],
-                },
-                bearerToken: token,
+                ],
             });
 
-            console.log("[ChipiDebug] Mint Result Hash:", mintResult);
-
-            console.log("Mint result:", mintResult);
-
-            if (mintResult) {
-                setTxHash(mintResult);
-                setTokenId(Date.now().toString()); // Mock ID for UI until indexed
+            if (txResult.status === "confirmed") {
+                setTxHash(txResult.txHash);
+                setTokenId(Date.now().toString());
                 setShowPinDialog(false);
 
                 toast({
@@ -200,24 +167,24 @@ export default function MintEventAsset({ asset, contractAddress }: MintEventAsse
                     description: "Your NFT has been minted.",
                 });
 
-                // Redirect to portfolio
-                setTimeout(function () {
+                setTimeout(() => {
                     window.location.assign("/mint/portfolio");
-                }, 7000);
+                }, 3000);
+            } else {
+                toast({
+                    title: "Transaction Reverted",
+                    description: txResult.revertReason || "The transaction failed on-chain. Please try again.",
+                    variant: "destructive",
+                });
             }
         } catch (error: any) {
-            console.error("[ChipiDebug] Minting failed:", {
-                message: error?.message,
-                stack: error?.stack,
-                error,
-            });
             const errorMessage =
                 error instanceof Error ? error.message : "Minting failed";
             setPinError(errorMessage);
 
             toast({
                 title: "Minting Failed",
-                description: error?.message || "PIN incorrect or network error. Please try again.",
+                description: errorMessage,
                 variant: "destructive",
             });
         } finally {

@@ -33,8 +33,8 @@ import {
 import { useMobile } from "@/src/hooks/use-mobile"
 import PageTransition from "@/src/components/page-transition"
 
-import { useAuth, useUser } from "@clerk/nextjs"
-import { useCallAnyContract } from "@chipi-stack/nextjs"
+import { useUser } from "@clerk/nextjs"
+import { useChipiTransaction } from "@/src/lib/hooks/use-chipi-transaction"
 import { useIpfsUpload } from "@/src/hooks/useIpfs"
 import { CONTRACTS } from "@/src/services/constant"
 import { PinInput } from "@/src/components/pin-input"
@@ -63,12 +63,10 @@ export default function CreateMintDropPage() {
     const { toast } = useToast()
     const isMobile = useMobile()
 
-    const { getToken } = useAuth()
     const { user } = useUser()
     const publicKey = user?.publicMetadata?.publicKey as string
-    const encryptedPrivateKey = user?.publicMetadata?.encryptedPrivateKey as string
 
-    const { callAnyContractAsync } = useCallAnyContract()
+    const { executeTransaction } = useChipiTransaction()
     const { uploadToIpfs } = useIpfsUpload()
 
     const [showPinDialog, setShowPinDialog] = useState(false)
@@ -153,14 +151,6 @@ export default function CreateMintDropPage() {
         setIsSubmitting(true)
 
         try {
-            const token = await getToken({
-                template: process.env.NEXT_PUBLIC_CLERK_TEMPLATE_NAME,
-            })
-
-            if (!token) {
-                throw new Error("No bearer token found. Please try to login again.")
-            }
-
             // Create metadata object
             const baseAttributes = [
                 { trait_type: "Type", value: "event" },
@@ -188,88 +178,49 @@ export default function CreateMintDropPage() {
             // Upload both file and metadata to IPFS
             const result = await uploadToIpfs(assetFile, metadata)
 
-            // Format parameters using CallData.compile (same pattern as working create-asset.tsx)
+            // Format calldata
             const formattedCalldata = CallData.compile([
-                byteArray.byteArrayFromString(assetName), // name
-                byteArray.byteArrayFromString("DROP"), // symbol
-                byteArray.byteArrayFromString(result.cid), // base_uri
+                byteArray.byteArrayFromString(assetName),
+                byteArray.byteArrayFromString("DROP"),
+                byteArray.byteArrayFromString(result.cid),
             ])
 
-            const call = {
+            // Execute via centralized hook (handles auth, wallet, L2 confirmation)
+            const txResult = await executeTransaction({
+                pin,
                 contractAddress: CONTRACTS.COLLECTION_FACTORY,
-                entrypoint: "create_collection",
-                calldata: formattedCalldata,
-            }
-
-            // Log full params for debugging
-            const sdkParams = {
-                params: {
-                    encryptKey: pin,
-                    wallet: {
-                        publicKey: publicKey,
-                        encryptedPrivateKey: encryptedPrivateKey ? `${encryptedPrivateKey.substring(0, 20)}...` : "MISSING",
+                calls: [
+                    {
+                        contractAddress: CONTRACTS.COLLECTION_FACTORY,
+                        entrypoint: "create_collection",
+                        calldata: formattedCalldata,
                     },
-                    contractAddress: CONTRACTS.COLLECTION_FACTORY,
-                    calls: [call],
-                },
-                bearerToken: token ? `${token.substring(0, 20)}...` : "MISSING",
-            }
-            console.log("[ChipiDebug] Full SDK params (sanitized):", JSON.stringify(sdkParams, null, 2));
-            console.log("[ChipiDebug] Calldata array:", formattedCalldata);
-            console.log("[ChipiDebug] Calldata length:", formattedCalldata.length);
+                ],
+            })
 
-            const txHash = await callAnyContractAsync({
-                params: {
-                    encryptKey: pin,
-                    wallet: {
-                        publicKey: publicKey,
-                        encryptedPrivateKey: encryptedPrivateKey,
-                    },
-                    contractAddress: CONTRACTS.COLLECTION_FACTORY,
-                    calls: [call],
-                },
-                bearerToken: token,
-            });
-
-            // Detailed response analysis
-            console.log("[ChipiDebug] === SDK RESPONSE ===");
-            console.log("[ChipiDebug] Raw response:", txHash);
-            console.log("[ChipiDebug] Type:", typeof txHash);
-            console.log("[ChipiDebug] Truthy:", !!txHash);
-            console.log("[ChipiDebug] JSON:", JSON.stringify(txHash));
-
-            // Strict validation: must be a 0x hex string
-            if (txHash && typeof txHash === 'string' && txHash.startsWith('0x') && txHash.length > 10) {
-                console.log("[ChipiDebug] ✅ Valid transaction hash:", txHash);
+            if (txResult.status === "confirmed") {
                 setShowPinDialog(false)
                 toast({
                     title: "Mint Drop Created! 🎉",
-                    description: `Transaction: ${txHash.substring(0, 10)}...${txHash.substring(txHash.length - 6)}`,
+                    description: `Transaction confirmed: ${txResult.txHash.substring(0, 10)}...${txResult.txHash.substring(txResult.txHash.length - 6)}`,
                 })
 
-                // Redirect to portfolio
                 setTimeout(() => {
                     router.push("/mint/portfolio")
                 }, 3000)
             } else {
-                // Response is not a valid tx hash — treat as failure
-                console.error("[ChipiDebug] ❌ Invalid SDK response — not a valid tx hash:", txHash);
-                throw new Error(`Transaction submission returned invalid response: ${JSON.stringify(txHash)}`);
+                toast({
+                    title: "Transaction Reverted",
+                    description: txResult.revertReason || "The transaction failed on-chain. Please try again.",
+                    variant: "destructive",
+                })
             }
         } catch (error: any) {
-            console.error("[ChipiDebug] === DEPLOYMENT ERROR ===");
-            console.error("[ChipiDebug] Error type:", error?.constructor?.name);
-            console.error("[ChipiDebug] Error message:", error?.message);
-            console.error("[ChipiDebug] Error stack:", error?.stack);
-            console.error("[ChipiDebug] Full error:", error);
-            if (error?.response) {
-                console.error("[ChipiDebug] Response status:", error.response?.status);
-                console.error("[ChipiDebug] Response data:", error.response?.data);
-            }
-            setPinError(error instanceof Error ? error.message : "Deployment failed")
+            const errorMessage = error instanceof Error ? error.message : "Deployment failed"
+            setPinError(errorMessage)
             toast({
                 title: "Deployment Failed",
-                description: error?.message || "PIN incorrect or network error. Please try again.",
+                description: errorMessage,
                 variant: "destructive",
             })
         } finally {

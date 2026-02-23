@@ -45,8 +45,8 @@ import {
 } from "lucide-react";
 import { toast } from "@/src/hooks/use-toast";
 import { useRouter } from "next/navigation";
-import { useCallAnyContract } from "@chipi-stack/nextjs";
-import { useAuth, useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
+import { useChipiTransaction } from "@/src/lib/hooks/use-chipi-transaction";
 import { FormWrapper } from "../ui/forms/wrapper";
 import { TextAreaInput, TextInput } from "../ui/forms/input";
 import {
@@ -97,16 +97,9 @@ const validationSchema = Yup.object().shape({
 export default function CreateAssetView() {
   const router = useRouter();
   const uploaderRef = useRef<MediaUploaderRef>(null);
-  const { getToken } = useAuth();
   const { user } = useUser();
   const publicKey = user?.publicMetadata?.publicKey as string;
-  const encryptedPrivateKey = user?.publicMetadata
-    ?.encryptedPrivateKey as string;
-  const {
-    callAnyContractAsync,
-    isLoading: isMinting,
-    // error: mintError,
-  } = useCallAnyContract();
+  const { executeTransaction, isSubmitting: isMinting } = useChipiTransaction();
   const { uploadToIpfs, loading } = useIpfsUpload();
   // Upload and media state
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
@@ -152,15 +145,7 @@ export default function CreateAssetView() {
     setPinError("");
 
     try {
-      const token = await getToken({
-        template: process.env.NEXT_PUBLIC_CLERK_TEMPLATE_NAME,
-      });
-
-      if (!token) {
-        throw new Error("No bearer token found. Please try to login again.");
-      }
-
-      // Create metadata object (in production, this would be uploaded to IPFS)
+      // Create metadata object
       const metadata = {
         name: values.title,
         description: values.description,
@@ -210,84 +195,56 @@ export default function CreateAssetView() {
         return;
       }
 
-      // If we have a file, it will be uploaded. 
-      // If we have only a URL (file is null), uploadToIpfs will use the URL in metadata.
+      // Upload to IPFS
       const result = await uploadToIpfs(file || null, metadata);
-      //console.log("Uploaded:", result);
 
-      // Format parameters to Starknet types and compile to raw felts
+      // Format calldata
       const formattedCalldata = CallData.compile([
-        publicKey, //
-        byteArray.byteArrayFromString(result.cid), // tokenURI (metadata)
+        publicKey,
+        byteArray.byteArrayFromString(result.cid),
       ]);
 
-      // Mint NFT using Chipi SDK's callAnyContract
-      const mintResult = await callAnyContractAsync({
-        params: {
-          encryptKey: pin,
-          wallet: {
-            publicKey: publicKey,
-            encryptedPrivateKey: encryptedPrivateKey,
+      // Execute via centralized hook (handles auth, wallet, L2 confirmation)
+      const txResult = await executeTransaction({
+        pin,
+        contractAddress: MEDIOLANO_CONTRACT,
+        calls: [
+          {
+            contractAddress: MEDIOLANO_CONTRACT,
+            entrypoint: "mint_item",
+            calldata: formattedCalldata,
           },
-          contractAddress: MEDIOLANO_CONTRACT,
-          calls: [
-            {
-              contractAddress: MEDIOLANO_CONTRACT,
-              entrypoint: "mint_item",
-              calldata: formattedCalldata,
-            },
-          ],
-        },
-        bearerToken: token,
+        ],
       });
 
-      // const mintResult = await callAnyContractAsync({
-      //   encryptKey: pin,
-      //   bearerToken: token,
-      //   wallet: {
-      //     publicKey: publicKey,
-      //     encryptedPrivateKey: encryptedPrivateKey,
-      //   },
-      //   contractAddress: MEDIOLANO_CONTRACT,
-      //   calls: [
-      //     {
-      //       contractAddress: MEDIOLANO_CONTRACT,
-      //       entrypoint: "mint_item",
-      //       calldata: [
-      //         publicKey, //
-      //         result.cid, // tokenURI (metadata)
-      //       ],
-      //     },
-      //   ],
-      // });
-
-      console.log("Mint result:", mintResult);
-
-      if (mintResult) {
-        setTxHash(mintResult);
-        setTokenId(Date.now().toString()); // In production, parse from transaction receipt
+      if (txResult.status === "confirmed") {
+        setTxHash(txResult.txHash);
+        setTokenId(Date.now().toString());
         setShowPinDialog(false);
 
         toast({
           title: "Asset Created!",
-          description: "Your content is now protected on the blockchain",
+          description: "Your content is now protected on the blockchain.",
         });
 
-        // Force full reload to ensure latest data
-        setTimeout(function () {
+        setTimeout(() => {
           window.location.assign("/mint/portfolio");
-        }, 7000);
-
+        }, 3000);
+      } else {
+        toast({
+          title: "Transaction Reverted",
+          description: txResult.revertReason || "The transaction failed on-chain. Please try again.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
-      console.error("Minting failed:", error);
       const errorMessage =
         error instanceof Error ? error.message : "Minting failed";
       setPinError(errorMessage);
 
       toast({
         title: "Minting Failed",
-        description: "PIN incorrect. Please try again or contact support.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
