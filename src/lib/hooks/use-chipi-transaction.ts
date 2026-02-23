@@ -215,10 +215,29 @@ export function useChipiTransaction() {
         isSubmittingRef.current = false
     }, [])
 
+    // Human-readable status message for UI display
+    const statusMessage = (() => {
+        switch (status) {
+            case "submitting":
+                return "Submitting transaction..."
+            case "confirming":
+                return "Confirming on blockchain..."
+            case "confirmed":
+                return "Transaction confirmed!"
+            case "reverted":
+                return "Transaction reverted"
+            case "error":
+                return "Transaction failed"
+            default:
+                return undefined
+        }
+    })()
+
     return {
         executeTransaction,
         reset,
         status,
+        statusMessage,
         txHash,
         error,
         isSubmitting: status === "submitting" || status === "confirming",

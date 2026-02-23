@@ -16,6 +16,8 @@ interface PinInputProps {
     submitText?: string;
     error?: string;
     onCancel?: () => void;
+    /** Live status message shown while processing (replaces generic "Processing...") */
+    statusMessage?: string;
 }
 
 export function PinInput({
@@ -26,6 +28,7 @@ export function PinInput({
     submitText = "Confirm",
     error,
     onCancel,
+    statusMessage,
 }: PinInputProps) {
     const [pin, setPin] = React.useState("");
     const [showPin, setShowPin] = React.useState(false);
@@ -176,7 +179,7 @@ export function PinInput({
                             {isLoading ? (
                                 <div className="flex items-center space-x-2">
                                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                                    <span>Processing...</span>
+                                    <span>{statusMessage || "Processing..."}</span>
                                 </div>
                             ) : (
                                 submitText

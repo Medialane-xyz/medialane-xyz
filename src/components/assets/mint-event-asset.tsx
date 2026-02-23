@@ -87,7 +87,7 @@ interface MintEventAssetProps {
 export default function MintEventAsset({ asset, contractAddress }: MintEventAssetProps) {
     const { user } = useUser();
     const publicKey = user?.publicMetadata?.publicKey as string;
-    const { executeTransaction, isSubmitting: isMinting } = useChipiTransaction();
+    const { executeTransaction, isSubmitting: isMinting, statusMessage } = useChipiTransaction();
     const { uploadToIpfs, loading } = useIpfsUpload();
 
     const [showPinDialog, setShowPinDialog] = useState(false);
@@ -331,6 +331,7 @@ export default function MintEventAsset({ asset, contractAddress }: MintEventAsse
                                                         error={pinError}
                                                         title="Enter Wallet PIN"
                                                         description="This transaction is gasless."
+                                                        statusMessage={statusMessage}
                                                     />
                                                 </DialogContent>
                                             </Dialog>

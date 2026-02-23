@@ -1,29 +1,21 @@
 "use client"
 
 import { useState } from "react"
-import { Card, CardContent } from "@/src/components/ui/card"
 import { Badge } from "@/src/components/ui/badge"
 import { Button } from "@/src/components/ui/button"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/src/components/ui/collapsible"
 import {
   ChevronDown,
-  Shield,
   ExternalLink,
-  Send,
-  Eye,
-  Copy,
-  Calendar,
-  Globe,
-  CheckCircle,
-  XCircle,
-  Edit,
   MoreHorizontal,
   Share,
-  UserPlus,
+  Copy,
   Flag,
+  Shield,
+  CheckCircle,
+  XCircle,
+  Globe,
 } from "lucide-react"
 import type { AssetIP } from "@/src/types/asset"
-import Image from "next/image"
 import Link from "next/link"
 import {
   DropdownMenu,
@@ -41,39 +33,23 @@ interface ExpandableAssetCardProps {
   isOwner?: boolean
 }
 
-const getLicenseColor = (licenseType: string) => {
-  switch (licenseType) {
-    case "all-rights":
-      return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-    case "creative-commons":
-      return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-    case "open-source":
-      return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-    case "custom":
-      return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
-    default:
-      return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
-  }
+// ─── Helpers ─────────────────────────────────────────────────────────────
+
+function PermissionDot({ allowed }: { allowed: boolean }) {
+  return allowed ? (
+    <CheckCircle className="w-3 h-3 text-emerald-500" />
+  ) : (
+    <XCircle className="w-3 h-3 text-muted-foreground/40" />
+  )
 }
 
-const getProtectionIcon = (status: string) => {
-  switch (status.toLowerCase()) {
-    case "protected":
-      return <CheckCircle className="w-4 h-4 text-green-500" />
-    case "patent protected":
-      return <Shield className="w-4 h-4 text-blue-500" />
-    case "pending":
-      return <Calendar className="w-4 h-4 text-yellow-500" />
-    case "expired":
-      return <XCircle className="w-4 h-4 text-red-500" />
-    default:
-      return <Shield className="w-4 h-4 text-gray-500" />
-  }
-}
+// ─── Main Component ──────────────────────────────────────────────────────
 
-
-
-export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }: ExpandableAssetCardProps) {
+export function ExpandableAssetCard({
+  asset,
+  variant = "grid",
+  isOwner = false,
+}: ExpandableAssetCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   const handleShare = () => {
@@ -81,396 +57,250 @@ export function ExpandableAssetCard({ asset, variant = "grid", isOwner = false }
     navigator.clipboard.writeText(url)
   }
 
-  const handleViewOnExplorer = () => {
-    const explorerUrl = process.env.NEXT_PUBLIC_EXPLORER_URL || "https://voyager.online"
+  const explorerUrl = (() => {
+    const base = process.env.NEXT_PUBLIC_EXPLORER_URL || "https://voyager.online"
     if (asset.contractAddress && asset.tokenId) {
-      window.open(`${explorerUrl}/nft/${asset.contractAddress}/${asset.tokenId}`, "_blank")
-    } else if (asset.contractAddress) {
-      window.open(`${explorerUrl}/nft/${asset.contractAddress}`, "_blank")
-    } else {
-      window.open(explorerUrl, "_blank")
+      return `${base}/nft/${asset.contractAddress}/${asset.tokenId}`
     }
-  }
+    return `${base}/nft/${asset.contractAddress}`
+  })()
 
-  const handleTransfer = () => {
-    // Navigate to transfer page
-    window.location.href = `/transfer?asset=${asset.slug}`
-  }
+  const menuItems = (
+    <>
+      <DropdownMenuItem onClick={handleShare}>
+        <Share className="w-3.5 h-3.5 mr-2" />
+        Share
+      </DropdownMenuItem>
+      <DropdownMenuItem onClick={() => navigator.clipboard.writeText(`${window.location.origin}/asset/${asset.slug}`)}>
+        <Copy className="w-3.5 h-3.5 mr-2" />
+        Copy Link
+      </DropdownMenuItem>
+      <DropdownMenuItem onClick={() => window.open(explorerUrl, "_blank")}>
+        <ExternalLink className="w-3.5 h-3.5 mr-2" />
+        Explorer
+      </DropdownMenuItem>
+      {!isOwner && (
+        <>
+          <DropdownMenuSeparator />
+          <ReportAssetDialog
+            contentType="asset"
+            contentId={asset.id}
+            contentTitle={asset.title}
+            contentCreator={asset.author}
+          >
+            <DropdownMenuItem
+              className="text-destructive focus:text-destructive"
+              onSelect={(e) => e.preventDefault()}
+            >
+              <Flag className="w-3.5 h-3.5 mr-2" />
+              Report
+            </DropdownMenuItem>
+          </ReportAssetDialog>
+        </>
+      )}
+    </>
+  )
+
+  // ─── Expandable Details (Shared) ────────────────────────────────────
+
+  const detailsPanel = (
+    <div className="grid grid-cols-2 gap-x-6 gap-y-3 pt-4 mt-4 border-t border-border/20 text-sm">
+      <div className="space-y-2.5">
+        <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Info</h4>
+        <div className="space-y-1.5">
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">Network</span>
+            <span className="text-foreground">{asset.blockchain}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">Token</span>
+            <span className="font-mono text-xs text-foreground">{asset.tokenId || asset.id}</span>
+          </div>
+          {asset.registrationDate && (
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Registered</span>
+              <span className="text-foreground">{asset.registrationDate}</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="space-y-2.5">
+        <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">License</h4>
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">Commercial</span>
+            <PermissionDot allowed={asset.commercialUse} />
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">Modify</span>
+            <PermissionDot allowed={asset.modifications} />
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">Attribution</span>
+            <PermissionDot allowed={asset.attribution} />
+          </div>
+        </div>
+      </div>
+
+      {asset.externalUrl && (
+        <div className="col-span-2 pt-1">
+          <a
+            href={asset.externalUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline"
+          >
+            <Globe className="w-3 h-3" />
+            External link
+          </a>
+        </div>
+      )}
+    </div>
+  )
+
+  // ─── List Variant ───────────────────────────────────────────────────
 
   if (variant === "list") {
     return (
-      <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 group bg-card/50 backdrop-blur-sm">
-        <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
-          <div className="p-4">
-            <div className="flex items-center space-x-4">
-
+      <div className="group rounded-xl border border-border/40 bg-card/50 hover:border-border/60 transition-colors">
+        <div className="p-4">
+          <div className="flex items-start gap-4">
+            {/* Thumbnail */}
+            <div className="relative w-16 h-16 rounded-lg overflow-hidden shrink-0 bg-muted">
               <LazyMedia
                 src={asset.mediaUrl || "/placeholder.svg"}
                 alt={asset.title}
-                width={96}
-                height={96}
-                className="w-24 h-24 rounded-xl shadow-sm group-hover:shadow-md transition-shadow"
+                width={64}
+                height={64}
+                className="w-16 h-16 object-cover"
               />
-              <Badge className="absolute -top-2 -right-2 text-xs capitalize bg-primary/90 text-primary-foreground">
-                {asset.type}
-              </Badge>
-
-
-              <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-
-                    <h3 className="font-semibold text-foreground truncate group-hover:text-primary transition-colors cursor-pointer text-lg">
-                      {asset.title}
-                    </h3>
-
-                    <p className="text-sm text-muted-foreground line-clamp-2 mt-1 mb-2">{asset.description}</p>
-
-                    <div className="flex items-center space-x-4 mb-4">
-                      <Badge className={`${getLicenseColor(asset.licenseType)} border-0 text-xs`}>
-                        {asset.licenseType.replace("-", " ").toUpperCase()}
-                      </Badge>
-                      <span className="text-xs text-muted-foreground">v{asset.ipVersion}</span>
-                      <span className="text-xs text-muted-foreground"></span>
-                    </div>
-
-                    <div className="flex items-center space-x-2">
-                      <div className="flex items-center space-x-1">
-                        {getProtectionIcon(asset.protectionStatus)}
-                        <span className="text-xs text-muted-foreground">{asset.protectionStatus}</span>
-                      </div>
-                      <div className="text-xs text-muted-foreground">•</div>
-                      <div className="text-xs text-muted-foreground">{asset.blockchain}</div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center space-x-2 ml-4">
-                    <CollapsibleTrigger asChild>
-                      <Button variant="outline" size="sm" className="hover:scale-105 transition-transform">
-                        <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
-                        {isExpanded ? "Less" : "More"}
-                      </Button>
-                    </CollapsibleTrigger>
-
-
-
-
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="w-8 h-8 p-0 hover:scale-105 transition-transform">
-                          <MoreHorizontal className="w-4 h-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-
-                        <DropdownMenuItem onClick={handleShare}>
-                          <Share className="w-4 h-4 mr-2" />
-                          Share
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Copy className="w-4 h-4 mr-2" />
-                          Copy Link
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={handleViewOnExplorer}>
-                          <ExternalLink className="w-4 h-4 mr-2" />
-                          View on Explorer
-                        </DropdownMenuItem>
-                        {!isOwner && (
-                          <>
-                            <DropdownMenuSeparator />
-                            <ReportAssetDialog
-                              contentType="asset"
-                              contentId={asset.id}
-                              contentTitle={asset.title}
-                              contentCreator={asset.author}
-                            >
-                              <DropdownMenuItem
-                                className="text-destructive focus:text-destructive"
-                                onSelect={(e) => e.preventDefault()}
-                              >
-                                <Flag className="w-4 h-4 mr-2" />
-                                Report Content
-                              </DropdownMenuItem>
-                            </ReportAssetDialog>
-                          </>
-                        )}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </div>
-              </div>
             </div>
 
-            <CollapsibleContent className="mt-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-border/30">
-
-
-
-                {/* Technical Details */}
-                <div className="space-y-3">
-                  <h4 className="font-medium text-foreground text-sm">Information</h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Network</span>
-                      <span className="font-medium text-foreground">{asset.blockchain}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Token ID</span>
-                      <span className="font-mono text-xs text-foreground">{asset.tokenId || asset.id}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Registered</span>
-                      <span className="font-medium text-foreground">{asset.registrationDate}</span>
-                    </div>
-                    {asset.fileFormat && (
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Format</span>
-                        <span className="font-medium text-foreground">{asset.fileFormat}</span>
-                      </div>
-                    )}
-                  </div>
+            {/* Content */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <h3 className="font-medium text-sm text-foreground truncate group-hover:text-primary transition-colors">
+                    {asset.title}
+                  </h3>
+                  <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
+                    {asset.description}
+                  </p>
                 </div>
 
-                {/* License Permissions */}
-                <div className="space-y-3">
-                  <h4 className="font-medium text-foreground text-sm">License</h4>
-                  <div className="grid grid-cols-3 gap-2">
-                    <div className="text-center p-2 bg-muted/20 rounded-lg">
-                      <div className="flex justify-center mb-1">
-                        {asset.commercialUse ? (
-                          <CheckCircle className="w-4 h-4 text-green-500" />
-                        ) : (
-                          <XCircle className="w-4 h-4 text-red-500" />
-                        )}
-                      </div>
-                      <p className="text-xs text-muted-foreground">Commercial</p>
-                    </div>
-                    <div className="text-center p-2 bg-muted/20 rounded-lg">
-                      <div className="flex justify-center mb-1">
-                        {asset.modifications ? (
-                          <CheckCircle className="w-4 h-4 text-green-500" />
-                        ) : (
-                          <XCircle className="w-4 h-4 text-red-500" />
-                        )}
-                      </div>
-                      <p className="text-xs text-muted-foreground">Modify</p>
-                    </div>
-                    <div className="text-center p-2 bg-muted/20 rounded-lg">
-                      <div className="flex justify-center mb-1">
-                        {asset.attribution ? (
-                          <CheckCircle className="w-4 h-4 text-green-500" />
-                        ) : (
-                          <XCircle className="w-4 h-4 text-red-500" />
-                        )}
-                      </div>
-                      <p className="text-xs text-muted-foreground">Attribution</p>
-                    </div>
-                  </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded-md hover:bg-muted/50 transition-colors"
+                  >
+                    <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+                  </button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="w-7 h-7 p-0">
+                        <MoreHorizontal className="w-3.5 h-3.5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">{menuItems}</DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
-
-
-                {asset.externalUrl && (
-                  <div className="space-y-3">
-
-                    <div className="flex items-center space-x-2">
-                      <Globe className="w-4 h-4 text-muted-foreground" />
-                      <a
-                        href={asset.externalUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary hover:underline text-sm"
-                      >
-                        View external link
-                      </a>
-                    </div>
-                  </div>
-                )}
               </div>
-            </CollapsibleContent>
+
+              {/* Meta row */}
+              <div className="flex items-center gap-2 mt-2">
+                <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 capitalize">
+                  {asset.type}
+                </Badge>
+                <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                  <Shield className="w-2.5 h-2.5" />
+                  {asset.protectionStatus}
+                </span>
+                <span className="text-[10px] text-muted-foreground">
+                  {asset.blockchain}
+                </span>
+              </div>
+            </div>
           </div>
-        </Collapsible>
-      </Card>
+
+          {/* Expandable details */}
+          {isExpanded && detailsPanel}
+        </div>
+      </div>
     )
   }
 
-  // Grid variant
+  // ─── Grid Variant ───────────────────────────────────────────────────
+
   return (
-    <Card className="overflow-hidden hover:shadow-xl transition-all duration-500 group border-border/50 bg-card/50 backdrop-blur-sm">
-      <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
-        <div className="relative">
+    <div className="group rounded-xl border border-border/40 bg-card/50 overflow-hidden hover:border-border/60 hover:shadow-lg transition-all duration-300">
+      {/* Image */}
+      <div className="relative aspect-square bg-muted">
+        <LazyMedia
+          src={asset.mediaUrl || "/placeholder.svg"}
+          alt={asset.title}
+          width={400}
+          height={400}
+          className="w-full h-full object-cover"
+        />
 
-          <LazyMedia
-            src={asset.mediaUrl || "/placeholder.svg"}
-            alt={asset.title}
-            width={400}
-            height={400}
-            className="w-full aspect-square"
-          />
+        {/* Hover overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        {/* Type badge */}
+        <Badge
+          variant="outline"
+          className="absolute bottom-2.5 left-2.5 bg-background/80 backdrop-blur-sm border-border/50 text-[10px] capitalize"
+        >
+          {asset.type}
+        </Badge>
 
-          <div className="absolute top-3 right-3">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="w-8 h-8 p-0 bg-background/90 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity hover:scale-105"
-                >
-                  <MoreHorizontal className="w-4 h-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+        {/* Menu button */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="secondary"
+              size="sm"
+              className="absolute top-2.5 right-2.5 w-7 h-7 p-0 bg-background/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <MoreHorizontal className="w-3.5 h-3.5" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">{menuItems}</DropdownMenuContent>
+        </DropdownMenu>
+      </div>
 
-                <DropdownMenuItem onClick={handleShare}>
-                  <Share className="w-4 h-4 mr-2" />
-                  Share
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleViewOnExplorer}>
-                  <ExternalLink className="w-4 h-4 mr-2" />
-                  View on Explorer
-                </DropdownMenuItem>
-                {!isOwner && (
-                  <>
-                    <DropdownMenuSeparator />
-                    <ReportAssetDialog
-                      contentType="asset"
-                      contentId={asset.id}
-                      contentTitle={asset.title}
-                      contentCreator={asset.author}
-                    >
-                      <DropdownMenuItem
-                        className="text-destructive focus:text-destructive"
-                        onSelect={(e) => e.preventDefault()}
-                      >
-                        <Flag className="w-4 h-4 mr-2" />
-                        Report Content
-                      </DropdownMenuItem>
-                    </ReportAssetDialog>
-                  </>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-
-          <div className="absolute bottom-3 left-3">
-            <Badge className="bg-background/90 text-foreground border-border/50 backdrop-blur-sm capitalize">
-              {asset.type}
-            </Badge>
-          </div>
-
-          <div className="absolute bottom-3 right-3">
-            <Badge className={`${getLicenseColor(asset.licenseType)} border-0 backdrop-blur-sm text-xs`}>
-              {asset.licenseType.replace("-", " ").toUpperCase()}
-            </Badge>
-          </div>
+      {/* Body */}
+      <div className="p-4 space-y-3">
+        <div>
+          <h3 className="font-medium text-sm text-foreground truncate group-hover:text-primary transition-colors">
+            {asset.title}
+          </h3>
+          <p className="text-xs text-muted-foreground line-clamp-2 mt-1">
+            {asset.description}
+          </p>
         </div>
 
-        <CardContent className="p-6">
-          <div className="space-y-4">
-            <div>
-
-              <h3 className="font-semibold text-foreground mb-2 truncate group-hover:text-primary transition-colors cursor-pointer text-lg">
-                {asset.title}
-              </h3>
-
-
-              <p className="text-sm text-muted-foreground line-clamp-2">{asset.description}</p>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                {getProtectionIcon(asset.protectionStatus)}
-                <span className="text-xs text-muted-foreground">{asset.protectionStatus}</span>
-              </div>
-              <span className="text-xs text-muted-foreground">v{asset.ipVersion}</span>
-            </div>
-
-            <div className="flex items-center justify-between text-sm text-muted-foreground">
-              <span>{asset.registrationDate}</span>
-              <span></span>
-            </div>
-
-            <div className="flex space-x-2">
-
-
-
-
-
-
-              <CollapsibleTrigger asChild>
-                <Button variant="outline" size="sm" className="hover:scale-105 transition-transform">
-                  <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
-                </Button>
-              </CollapsibleTrigger>
-            </div>
+        {/* Footer row */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+            <Shield className="w-3 h-3" />
+            <span>{asset.protectionStatus}</span>
+            <span className="text-border">•</span>
+            <span>{asset.blockchain}</span>
           </div>
 
-          <CollapsibleContent className="mt-4">
-            <div className="space-y-4 pt-4 border-t border-border/30">
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground px-1.5 py-0.5 rounded hover:bg-muted/50 transition-colors"
+          >
+            <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+          </button>
+        </div>
 
-              {/* Technical Info */}
-              <div>
-                <h4 className="font-medium text-foreground mb-3 text-sm">Technical Details</h4>
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Network</span>
-                    <span className="font-medium text-foreground">{asset.blockchain}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Token ID</span>
-                    <span className="font-mono text-xs text-foreground">{asset.tokenId || asset.id}</span>
-                  </div>
-                  {asset.fileFormat && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Format</span>
-                      <span className="font-medium text-foreground">{asset.fileFormat}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* License Permissions */}
-              <div>
-                <h4 className="font-medium text-foreground mb-3 text-sm">License Permissions</h4>
-                <div className="grid grid-cols-3 gap-2">
-                  <div className="text-center p-2 bg-muted/20 rounded-lg">
-                    <div className="flex justify-center mb-1">
-                      {asset.commercialUse ? (
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                      ) : (
-                        <XCircle className="w-4 h-4 text-red-500" />
-                      )}
-                    </div>
-                    <p className="text-xs text-muted-foreground">Commercial</p>
-                  </div>
-                  <div className="text-center p-2 bg-muted/20 rounded-lg">
-                    <div className="flex justify-center mb-1">
-                      {asset.modifications ? (
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                      ) : (
-                        <XCircle className="w-4 h-4 text-red-500" />
-                      )}
-                    </div>
-                    <p className="text-xs text-muted-foreground">Modify</p>
-                  </div>
-                  <div className="text-center p-2 bg-muted/20 rounded-lg">
-                    <div className="flex justify-center mb-1">
-                      {asset.attribution ? (
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                      ) : (
-                        <XCircle className="w-4 h-4 text-red-500" />
-                      )}
-                    </div>
-                    <p className="text-xs text-muted-foreground">Attribution</p>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </CollapsibleContent>
-        </CardContent>
-      </Collapsible>
-    </Card>
+        {/* Expandable details */}
+        {isExpanded && detailsPanel}
+      </div>
+    </div>
   )
 }

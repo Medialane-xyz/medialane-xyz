@@ -99,7 +99,7 @@ export default function CreateAssetView() {
   const uploaderRef = useRef<MediaUploaderRef>(null);
   const { user } = useUser();
   const publicKey = user?.publicMetadata?.publicKey as string;
-  const { executeTransaction, isSubmitting: isMinting } = useChipiTransaction();
+  const { executeTransaction, isSubmitting: isMinting, statusMessage } = useChipiTransaction();
   const { uploadToIpfs, loading } = useIpfsUpload();
   // Upload and media state
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
@@ -788,6 +788,7 @@ export default function CreateAssetView() {
                                 submitText="Mint Asset"
                                 error={pinError}
                                 onCancel={() => setShowPinDialog(false)}
+                                statusMessage={statusMessage}
                               />
                             </DialogContent>
                           </Dialog>

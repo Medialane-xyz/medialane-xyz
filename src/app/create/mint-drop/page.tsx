@@ -66,7 +66,7 @@ export default function CreateMintDropPage() {
     const { user } = useUser()
     const publicKey = user?.publicMetadata?.publicKey as string
 
-    const { executeTransaction } = useChipiTransaction()
+    const { executeTransaction, statusMessage } = useChipiTransaction()
     const { uploadToIpfs } = useIpfsUpload()
 
     const [showPinDialog, setShowPinDialog] = useState(false)
@@ -207,7 +207,7 @@ export default function CreateMintDropPage() {
 
                 setTimeout(() => {
                     router.push("/mint/portfolio")
-                }, 3000)
+                }, 5000)
             } else {
                 toast({
                     title: "Transaction Reverted",
@@ -641,6 +641,7 @@ export default function CreateMintDropPage() {
                             error={pinError}
                             title="Enter Wallet PIN"
                             description="This transaction creates a new ERC721 collection."
+                            statusMessage={statusMessage}
                         />
                     </DialogContent>
                 </Dialog>
