@@ -201,7 +201,22 @@ export default function CreateMintDropPage() {
                 calldata: formattedCalldata,
             }
 
-            console.log("[ChipiDebug] Submitting create_collection:", call);
+            // Log full params for debugging
+            const sdkParams = {
+                params: {
+                    encryptKey: pin,
+                    wallet: {
+                        publicKey: publicKey,
+                        encryptedPrivateKey: encryptedPrivateKey ? `${encryptedPrivateKey.substring(0, 20)}...` : "MISSING",
+                    },
+                    contractAddress: CONTRACTS.COLLECTION_FACTORY,
+                    calls: [call],
+                },
+                bearerToken: token ? `${token.substring(0, 20)}...` : "MISSING",
+            }
+            console.log("[ChipiDebug] Full SDK params (sanitized):", JSON.stringify(sdkParams, null, 2));
+            console.log("[ChipiDebug] Calldata array:", formattedCalldata);
+            console.log("[ChipiDebug] Calldata length:", formattedCalldata.length);
 
             const txHash = await callAnyContractAsync({
                 params: {
@@ -216,26 +231,41 @@ export default function CreateMintDropPage() {
                 bearerToken: token,
             });
 
-            console.log("[ChipiDebug] Transaction Hash Received:", txHash);
+            // Detailed response analysis
+            console.log("[ChipiDebug] === SDK RESPONSE ===");
+            console.log("[ChipiDebug] Raw response:", txHash);
+            console.log("[ChipiDebug] Type:", typeof txHash);
+            console.log("[ChipiDebug] Truthy:", !!txHash);
+            console.log("[ChipiDebug] JSON:", JSON.stringify(txHash));
 
-            if (txHash) {
+            // Strict validation: must be a 0x hex string
+            if (txHash && typeof txHash === 'string' && txHash.startsWith('0x') && txHash.length > 10) {
+                console.log("[ChipiDebug] ✅ Valid transaction hash:", txHash);
                 setShowPinDialog(false)
                 toast({
                     title: "Mint Drop Created! 🎉",
-                    description: "Your Mint Drop has been deployed to Starknet. Please allow a few minutes for the blockchain indexer to catch up.",
+                    description: `Transaction: ${txHash.substring(0, 10)}...${txHash.substring(txHash.length - 6)}`,
                 })
 
                 // Redirect to portfolio
                 setTimeout(() => {
                     router.push("/mint/portfolio")
                 }, 3000)
+            } else {
+                // Response is not a valid tx hash — treat as failure
+                console.error("[ChipiDebug] ❌ Invalid SDK response — not a valid tx hash:", txHash);
+                throw new Error(`Transaction submission returned invalid response: ${JSON.stringify(txHash)}`);
             }
         } catch (error: any) {
-            console.error("[ChipiDebug] Deployment failed:", {
-                message: error?.message,
-                stack: error?.stack,
-                error,
-            })
+            console.error("[ChipiDebug] === DEPLOYMENT ERROR ===");
+            console.error("[ChipiDebug] Error type:", error?.constructor?.name);
+            console.error("[ChipiDebug] Error message:", error?.message);
+            console.error("[ChipiDebug] Error stack:", error?.stack);
+            console.error("[ChipiDebug] Full error:", error);
+            if (error?.response) {
+                console.error("[ChipiDebug] Response status:", error.response?.status);
+                console.error("[ChipiDebug] Response data:", error.response?.data);
+            }
             setPinError(error instanceof Error ? error.message : "Deployment failed")
             toast({
                 title: "Deployment Failed",
