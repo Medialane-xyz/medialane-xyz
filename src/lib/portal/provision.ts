@@ -43,7 +43,9 @@ export async function provisionUser(userId: string): Promise<ProvisionResult> {
     return { ok: false, error: "Failed to provision tenant" };
   }
 
-  const data = await res.json();
+  const json = await res.json();
+  // Backend wraps all responses in { data: ... }
+  const data = json?.data ?? json;
   const plaintext = data?.apiKey?.plaintext;
   const tenantId = data?.tenant?.id;
 
