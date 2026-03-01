@@ -1,4 +1,4 @@
-import { clerkMiddleware, createRouteMatcher, clerkClient } from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 const isPublicRoute = createRouteMatcher([
@@ -9,55 +9,52 @@ const isPublicRoute = createRouteMatcher([
   '/onboarding',    // wallet setup
   '/api/proxy(.*)', // existing proxy
   '/create(.*)',    // creator tools
-])
+]);
+
+// Paths that don't require a Chipi wallet (API portal is wallet-free)
+const isPortalPath = createRouteMatcher([
+  '/account(.*)',
+  '/api/portal(.*)',
+]);
+
+/**
+ * Read walletCreated from the JWT session claims — zero Clerk API calls.
+ *
+ * Requires a custom session token in the Clerk dashboard:
+ *   Dashboard → Sessions → Customize session token → add:
+ *   { "metadata": "{{user.public_metadata}}" }
+ *
+ * Once configured, sessionClaims.metadata.walletCreated reflects the value
+ * set in publicMetadata and is refreshed on every new session token issue.
+ */
+function hasWalletClaim(sessionClaims: Record<string, unknown> | null): boolean {
+  const metadata = sessionClaims?.metadata as Record<string, unknown> | undefined;
+  return metadata?.walletCreated === true;
+}
 
 export default clerkMiddleware(async (auth, req) => {
-  const { userId, redirectToSignIn } = await auth();
+  const { userId, sessionClaims, redirectToSignIn } = await auth();
 
-  // If the user isn't signed in and the route is private, redirect to sign-in
+  // Unauthenticated user hitting a private route → sign-in
   if (!userId && !isPublicRoute(req)) {
-    console.log(`[Middleware] Protecting private route: ${req.nextUrl.pathname}`);
     return redirectToSignIn({ returnBackUrl: req.url });
   }
 
-  // If user is logged in, we need to check their metadata
   if (userId) {
-    try {
-      const client = await clerkClient();
-      const user = await client.users.getUser(userId);
+    const hasWallet = hasWalletClaim(sessionClaims);
 
-      const hasWallet = user.publicMetadata?.walletCreated === true;
+    // Already has a wallet and hits /onboarding → send home
+    if (hasWallet && req.nextUrl.pathname === "/onboarding") {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
 
-      // If user is trying to access onboarding but already has a wallet, redirect to home
-      if (hasWallet && req.nextUrl.pathname === "/onboarding") {
-        const homeUrl = new URL("/", req.url);
-        return NextResponse.redirect(homeUrl);
-      }
-
-      // Catch users who do not have walletCreated: true in their publicMetadata
-      // Redirect them to /onboarding — but NOT if they're accessing the API
-      // portal (/account) or portal API routes, which don't require a wallet.
-      const isPortalPath =
-        req.nextUrl.pathname.startsWith("/account") ||
-        req.nextUrl.pathname.startsWith("/api/portal");
-
-      if (!hasWallet && req.nextUrl.pathname !== "/onboarding" && !isPortalPath) {
-        const onboardingUrl = new URL("/onboarding", req.url);
-        onboardingUrl.searchParams.set("redirect_url", req.url);
-        return NextResponse.redirect(onboardingUrl);
-      }
-    } catch (error) {
-      console.error('Error fetching user in middleware:', error);
-      // If there's an error fetching user data, allow the request to continue
-      // to avoid breaking the app
+    // No wallet yet → enforce onboarding, except for portal & public routes
+    if (!hasWallet && !isPublicRoute(req) && !isPortalPath(req) && req.nextUrl.pathname !== "/onboarding") {
+      const onboardingUrl = new URL("/onboarding", req.url);
+      onboardingUrl.searchParams.set("redirect_url", req.url);
+      return NextResponse.redirect(onboardingUrl);
     }
   }
-
-  // If the user is logged in and the route is protected, let them view.
-  if (userId && !isPublicRoute(req)) {
-    return NextResponse.next();
-  }
-
 });
 
 export const config = {

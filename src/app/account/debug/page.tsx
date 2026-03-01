@@ -1,11 +1,12 @@
-"use client";
-
+import { notFound } from "next/navigation";
 import { ChipiDebug } from "@/src/components/debug/chipi-debug";
 import { Button } from "@/src/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export default function AccountDebugPage() {
+  if (process.env.NODE_ENV === "production") notFound();
+
     return (
         <div className="container mx-auto px-4 py-8 max-w-4xl space-y-8">
             <div className="flex items-center gap-4">

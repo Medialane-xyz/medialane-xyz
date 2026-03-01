@@ -8,13 +8,12 @@ export default async function AccountPage() {
   if (!userId) redirect("/sign-in");
 
   const clerk = await clerkClient();
-  const user = await clerk.users.getUser(userId);
+  let user = await clerk.users.getUser(userId);
 
   if (!user.privateMetadata?.backendApiKey) {
     await provisionUser(userId);
     // Re-fetch after provision so we have the key for the plan lookup
-    const fresh = await clerk.users.getUser(userId);
-    Object.assign(user, fresh);
+    user = await clerk.users.getUser(userId);
   }
 
   let plan = "FREE";
