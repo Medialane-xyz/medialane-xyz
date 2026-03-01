@@ -17,6 +17,7 @@ import {
   DialogClose,
 } from "@/src/components/ui/dialog";
 import { Key, Trash2, AlertCircle, Plus, Copy, Check } from "lucide-react";
+import { portalFetcher } from "@/src/lib/portal/fetcher";
 
 interface ApiKey {
   id: string;
@@ -27,15 +28,14 @@ interface ApiKey {
   createdAt: string;
 }
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
-
 export function ApiKeysTab() {
   // Backend returns { data: ApiKey[] } — unwrap via data?.data
   const { data, error, isLoading, mutate } = useSWR<{ data: ApiKey[] }>(
     "/api/portal/keys",
-    fetcher
+    portalFetcher
   );
   const [revoking, setRevoking] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   // Create key dialog state
   const [createOpen, setCreateOpen] = useState(false);
@@ -46,9 +46,17 @@ export function ApiKeysTab() {
 
   const handleRevoke = async (id: string) => {
     setRevoking(id);
+    setActionError(null);
     try {
-      await fetch(`/api/portal/keys/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/portal/keys/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({})) as { error?: string };
+        setActionError(json?.error ?? `Failed to revoke key (${res.status})`);
+        return;
+      }
       await mutate();
+    } catch {
+      setActionError("Network error — please try again");
     } finally {
       setRevoking(null);
     }
@@ -56,17 +64,22 @@ export function ApiKeysTab() {
 
   const handleCreate = async () => {
     setCreating(true);
+    setActionError(null);
     try {
       const res = await fetch("/api/portal/keys", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ label: labelInput.trim() || undefined }),
       });
-      const json = await res.json();
-      if (!res.ok) return;
-      const created = json?.data ?? json;
-      setNewKey({ prefix: created.prefix, plaintext: created.plaintext });
+      const json = await res.json().catch(() => ({})) as { data?: { prefix: string; plaintext: string }; error?: string };
+      if (!res.ok) {
+        setActionError(json?.error ?? `Failed to create key (${res.status})`);
+        return;
+      }
+      setNewKey({ prefix: json.data!.prefix, plaintext: json.data!.plaintext });
       await mutate();
+    } catch {
+      setActionError("Network error — please try again");
     } finally {
       setCreating(false);
     }
@@ -183,6 +196,12 @@ export function ApiKeysTab() {
             </div>
           )}
         </CardContent>
+      {actionError && (
+        <div className="flex items-center gap-2 text-destructive text-sm p-3 rounded-lg border border-destructive/20 bg-destructive/5 mt-3 mx-6 mb-4">
+          <AlertCircle className="w-4 h-4 shrink-0" />
+          {actionError}
+        </div>
+      )}
       </Card>
 
       {/* Create key dialog */}

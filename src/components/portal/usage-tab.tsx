@@ -13,6 +13,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/src/components/ui/card";
 import { Skeleton } from "@/src/components/ui/skeleton";
 import { BarChart2, AlertCircle } from "lucide-react";
+import { portalFetcher } from "@/src/lib/portal/fetcher";
 
 // Backend returns { day: Date, requests: number }[] — day is an ISO date string
 interface UsageDayRaw {
@@ -24,8 +25,6 @@ interface ChartDay {
   date: string;
   requests: number;
 }
-
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 function toIsoDate(d: Date): string {
   return d.toISOString().slice(0, 10);
@@ -58,7 +57,7 @@ export function UsageTab() {
   // Backend returns { data: [{ day, requests }] } — unwrap via data?.data
   const { data, error, isLoading } = useSWR<{ data: UsageDayRaw[] }>(
     "/api/portal/usage",
-    fetcher
+    portalFetcher
   );
 
   if (isLoading) {

@@ -17,6 +17,7 @@ import {
   DialogClose,
 } from "@/src/components/ui/dialog";
 import { Webhook, Trash2, AlertCircle, Plus, Copy, Check, Lock } from "lucide-react";
+import { portalFetcher } from "@/src/lib/portal/fetcher";
 
 const ALL_EVENTS = ["ORDER_CREATED", "ORDER_FULFILLED", "ORDER_CANCELLED", "TRANSFER"] as const;
 type EventType = (typeof ALL_EVENTS)[number];
@@ -29,8 +30,6 @@ interface WebhookEndpoint {
   createdAt: string;
 }
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
-
 interface Props {
   plan: string;
 }
@@ -41,10 +40,11 @@ export function WebhooksTab({ plan }: Props) {
   // Backend returns { data: WebhookEndpoint[] } — only reachable if PREMIUM
   const { data, error, isLoading, mutate } = useSWR<{ data: WebhookEndpoint[] }>(
     isPremium ? "/api/portal/webhooks" : null,
-    fetcher
+    portalFetcher
   );
 
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [urlInput, setUrlInput] = useState("");
   const [selectedEvents, setSelectedEvents] = useState<Set<EventType>>(new Set(ALL_EVENTS));
@@ -62,9 +62,17 @@ export function WebhooksTab({ plan }: Props) {
 
   const handleDelete = async (id: string) => {
     setDeleting(id);
+    setActionError(null);
     try {
-      await fetch(`/api/portal/webhooks/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/portal/webhooks/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({})) as { error?: string };
+        setActionError(json?.error ?? `Failed to delete endpoint (${res.status})`);
+        return;
+      }
       await mutate();
+    } catch {
+      setActionError("Network error — please try again");
     } finally {
       setDeleting(null);
     }
@@ -73,17 +81,22 @@ export function WebhooksTab({ plan }: Props) {
   const handleCreate = async () => {
     if (!urlInput || selectedEvents.size === 0) return;
     setCreating(true);
+    setActionError(null);
     try {
       const res = await fetch("/api/portal/webhooks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url: urlInput, events: Array.from(selectedEvents) }),
       });
-      const json = await res.json();
-      if (!res.ok) return;
-      const created = json?.data ?? json;
-      setNewSecret(created.secret ?? null);
+      const json = await res.json().catch(() => ({})) as { data?: { secret: string }; error?: string };
+      if (!res.ok) {
+        setActionError(json?.error ?? `Failed to create endpoint (${res.status})`);
+        return;
+      }
+      setNewSecret(json.data?.secret ?? null);
       await mutate();
+    } catch {
+      setActionError("Network error — please try again");
     } finally {
       setCreating(false);
     }
@@ -219,6 +232,12 @@ export function WebhooksTab({ plan }: Props) {
             </div>
           )}
         </CardContent>
+      {actionError && (
+        <div className="flex items-center gap-2 text-destructive text-sm p-3 rounded-lg border border-destructive/20 bg-destructive/5 mt-3 mx-6 mb-4">
+          <AlertCircle className="w-4 h-4 shrink-0" />
+          {actionError}
+        </div>
+      )}
       </Card>
 
       {/* Create endpoint dialog */}

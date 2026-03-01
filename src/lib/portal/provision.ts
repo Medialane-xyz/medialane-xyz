@@ -44,13 +44,12 @@ export async function provisionUser(userId: string): Promise<ProvisionResult> {
   }
 
   const json = await res.json();
-  // Backend wraps all responses in { data: ... }
-  const data = json?.data ?? json;
-  const plaintext = data?.apiKey?.plaintext;
-  const tenantId = data?.tenant?.id;
+  const { tenant, apiKey } = json?.data ?? {};
+  const plaintext = apiKey?.plaintext;
+  const tenantId = tenant?.id;
 
   if (!plaintext || !tenantId) {
-    console.error("[provision] Unexpected backend response:", data);
+    console.error("[provision] Unexpected backend response:", json);
     return { ok: false, error: "Invalid backend response" };
   }
 
