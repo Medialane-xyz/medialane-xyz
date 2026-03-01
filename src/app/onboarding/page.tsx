@@ -110,6 +110,9 @@ export default function OnboardingComponent() {
 
       await user?.reload();
 
+      // Auto-provision backend API key (non-blocking)
+      fetch('/api/portal/provision', { method: 'POST' }).catch(() => {});
+
       window.location.assign(redirectUrl);
     } catch (error) {
       console.error('Error in handleSubmit:', error);

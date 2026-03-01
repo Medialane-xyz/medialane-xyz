@@ -1,14 +1,11 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { ArrowLeft, Play, ExternalLink, Code, BookOpen, Terminal, CheckCircle2 } from "lucide-react"
+import { Play, ExternalLink, Code, BookOpen, Terminal, Key } from "lucide-react"
 import { Button } from "@/src/components/ui/button"
-import { useRouter } from "next/navigation"
 import Link from "next/link"
 
 export default function WorkshopPage() {
-    const router = useRouter()
-
     const containerVariants = {
         hidden: { opacity: 0 },
         visible: {
@@ -166,6 +163,26 @@ export default function WorkshopPage() {
                     variants={containerVariants}
                     className="max-w-5xl mx-auto space-y-16"
                 >
+                    {/* API Portal CTA */}
+                    <motion.div variants={itemVariants}>
+                        <div className="flex items-center justify-between gap-4 p-4 rounded-2xl border border-primary/20 bg-primary/5 backdrop-blur-sm">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 rounded-xl bg-primary/10 text-primary border border-primary/20">
+                                    <Key className="h-5 w-5" />
+                                </div>
+                                <div>
+                                    <p className="font-semibold text-sm text-white">Build on Medialane</p>
+                                    <p className="text-xs text-zinc-400">Get your free API key and start querying Starknet IP data</p>
+                                </div>
+                            </div>
+                            <Link href="/account" className="shrink-0">
+                                <Button size="sm" className="whitespace-nowrap">
+                                    Get API Key
+                                </Button>
+                            </Link>
+                        </div>
+                    </motion.div>
+
                     {/* Header */}
                     <motion.div variants={itemVariants} className="space-y-8 text-center max-w-3xl mx-auto">
                         <div className="space-y-6">

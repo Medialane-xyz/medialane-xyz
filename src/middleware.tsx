@@ -4,17 +4,12 @@ import { NextResponse } from "next/server";
 const isPublicRoute = createRouteMatcher([
   '/',
   '/about',
-  '/collections(.*)',
-  '/onboarding',
-  '/api/proxy(.*)',
-  '/mint(.*)',
-  '/creator(.*)',
-  '/assets(.*)',
-  '/create(.*)',
+  '/mint(.*)',       // events — public
+  '/workshop',      // educational — public
+  '/onboarding',    // wallet setup
+  '/api/proxy(.*)', // existing proxy
+  '/create(.*)',    // creator tools
 ])
-//const isPublicRoute = createRouteMatcher(['/(.*)'])
-
-
 
 export default clerkMiddleware(async (auth, req) => {
   const { userId, redirectToSignIn } = await auth();

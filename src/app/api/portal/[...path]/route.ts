@@ -1,0 +1,54 @@
+import { auth, clerkClient } from "@clerk/nextjs/server";
+import { NextRequest, NextResponse } from "next/server";
+
+async function handler(
+  req: NextRequest,
+  { params }: { params: Promise<{ path: string[] }> }
+) {
+  const { userId } = await auth();
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const clerk = await clerkClient();
+  const user = await clerk.users.getUser(userId);
+  const apiKey = user.privateMetadata?.backendApiKey as string | undefined;
+
+  if (!apiKey) {
+    return NextResponse.json({ error: "No API key — provision first" }, { status: 403 });
+  }
+
+  const apiUrl = process.env.MEDIALANE_API_URL;
+  if (!apiUrl) {
+    return NextResponse.json({ error: "Backend not configured" }, { status: 500 });
+  }
+
+  const { path } = await params;
+  const subpath = path.join("/");
+  const search = req.nextUrl.search;
+  const upstreamUrl = `${apiUrl}/v1/portal/${subpath}${search}`;
+
+  const headers: Record<string, string> = {
+    "x-api-key": apiKey,
+    "Content-Type": "application/json",
+  };
+
+  let body: string | undefined;
+  if (req.method !== "GET" && req.method !== "HEAD") {
+    body = await req.text();
+  }
+
+  const upstream = await fetch(upstreamUrl, {
+    method: req.method,
+    headers,
+    body,
+  });
+
+  const json = await upstream.json().catch(() => null);
+  return NextResponse.json(json ?? {}, { status: upstream.status });
+}
+
+export const GET = handler;
+export const POST = handler;
+export const DELETE = handler;
+export const PATCH = handler;
