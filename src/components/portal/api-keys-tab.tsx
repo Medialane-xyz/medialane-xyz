@@ -9,6 +9,11 @@ import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
 import { Skeleton } from "@/src/components/ui/skeleton";
 import {
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent,
+} from "@/src/components/ui/collapsible";
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -16,7 +21,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/src/components/ui/dialog";
-import { Key, Trash2, AlertCircle, Plus, Copy, Check } from "lucide-react";
+import { Key, Trash2, AlertCircle, Plus, Copy, Check, ChevronDown, ChevronUp, Terminal } from "lucide-react";
 import { portalFetcher } from "@/src/lib/portal/fetcher";
 
 interface ApiKey {
@@ -28,8 +33,83 @@ interface ApiKey {
   createdAt: string;
 }
 
+const QUICKSTART_SNIPPETS = [
+  {
+    label: "List open orders",
+    code: `curl https://api.medialane.xyz/v1/orders \\
+  -H "x-api-key: YOUR_API_KEY"`,
+  },
+  {
+    label: "Get your tenant profile",
+    code: `curl https://api.medialane.xyz/v1/portal/me \\
+  -H "x-api-key: YOUR_API_KEY"`,
+  },
+];
+
+function QuickstartCard() {
+  const [open, setOpen] = useState(false);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+
+  const handleCopy = (code: string, i: number) => {
+    navigator.clipboard.writeText(code);
+    setCopiedIndex(i);
+    setTimeout(() => setCopiedIndex(null), 2000);
+  };
+
+  return (
+    <Card className="border-primary/20 bg-background/50 backdrop-blur-sm">
+      <Collapsible open={open} onOpenChange={setOpen}>
+        <CollapsibleTrigger asChild>
+          <CardHeader className="cursor-pointer select-none hover:bg-muted/10 transition-colors rounded-t-xl">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Terminal className="w-5 h-5 text-primary" />
+                <CardTitle className="text-base">Quickstart</CardTitle>
+              </div>
+              {open ? (
+                <ChevronUp className="w-4 h-4 text-muted-foreground" />
+              ) : (
+                <ChevronDown className="w-4 h-4 text-muted-foreground" />
+              )}
+            </div>
+            <CardDescription>Sample curl requests to get you started</CardDescription>
+          </CardHeader>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <CardContent className="space-y-4 pt-0">
+            <p className="text-xs text-muted-foreground">
+              Replace <code className="bg-muted px-1 py-0.5 rounded text-foreground">YOUR_API_KEY</code> with the key shown above.
+            </p>
+            {QUICKSTART_SNIPPETS.map((snippet, i) => (
+              <div key={i} className="space-y-1.5">
+                <p className="text-xs font-medium text-muted-foreground">{snippet.label}</p>
+                <div className="relative group">
+                  <pre className="bg-muted/50 border border-border rounded-lg p-3 text-xs font-mono text-foreground overflow-x-auto whitespace-pre-wrap break-all">
+                    {snippet.code}
+                  </pre>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() => handleCopy(snippet.code, i)}
+                  >
+                    {copiedIndex === i ? (
+                      <Check className="w-3.5 h-3.5 text-green-500" />
+                    ) : (
+                      <Copy className="w-3.5 h-3.5" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </CollapsibleContent>
+      </Collapsible>
+    </Card>
+  );
+}
+
 export function ApiKeysTab() {
-  // Backend returns { data: ApiKey[] } — unwrap via data?.data
   const { data, error, isLoading, mutate } = useSWR<{ data: ApiKey[] }>(
     "/api/portal/keys",
     portalFetcher
@@ -37,7 +117,6 @@ export function ApiKeysTab() {
   const [revoking, setRevoking] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
 
-  // Create key dialog state
   const [createOpen, setCreateOpen] = useState(false);
   const [labelInput, setLabelInput] = useState("");
   const [creating, setCreating] = useState(false);
@@ -196,13 +275,16 @@ export function ApiKeysTab() {
             </div>
           )}
         </CardContent>
-      {actionError && (
-        <div className="flex items-center gap-2 text-destructive text-sm p-3 rounded-lg border border-destructive/20 bg-destructive/5 mt-3 mx-6 mb-4">
-          <AlertCircle className="w-4 h-4 shrink-0" />
-          {actionError}
-        </div>
-      )}
+        {actionError && (
+          <div className="flex items-center gap-2 text-destructive text-sm p-3 rounded-lg border border-destructive/20 bg-destructive/5 mt-3 mx-6 mb-4">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            {actionError}
+          </div>
+        )}
       </Card>
+
+      {/* Quickstart snippets */}
+      <QuickstartCard />
 
       {/* Create key dialog */}
       <Dialog open={createOpen} onOpenChange={(open) => !open && handleCloseCreate()}>

@@ -172,7 +172,7 @@ export function AccountDashboard({
 
         {/* Usage Tab */}
         <TabsContent value="usage">
-          <UsageTab />
+          <UsageTab plan={initialPlan} />
         </TabsContent>
 
         {/* Plan Tab */}

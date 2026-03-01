@@ -12,8 +12,8 @@ interface PlanTabProps {
 }
 
 const PLAN_LIMITS = {
-  FREE: { rateLimit: "60 req/min", monthlyReqs: "10,000/month", features: ["REST API access", "NFT metadata indexing", "Collection queries", "Activity feeds"] },
-  PREMIUM: { rateLimit: "3,000 req/min", monthlyReqs: "Unlimited", features: ["Everything in FREE", "Webhooks", "Priority support", "Advanced analytics", "Batch operations"] },
+  FREE: { rateLimit: "50 req/month", monthlyReqs: "Resets 1st of each month", features: ["REST API access", "NFT metadata indexing", "Collection queries", "Activity feeds"] },
+  PREMIUM: { rateLimit: "Unlimited · 3,000 req/min", monthlyReqs: "No monthly cap", features: ["Everything in FREE", "Webhooks", "Priority support", "Advanced analytics", "Batch operations"] },
 };
 
 export function PlanTab({ plan }: PlanTabProps) {
@@ -51,11 +51,11 @@ export function PlanTab({ plan }: PlanTabProps) {
         <CardContent className="space-y-6">
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="rounded-xl border border-border bg-muted/20 p-4 space-y-1">
-              <p className="text-xs text-muted-foreground uppercase tracking-wider">Rate Limit</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Request Limit</p>
               <p className="text-xl font-bold text-foreground">{limits.rateLimit}</p>
             </div>
             <div className="rounded-xl border border-border bg-muted/20 p-4 space-y-1">
-              <p className="text-xs text-muted-foreground uppercase tracking-wider">Monthly Requests</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Reset Policy</p>
               <p className="text-xl font-bold text-foreground">{limits.monthlyReqs}</p>
             </div>
           </div>

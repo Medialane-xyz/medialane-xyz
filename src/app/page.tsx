@@ -4,6 +4,21 @@ import { Badge } from "@/src/components/ui/badge"
 import { Card, CardContent } from "@/src/components/ui/card"
 import { Code2, Key, BarChart2, Zap, Play, ArrowRight, Sparkles } from "lucide-react"
 
+const SAMPLE_RESPONSE = `{
+  "data": [
+    {
+      "orderHash": "0x04f7a1...",
+      "offerer": "0x0591...",
+      "nftContract": "0x05e7...",
+      "tokenId": "42",
+      "price": "500000",
+      "currency": "USDC",
+      "status": "OPEN"
+    }
+  ],
+  "meta": { "total": 128, "page": 1, "limit": 20 }
+}`
+
 export default function Home() {
   return (
     <div className="relative w-full overflow-hidden">
@@ -26,8 +41,8 @@ export default function Home() {
           </h1>
 
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Medialane is the open IP marketplace on Starknet. Get a free API key and start querying
-            NFT metadata, collections, activities, and more — in minutes.
+            One REST API for Starknet IP — query open orders, NFT metadata, collections,
+            on-chain activities, and token listings. Get a free key and go live in minutes.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -48,9 +63,9 @@ export default function Home() {
           {/* Feature chips */}
           <div className="flex flex-wrap justify-center gap-3 pt-4">
             {[
-              { icon: Code2, label: "REST API" },
-              { icon: BarChart2, label: "Usage Analytics" },
-              { icon: Key, label: "API Key Management" },
+              { icon: Code2, label: "Orders & Listings" },
+              { icon: BarChart2, label: "Collections & Stats" },
+              { icon: Key, label: "IP Metadata" },
               { icon: Zap, label: "Starknet Native" },
             ].map(({ icon: Icon, label }) => (
               <div
@@ -61,6 +76,21 @@ export default function Home() {
                 {label}
               </div>
             ))}
+          </div>
+
+          {/* Static code preview */}
+          <div className="mx-auto max-w-2xl text-left mt-8">
+            <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden">
+              <div className="flex items-center gap-2 px-4 py-2.5 border-b border-white/10 bg-white/[0.03]">
+                <span className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
+                <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
+                <span className="w-2.5 h-2.5 rounded-full bg-green-500/70" />
+                <span className="ml-2 text-xs text-muted-foreground font-mono">GET /v1/orders</span>
+              </div>
+              <pre className="p-4 text-xs font-mono text-green-300/90 overflow-x-auto leading-relaxed">
+                {SAMPLE_RESPONSE}
+              </pre>
+            </div>
           </div>
         </section>
 
