@@ -88,7 +88,7 @@ export default function RootLayout({
                 <div className="relative min-h-screen flex flex-col">
                   <FloatingNav />
                   <main className="flex-1">{children}</main>
-                  {/* <Footer /> */}
+                  <Footer />
                   <Toaster />
                 </div>
               </FramerMotionProvider>

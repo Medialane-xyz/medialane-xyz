@@ -2,7 +2,8 @@ import Link from "next/link"
 import { Button } from "@/src/components/ui/button"
 import { Badge } from "@/src/components/ui/badge"
 import { Card, CardContent } from "@/src/components/ui/card"
-import { Code2, Key, BarChart2, Zap, Play, ArrowRight, Sparkles } from "lucide-react"
+import { Code2, Key, BarChart2, Play, ArrowRight, Sparkles, Bot, Check } from "lucide-react"
+import { BackgroundGradients } from "@/src/components/background-gradients"
 
 const SAMPLE_RESPONSE = `{
   "data": [
@@ -22,18 +23,14 @@ const SAMPLE_RESPONSE = `{
 export default function Home() {
   return (
     <div className="relative w-full overflow-hidden">
-      {/* Background gradients */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-purple-900/20 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-cyan-900/20 blur-[120px] rounded-full" />
-      </div>
+      <BackgroundGradients />
 
       <div className="relative z-10">
-        {/* API Portal Hero */}
+        {/* Hero */}
         <section className="container mx-auto px-4 pt-24 pb-16 max-w-5xl text-center space-y-8">
           <Badge className="bg-primary/10 text-primary border-primary/30 px-4 py-1.5 text-sm">
             <Sparkles className="w-3.5 h-3.5 mr-1.5 inline" />
-            Developer API — Now in Early Access
+            Permissionless IP Infrastructure on Starknet
           </Badge>
 
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-gray-500 leading-tight">
@@ -41,21 +38,21 @@ export default function Home() {
           </h1>
 
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            One REST API for Starknet IP — query open orders, NFT metadata, collections,
-            on-chain activities, and token listings. Get a free key and go live in minutes.
+            Query IP assets, collections, on-chain activities and listings. Integrate in minutes —
+            free for humans, sovereign for AI agents.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button asChild size="lg" className="px-8 h-12 text-base font-semibold">
               <Link href="/account">
                 <Key className="w-5 h-5 mr-2" />
-                Get Your Free API Key
+                Get Free API Key
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="px-8 h-12 text-base border-white/10 hover:bg-white/5">
-              <Link href="/workshop">
-                <Play className="w-5 h-5 mr-2" />
-                Watch Workshop
+              <Link href="/docs">
+                <Code2 className="w-5 h-5 mr-2" />
+                Read the Docs
               </Link>
             </Button>
           </div>
@@ -66,7 +63,7 @@ export default function Home() {
               { icon: Code2, label: "Orders & Listings" },
               { icon: BarChart2, label: "Collections & Stats" },
               { icon: Key, label: "IP Metadata" },
-              { icon: Zap, label: "Starknet Native" },
+              { icon: Bot, label: "AI Agent Ready" },
             ].map(({ icon: Icon, label }) => (
               <div
                 key={label}
@@ -78,7 +75,7 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Static code preview */}
+          {/* Terminal code preview */}
           <div className="mx-auto max-w-2xl text-left mt-8">
             <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden">
               <div className="flex items-center gap-2 px-4 py-2.5 border-b border-white/10 bg-white/[0.03]">
@@ -91,6 +88,55 @@ export default function Home() {
                 {SAMPLE_RESPONSE}
               </pre>
             </div>
+          </div>
+        </section>
+
+        {/* Mini pricing teaser */}
+        <section className="container mx-auto px-4 pb-16 max-w-5xl">
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* FREE */}
+            <Card className="border-white/10 bg-white/5 backdrop-blur-sm">
+              <CardContent className="p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-bold text-white">FREE</h3>
+                  <span className="text-2xl font-extrabold text-white">$0</span>
+                </div>
+                <p className="text-sm text-muted-foreground">50 requests / month. Resets on the 1st.</p>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {["All API endpoints", "Up to 5 API keys", "Portal dashboard"].map((f) => (
+                    <li key={f} className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-green-400 flex-shrink-0" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Button asChild className="w-full">
+                  <Link href="/account">Get API Key</Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* PREMIUM */}
+            <Card className="border-primary/30 bg-gradient-to-br from-primary/10 to-background/50 backdrop-blur-sm">
+              <CardContent className="p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-bold text-white">PREMIUM</h3>
+                  <span className="text-2xl font-extrabold text-white">Custom</span>
+                </div>
+                <p className="text-sm text-muted-foreground">Unlimited requests. 3,000 req/min rate limit.</p>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {["Everything in FREE", "Webhooks (4 event types)", "Priority support"].map((f) => (
+                    <li key={f} className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-primary flex-shrink-0" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Button asChild variant="outline" className="w-full border-primary/30 hover:bg-primary/10">
+                  <Link href="/pricing">See all plans →</Link>
+                </Button>
+              </CardContent>
+            </Card>
           </div>
         </section>
 
