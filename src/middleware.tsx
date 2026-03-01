@@ -35,8 +35,13 @@ export default clerkMiddleware(async (auth, req) => {
       }
 
       // Catch users who do not have walletCreated: true in their publicMetadata
-      // Redirect them to the /onboarding route to complete onboarding
-      if (!hasWallet && req.nextUrl.pathname !== "/onboarding") {
+      // Redirect them to /onboarding — but NOT if they're accessing the API
+      // portal (/account) or portal API routes, which don't require a wallet.
+      const isPortalPath =
+        req.nextUrl.pathname.startsWith("/account") ||
+        req.nextUrl.pathname.startsWith("/api/portal");
+
+      if (!hasWallet && req.nextUrl.pathname !== "/onboarding" && !isPortalPath) {
         const onboardingUrl = new URL("/onboarding", req.url);
         onboardingUrl.searchParams.set("redirect_url", req.url);
         return NextResponse.redirect(onboardingUrl);

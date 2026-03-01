@@ -32,7 +32,7 @@ export async function provisionUser(userId: string): Promise<ProvisionResult> {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "x-api-secret": apiSecret,
+      "x-api-key": apiSecret,
     },
     body: JSON.stringify({ name, email, plan: "FREE" }),
   });
