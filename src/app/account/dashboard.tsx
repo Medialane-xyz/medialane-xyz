@@ -12,7 +12,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/ta
 import { ApiKeysTab } from "@/src/components/portal/api-keys-tab";
 import { UsageTab } from "@/src/components/portal/usage-tab";
 import { PlanTab } from "@/src/components/portal/plan-tab";
-import { WalletIcon, User, Key, BarChart2, Zap } from "lucide-react";
+import { WebhooksTab } from "@/src/components/portal/webhooks-tab";
+import { WalletIcon, User, Key, BarChart2, Zap, Webhook } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 type WalletShape = { wallet: { publicKey: string; normalizedPublicKey: string } };
@@ -61,7 +62,7 @@ export function AccountDashboard({
       <Separator className="bg-primary/20" />
 
       <Tabs defaultValue="profile" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5 h-auto p-1 gap-1">
+        <TabsList className="grid w-full grid-cols-6 h-auto p-1 gap-1">
           <TabsTrigger value="profile" className="flex items-center gap-1.5 py-2 text-xs sm:text-sm">
             <User className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Profile</span>
@@ -81,6 +82,10 @@ export function AccountDashboard({
           <TabsTrigger value="plan" className="flex items-center gap-1.5 py-2 text-xs sm:text-sm">
             <Zap className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Plan</span>
+          </TabsTrigger>
+          <TabsTrigger value="webhooks" className="flex items-center gap-1.5 py-2 text-xs sm:text-sm">
+            <Webhook className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Webhooks</span>
           </TabsTrigger>
         </TabsList>
 
@@ -173,6 +178,11 @@ export function AccountDashboard({
         {/* Plan Tab */}
         <TabsContent value="plan">
           <PlanTab plan={initialPlan} />
+        </TabsContent>
+
+        {/* Webhooks Tab */}
+        <TabsContent value="webhooks">
+          <WebhooksTab plan={initialPlan} />
         </TabsContent>
       </Tabs>
     </div>

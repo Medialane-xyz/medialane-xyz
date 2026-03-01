@@ -28,7 +28,7 @@ export default async function AccountPage() {
       });
       if (res.ok) {
         const data = await res.json();
-        plan = data?.tenant?.plan ?? "FREE";
+        plan = data?.data?.plan ?? "FREE";
       }
     } catch {
       // non-fatal — show FREE as fallback

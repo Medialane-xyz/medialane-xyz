@@ -5,8 +5,18 @@ import useSWR from "swr";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/src/components/ui/card";
 import { Badge } from "@/src/components/ui/badge";
 import { Button } from "@/src/components/ui/button";
+import { Input } from "@/src/components/ui/input";
+import { Label } from "@/src/components/ui/label";
 import { Skeleton } from "@/src/components/ui/skeleton";
-import { Key, Trash2, AlertCircle } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose,
+} from "@/src/components/ui/dialog";
+import { Key, Trash2, AlertCircle, Plus, Copy, Check } from "lucide-react";
 
 interface ApiKey {
   id: string;
@@ -20,11 +30,19 @@ interface ApiKey {
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 export function ApiKeysTab() {
-  const { data, error, isLoading, mutate } = useSWR<{ keys: ApiKey[] }>(
+  // Backend returns { data: ApiKey[] } — unwrap via data?.data
+  const { data, error, isLoading, mutate } = useSWR<{ data: ApiKey[] }>(
     "/api/portal/keys",
     fetcher
   );
   const [revoking, setRevoking] = useState<string | null>(null);
+
+  // Create key dialog state
+  const [createOpen, setCreateOpen] = useState(false);
+  const [labelInput, setLabelInput] = useState("");
+  const [creating, setCreating] = useState(false);
+  const [newKey, setNewKey] = useState<{ prefix: string; plaintext: string } | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const handleRevoke = async (id: string) => {
     setRevoking(id);
@@ -34,6 +52,38 @@ export function ApiKeysTab() {
     } finally {
       setRevoking(null);
     }
+  };
+
+  const handleCreate = async () => {
+    setCreating(true);
+    try {
+      const res = await fetch("/api/portal/keys", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ label: labelInput.trim() || undefined }),
+      });
+      const json = await res.json();
+      if (!res.ok) return;
+      const created = json?.data ?? json;
+      setNewKey({ prefix: created.prefix, plaintext: created.plaintext });
+      await mutate();
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const handleCopy = () => {
+    if (!newKey) return;
+    navigator.clipboard.writeText(newKey.plaintext);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleCloseCreate = () => {
+    setCreateOpen(false);
+    setLabelInput("");
+    setNewKey(null);
+    setCopied(false);
   };
 
   if (isLoading) {
@@ -55,24 +105,36 @@ export function ApiKeysTab() {
     );
   }
 
-  const keys = data?.keys ?? [];
+  const keys = data?.data ?? [];
+  const activeCount = keys.filter((k) => k.status === "ACTIVE").length;
 
   return (
     <div className="space-y-4">
       <Card className="border-primary/20 bg-background/50 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Key className="w-5 h-5 text-primary" />
-            API Keys
-          </CardTitle>
-          <CardDescription>
-            Your API keys for accessing the Medialane REST API. Keep them secret.
-          </CardDescription>
+        <CardHeader className="flex flex-row items-start justify-between gap-4">
+          <div>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Key className="w-5 h-5 text-primary" />
+              API Keys
+            </CardTitle>
+            <CardDescription>
+              Your API keys for accessing the Medialane REST API. Keep them secret.
+            </CardDescription>
+          </div>
+          <Button
+            size="sm"
+            onClick={() => setCreateOpen(true)}
+            disabled={activeCount >= 5}
+            title={activeCount >= 5 ? "Maximum 5 active keys reached" : undefined}
+          >
+            <Plus className="w-4 h-4 mr-1" />
+            New Key
+          </Button>
         </CardHeader>
         <CardContent>
           {keys.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground text-sm">
-              No API keys found. Your key was auto-provisioned — if missing, try refreshing.
+              No API keys yet. Create one to start using the Medialane API.
             </div>
           ) : (
             <div className="space-y-3">
@@ -122,6 +184,54 @@ export function ApiKeysTab() {
           )}
         </CardContent>
       </Card>
+
+      {/* Create key dialog */}
+      <Dialog open={createOpen} onOpenChange={(open) => !open && handleCloseCreate()}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Create API Key</DialogTitle>
+          </DialogHeader>
+          {newKey ? (
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Copy your key now — it won&apos;t be shown again.
+              </p>
+              <div className="flex items-center gap-2">
+                <code className="flex-1 text-xs font-mono bg-muted px-3 py-2 rounded-lg break-all">
+                  {newKey.plaintext}
+                </code>
+                <Button variant="outline" size="icon" onClick={handleCopy} className="shrink-0">
+                  {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                </Button>
+              </div>
+              <DialogFooter>
+                <Button onClick={handleCloseCreate}>Done</Button>
+              </DialogFooter>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="key-label">Label (optional)</Label>
+                <Input
+                  id="key-label"
+                  placeholder="e.g. production, staging"
+                  value={labelInput}
+                  onChange={(e) => setLabelInput(e.target.value)}
+                  maxLength={64}
+                />
+              </div>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button onClick={handleCreate} disabled={creating}>
+                  {creating ? "Creating…" : "Create"}
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -14,20 +14,49 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/src
 import { Skeleton } from "@/src/components/ui/skeleton";
 import { BarChart2, AlertCircle } from "lucide-react";
 
-interface UsageDay {
+// Backend returns { day: Date, requests: number }[] — day is an ISO date string
+interface UsageDayRaw {
+  day: string;
+  requests: number;
+}
+
+interface ChartDay {
   date: string;
   requests: number;
 }
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
-function formatDay(dateStr: string) {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+function toIsoDate(d: Date): string {
+  return d.toISOString().slice(0, 10);
+}
+
+function formatDay(isoDate: string) {
+  const d = new Date(isoDate + "T00:00:00Z");
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+}
+
+/** Build a filled 30-day array (oldest first), defaulting missing days to 0. */
+function fillDays(raw: UsageDayRaw[]): ChartDay[] {
+  const lookup = new Map<string, number>();
+  for (const r of raw) {
+    lookup.set(toIsoDate(new Date(r.day)), r.requests);
+  }
+
+  const result: ChartDay[] = [];
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date();
+    d.setUTCHours(0, 0, 0, 0);
+    d.setUTCDate(d.getUTCDate() - i);
+    const iso = toIsoDate(d);
+    result.push({ date: formatDay(iso), requests: lookup.get(iso) ?? 0 });
+  }
+  return result;
 }
 
 export function UsageTab() {
-  const { data, error, isLoading } = useSWR<{ usage: UsageDay[] }>(
+  // Backend returns { data: [{ day, requests }] } — unwrap via data?.data
+  const { data, error, isLoading } = useSWR<{ data: UsageDayRaw[] }>(
     "/api/portal/usage",
     fetcher
   );
@@ -50,12 +79,7 @@ export function UsageTab() {
     );
   }
 
-  const rawUsage = data?.usage ?? [];
-  // Ensure 30 days; fill missing days with 0
-  const chartData = rawUsage.map((d) => ({
-    date: formatDay(d.date),
-    requests: d.requests,
-  }));
+  const chartData = fillDays(data?.data ?? []);
 
   const total = chartData.reduce((sum, d) => sum + d.requests, 0);
 
@@ -73,7 +97,7 @@ export function UsageTab() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {chartData.length === 0 ? (
+          {total === 0 ? (
             <div className="text-center py-12 text-muted-foreground text-sm">
               No usage data yet. Start making API calls to see activity here.
             </div>
