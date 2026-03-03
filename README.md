@@ -1,4 +1,7 @@
-### Medialane.xyz
+<img width="2972" height="2160" alt="image" src="https://github.com/user-attachments/assets/abd42bec-d6b9-4636-a9cf-21fe8ec3ba0d" />
+
+# Medialane.xyz 
+### Services for Programmable IP 
 
 Query IP assets, collections, on-chain activities and listings. Integrate in minutes — free for humans, sovereign for AI agents.
 
@@ -59,16 +62,6 @@ To run this project, you will need to add the following environment variables to
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
 NEXT_PUBLIC_CHIPI_API_KEY=your_chipi_api_key
 ```
-
-## Roadmap
-
-- [X] Medialane Protocol @ Starknet Sepolia **25.11**
-- [X] Medialane Dapp @ Starknet Sepolia **25.11**
-- [X] Medialane Onboarding @ Starknet Mainnet **26.01**
-- [X] Medialane Protocol @ Starknet Mainnet **26.02**
-- [X] Medialane SDK @ Starknet Mainnet **26.03**
-- [ ] Medialane Creator Launchpad @ Starknet Mainnet **26.03**
-- [ ] Medialane Marketplace @ Starknet Mainnet **26.03**
 
 
 ## Contributing
