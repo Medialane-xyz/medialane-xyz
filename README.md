@@ -1,28 +1,28 @@
-<img width="1280" height="640" alt="image" src="https://github.com/user-attachments/assets/197ced01-1e62-46dd-a848-abcbf1ac8a06" />
+### Medialane.xyz
 
+Query IP assets, collections, on-chain activities and listings. Integrate in minutes — free for humans, sovereign for AI agents.
 
-### Medialane: Creators Capital Markets on the Integrity Web
+Everything you need to build Programmable IP on Starknet.
+One REST API. All the data. No indexer needed.
+
+- Orders & Listings: Query open orders, bids, and fulfilled listings across the marketplace. Filter by NFT contract, token, or user.
+- Collections: Fetch collection metadata, floor prices, volume, and token inventories for any Starknet IP collection.
+- Tokens & Metadata: Resolve on-chain and IPFS metadata for any token. Upload and pin metadata with the Medialane CDN.
+- Activities: Stream on-chain events: mints, transfers, sales, offers, cancellations — indexed in real time.
+- Intents (SNIP-12): Create, sign, and submit structured trade intents using the SNIP-12 typed data standard on Starknet.
+- Search: Full-text search across tokens, collections, and creators. Integrate autocomplete in your dApp in minutes.
+
+### Medialane.io
 
 Monetization hub financial infrastructure for the Creators Capital Markets, with Creators Launchpad and IP Marketplace engineered for the integrity web, to enable trustless, verifiable financial activity. Medialane empowers creators, businesses, and AI to fully own, trade, and generate capital from intellectual property with sovereignty, control, and transparency.
 
-
 The core of our business operates through two integrated financial hubs. The Creator Launchpad is the engine for capital structuring, facilitating the creation of financial assets and structured revenue products such as IP Coins, Creator Coins, Collection Drops, IP Clubs, Memberships, Subscriptions, and IP Tickets. Complementing this is the NFT Marketplace, which functions as the High-Integrity Exchange, the central secondary market for the licensing and trading of all tokenized creator assets.
-
 
 We provide the definitive operating environment for creative capital, eliminating intermediaries and friction through key principles. Creators maintain Sovereign Capital—complete ownership over their assets and decentralized identity, which is the basis for their market activity. Utilizing the Mediolano primitives, assets feature Programmable Licensing, giving creators precise control over usage and remix terms with contracts generated automatically. 
 
-Discover Medialane (Dapp Preview): [https://medialane.xyz](https://medialane.xyz)
 
-#### Powered by Starknet, Mediolano Protocol, Chipi Pay SDK.
 
-## Key Features
-
-- **Creator Launchpad**: Tools for capital structuring and creating financial assets like IP Coins and Creator Coins.
-- **IP Marketplace**: A high-integrity secondary market for licensing and trading tokenized assets.
-- **Programmable Licensing**: Smart contracts that automatically enforce usage and remix terms.
-- **Sovereign Capital**: Complete ownership for creators over their assets and decentralized identity.
-- **Interactive UI**: Rich animations, floating navigation, and a responsive design optimized for mobile and desktop.
-- **Wallet Integration**: Seamless connection with Starknet wallets throughout the application.
+#### Powered by Starknet, Medialane SDK, Mediolano Protocol, Chipi Pay SDK.
 
 ## Tech Stack
 
@@ -42,7 +42,7 @@ src/
 ├── app/                  # Application routes and pages (App Router)
 │   ├── layout.tsx        # Global layout and providers
 │   ├── page.tsx          # Landing page
-│   └── [features]/       # Feature-based route directories (assets, creators, etc.)
+│   └── [features]/       # Feature-based route directories (services, docs)
 ├── components/           # React components
 │   ├── ui/               # Reusable atomic UI components (Button, Card, etc.)
 │   └── [feature].tsx     # Feature-specific components
@@ -66,6 +66,7 @@ NEXT_PUBLIC_CHIPI_API_KEY=your_chipi_api_key
 - [X] Medialane Dapp @ Starknet Sepolia **25.11**
 - [X] Medialane Onboarding @ Starknet Mainnet **26.01**
 - [X] Medialane Protocol @ Starknet Mainnet **26.02**
+- [X] Medialane SDK @ Starknet Mainnet **26.03**
 - [ ] Medialane Creator Launchpad @ Starknet Mainnet **26.03**
 - [ ] Medialane Marketplace @ Starknet Mainnet **26.03**
 
