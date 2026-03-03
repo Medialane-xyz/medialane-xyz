@@ -1,4 +1,4 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher, clerkClient } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 const isPublicRoute = createRouteMatcher([
@@ -41,7 +41,21 @@ export default clerkMiddleware(async (auth, req) => {
   }
 
   if (userId) {
-    const hasWallet = hasWalletClaim(sessionClaims);
+    let hasWallet = hasWalletClaim(sessionClaims);
+
+    // Fallback: if JWT claims don't show walletCreated (e.g. session token template
+    // not configured in Clerk dashboard, or token is stale after onboarding),
+    // check directly via the Clerk API. Only runs on routes where we'd redirect
+    // to onboarding — skipped for public and portal paths to avoid unnecessary calls.
+    if (!hasWallet && !isPublicRoute(req) && !isPortalPath(req)) {
+      try {
+        const client = await clerkClient();
+        const clerkUser = await client.users.getUser(userId);
+        hasWallet = clerkUser.publicMetadata?.walletCreated === true;
+      } catch {
+        // If the API check fails, fall through — treat as no wallet
+      }
+    }
 
     // Already has a wallet and hits /onboarding → send home
     if (hasWallet && req.nextUrl.pathname === "/onboarding") {
