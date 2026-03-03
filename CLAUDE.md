@@ -19,11 +19,11 @@ Always verify `bun run build` passes (0 errors, 0 TS issues) after any significa
 
 ## Repository Role
 
-`medialane-xyz` is the **public-facing developer portal** for the Medialane platform.
-It is a Next.js 15 App Router site — mostly static/server-rendered pages.
+`medialane-xyz` is the **public-facing developer portal AND consumer creator app** for the Medialane platform.
+It is a Next.js 15 App Router site — mix of static marketing pages, a ChipiPay-powered wallet, and an API developer portal.
 
 **Do not confuse it with:**
-- `medialane-io` — the consumer creator launchpad (invisible wallet, ChipiPay)
+- `medialane-io` — separate consumer launchpad (older, being superseded by medialane-xyz features)
 - `medialane-backend` — the Hono REST API + indexer service
 - `medialane-sdk` — the TypeScript SDK (`medialane-sdk` npm package)
 
@@ -43,7 +43,8 @@ It is a Next.js 15 App Router site — mostly static/server-rendered pages.
 | `/changelog` | Static release timeline | Yes |
 | `/terms` | Placeholder TOS | Yes |
 | `/privacy` | Placeholder privacy policy | Yes |
-| `/account` | Portal dashboard (Clerk auth) | **DO NOT TOUCH** |
+| `/account` | API portal dashboard (Clerk auth + ChipiPay wallet) | Yes |
+| `/onboarding` | Wallet setup — passkey-first, PIN fallback | Yes |
 | `/mint` | NFT mint page | **DO NOT TOUCH** |
 | `/workshop` | Workshop event page | **DO NOT TOUCH** |
 
@@ -91,9 +92,11 @@ Footer is rendered in root layout — visible on all pages except those that ove
 | `BackgroundGradients` | `src/components/background-gradients.tsx` | Fixed purple/cyan gradient blobs — import on full-page routes |
 | `DocH2` / `DocH3` / `DocCodeBlock` | `src/components/docs/typography.tsx` | Consistent heading/code styling in docs + legal pages |
 | `DocsSidebar` | `src/components/docs/sidebar.tsx` | Sticky left nav for `/docs/*` routes |
-| `FloatingNav` | `src/components/floating-nav.tsx` | Top navigation — logo, nav links, account button |
+| `FloatingNav` | `src/components/floating-nav.tsx` | Top navigation — logo, nav links, account button. **Fixed position, ~70px tall.** |
 | `Footer` | `src/components/footer.tsx` | 3-column footer + social row |
 | `LogoMedialane` | `src/components/logo-medialane.tsx` | Responsive logo (different sizes mobile/desktop) |
+| `WalletPinDialog` | `src/components/chipi/wallet-pin-dialog.tsx` | Transaction auth — passkey-first, PIN fallback |
+| `WalletSummary` | `src/components/chipi/wallet-summary.tsx` | Balance display + receive dialog |
 
 ### Adding a new page
 
@@ -141,7 +144,8 @@ The contact route uses Zod for validation. Honeypot field `_hp` blocks bot submi
 | Runtime | Bun (`~/.bun/bin/bun`) |
 | UI | React 19 + Tailwind v3 + Radix UI |
 | Animation | Framer Motion |
-| Auth | Clerk 6 (`@clerk/nextjs`) — only on `/account` |
+| Auth | Clerk 6 (`@clerk/nextjs`) — auth + user metadata storage |
+| Wallet | ChipiPay — `@chipi-stack/nextjs` v13.8.0 + `@chipi-stack/chipi-passkey` v1.8.0 |
 | Email | nodemailer v8 (SMTP, contact form only) |
 | Validation | Zod v3 (contact API route) |
 | Path alias | `@/*` → repo root, `@/src/*` → `src/` |
@@ -154,3 +158,6 @@ The contact route uses Zod for validation. Honeypot field `_hp` blocks bot submi
 - **macOS `sed` backreferences** — BSD sed doesn't support `\1`/`\2` in replacement with `-i`. Use Python3 or the Edit tool instead.
 - **`bun` not in PATH** — always use `~/.bun/bin/bun` explicitly or the Bash tool with full path.
 - **Footer not rendered** — confirm `<Footer />` is uncommented in `src/app/layout.tsx`.
+- **FloatingNav overlay** — the nav is `position: fixed` and ~70px tall. Pages must use `pt-28` (112px) as their top padding. Other values (e.g. `pt-12`) will cause content to hide behind the nav. See `/features`, `/account` for the correct pattern.
+- **Clerk JWT staleness** — after updating `publicMetadata`, call `user.reload()` then `session.touch()` before navigating, otherwise middleware may still read stale JWT claims. The middleware also has a Clerk API fallback for resilience.
+- **ChipiPay template** — `getToken({ template: process.env.NEXT_PUBLIC_CLERK_TEMPLATE_NAME })` is used throughout. The Clerk dashboard must have a JWT template named accordingly. The middleware also needs `{ "metadata": "{{user.public_metadata}}" }` in the session token to avoid API fallback calls on every request.
