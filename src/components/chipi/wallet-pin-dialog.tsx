@@ -85,7 +85,7 @@ export function WalletPinDialog({
                     </DialogTitle>
                     <DialogDescription>
                         {isAuthenticating
-                            ? "Please complete the biometric prompt on your device."
+                            ? "Follow the passkey prompt on your device — this may be a biometric scan, password manager, or security key."
                             : showPinFallback
                             ? "Your wallet is protected — enter your PIN to continue."
                             : "Confirm your identity to continue."}
@@ -140,7 +140,7 @@ export function WalletPinDialog({
                             className="text-xs"
                             onClick={attemptPasskeyAuth}
                         >
-                            Try biometrics again
+                            Try passkey again
                         </Button>
                     )}
                 </DialogFooter>

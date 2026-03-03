@@ -21,7 +21,7 @@ export default function OnboardingComponent() {
   const [showPinFallback, setShowPinFallback] = React.useState(false);
   const [pinError, setPinError] = React.useState<string>("");
 
-  // Computed once on mount — isWebAuthnSupported() is a synchronous browser API check
+  // Computed once on mount — synchronous browser API check
   const [passkeySupported] = React.useState(() =>
     typeof window !== "undefined" && isWebAuthnSupported()
   );
@@ -170,7 +170,7 @@ export default function OnboardingComponent() {
         <h1 className="text-3xl font-extrabold mb-2">Secure your account</h1>
         <p className="mb-6 text-sm opacity-70">
           {passkeySupported && !showPinFallback
-            ? "Use your device biometrics for a fast, secure setup."
+            ? "Use a passkey to protect your wallet — works with Face ID, Touch ID, Windows Hello, hardware security keys, and password managers like 1Password."
             : "Create a security PIN to protect your wallet."}
         </p>
 
@@ -192,7 +192,7 @@ export default function OnboardingComponent() {
               className="w-full flex items-center justify-center gap-3 px-4 py-4 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-400/30 rounded-xl font-semibold transition-all hover:shadow-lg hover:scale-[1.02]"
             >
               <span className="text-2xl">🔑</span>
-              <span>Continue with Face ID / Touch ID</span>
+              <span>Continue with passkey</span>
             </button>
 
             <button
@@ -259,7 +259,7 @@ export default function OnboardingComponent() {
                 onClick={() => { setShowPinFallback(false); setGeneralError(""); setPinError(""); }}
                 className="w-full text-center text-sm opacity-50 hover:opacity-80 transition py-2 mt-2"
               >
-                Use biometrics instead
+                Use passkey instead
               </button>
             )}
           </form>
