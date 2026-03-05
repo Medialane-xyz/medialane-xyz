@@ -2,7 +2,7 @@ import { clerkMiddleware, createRouteMatcher, clerkClient } from "@clerk/nextjs/
 import { NextResponse } from "next/server";
 
 const isPublicRoute = createRouteMatcher([
-  '/(.*)',
+  '/',
   '/docs(.*)',
   '/mint(.*)',       // events — public
   '/workshop',      // educational — public
