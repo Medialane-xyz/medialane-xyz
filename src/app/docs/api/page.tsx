@@ -100,7 +100,7 @@ export default function ApiReferencePage() {
         params={[
           { name: "status", type: "string", desc: "Filter by status: OPEN | FULFILLED | CANCELLED" },
           { name: "nftContract", type: "string", desc: "Filter by NFT contract address" },
-          { name: "currency", type: "string", desc: "Filter by payment token: USDC | ETH | STRK | USDT" },
+          { name: "currency", type: "string", desc: "Filter by payment token: USDC | USDC.e | ETH | STRK | USDT" },
           { name: "sort", type: "string", desc: "Sort field: priceRaw | createdAt" },
           { name: "order", type: "string", desc: "asc | desc (default: desc)" },
           { name: "page", type: "number", desc: "Page number (default: 1)" },
@@ -371,7 +371,7 @@ export default function ApiReferencePage() {
           { name: "nftContract", type: "string", required: true, desc: "NFT contract address" },
           { name: "tokenId", type: "string", required: true, desc: "Token ID" },
           { name: "price", type: "string", required: true, desc: "Price in smallest denomination" },
-          { name: "currency", type: "string", required: true, desc: "USDC | ETH | STRK | USDT" },
+          { name: "currency", type: "string", required: true, desc: "USDC | USDC.e | ETH | STRK | USDT" },
           { name: "offerer", type: "string", required: true, desc: "Seller Starknet address" },
         ]}
         curl={`curl -X POST "${BASE}/v1/intents/listing" \\
@@ -403,7 +403,7 @@ export default function ApiReferencePage() {
           { name: "nftContract", type: "string", required: true, desc: "Target NFT contract" },
           { name: "tokenId", type: "string", required: true, desc: "Token ID" },
           { name: "price", type: "string", required: true, desc: "Offer amount in smallest denomination" },
-          { name: "currency", type: "string", required: true, desc: "USDC | ETH | STRK | USDT" },
+          { name: "currency", type: "string", required: true, desc: "USDC | USDC.e | ETH | STRK | USDT" },
           { name: "offerer", type: "string", required: true, desc: "Buyer Starknet address" },
         ]}
         curl={`curl -X POST "${BASE}/v1/intents/offer" \\
@@ -441,6 +441,42 @@ export default function ApiReferencePage() {
   -H "Content-Type: application/json" \\
   -d '{ "orderHash": "0x04f7a1...", "offerer": "0x0591..." }'`}
         response={`{ "intentId": "clm_jkl012", "typedData": { ... } }`}
+      />
+
+      <Endpoint
+        method="POST"
+        path="/v1/intents/mint"
+        description="Create a mint intent. Mints an NFT into a collection. Executed immediately if pre-validated."
+        params={[
+          { name: "owner", type: "string", required: true, desc: "Collection owner address" },
+          { name: "collectionId", type: "string", required: true, desc: "Hex or decimal collection ID" },
+          { name: "recipient", type: "string", required: true, desc: "Recipient address" },
+          { name: "tokenUri", type: "string", required: true, desc: "IPFS URI or metadata URL" },
+          { name: "collectionContract", type: "string", desc: "Optional: registry contract override" },
+        ]}
+        curl={`curl -X POST "${BASE}/v1/intents/mint" \\
+  -H "x-api-key: ${KEY}" \\
+  -H "Content-Type: application/json" \\
+  -d '{ "owner": "0x0591...", "collectionId": "1", "recipient": "0x0591...", "tokenUri": "ipfs://..." }'`}
+        response={`{ "intentId": "clm_mnt123", "status": "SIGNED", "calls": [...] }`}
+      />
+
+      <Endpoint
+        method="POST"
+        path="/v1/intents/create-collection"
+        description="Create a new collection intent. Registers a new NFT contract."
+        params={[
+          { name: "owner", type: "string", required: true, desc: "Requester address" },
+          { name: "name", type: "string", required: true, desc: "Collection name" },
+          { name: "symbol", type: "string", required: true, desc: "Collection symbol" },
+          { name: "baseUri", type: "string", required: true, desc: "Base URI for tokens" },
+          { name: "collectionContract", type: "string", desc: "Optional: registry contract override" },
+        ]}
+        curl={`curl -X POST "${BASE}/v1/intents/create-collection" \\
+  -H "x-api-key: ${KEY}" \\
+  -H "Content-Type: application/json" \\
+  -d '{ "owner": "0x0591...", "name": "My Collection", "symbol": "MYC", "baseUri": "ipfs://..." }'`}
+        response={`{ "intentId": "clm_coll123", "status": "SIGNED", "calls": [...] }`}
       />
 
       <Endpoint

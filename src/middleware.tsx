@@ -2,13 +2,12 @@ import { clerkMiddleware, createRouteMatcher, clerkClient } from "@clerk/nextjs/
 import { NextResponse } from "next/server";
 
 const isPublicRoute = createRouteMatcher([
-  '/',
-  '/about',
+  '/(.*)',
+  '/docs(.*)',
   '/mint(.*)',       // events — public
   '/workshop',      // educational — public
   '/onboarding',    // wallet setup
   '/api/proxy(.*)', // existing proxy
-  '/create(.*)',    // creator tools
 ]);
 
 // Paths that don't require a Chipi wallet (API portal is wallet-free)

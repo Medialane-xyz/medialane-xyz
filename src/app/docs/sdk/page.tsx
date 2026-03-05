@@ -55,7 +55,21 @@ const client = new MedialaneClient({
 const order = await client.marketplace.getOrderDetails("0x04f7a1...")
 
 // Get the current nonce for signing
-const nonce = await client.marketplace.getNonce("0x0591...")`}</DocCodeBlock>
+const nonce = await client.marketplace.getNonce("0x0591...")
+
+// Mint an NFT into a collection
+const tx = await client.marketplace.mint(account, {
+  collectionId: "1",
+  recipient: "0x0591...",
+  tokenUri: "ipfs://...",
+})
+
+// Create a new collection
+const tx2 = await client.marketplace.createCollection(account, {
+  name: "My Collection",
+  symbol: "MYC",
+  baseUri: "ipfs://...",
+})`}</DocCodeBlock>
 
       {/* API client */}
       <DocH2 id="api-client" border>API Client (REST)</DocH2>
@@ -95,7 +109,23 @@ const account = new Account(provider, walletAddress, privateKey)
 const signature = await account.signMessage(typedData)
 
 // 3. Submit the signature
-await client.api.intents.submitSignature(intentId, signature)`}</DocCodeBlock>
+await client.api.intents.submitSignature(intentId, signature)
+
+// Create a mint intent (no SNIP-12 required)
+const mintIntent = await client.api.createMintIntent({
+  owner: "0x0591...",
+  collectionId: "1",
+  recipient: "0x0591...",
+  tokenUri: "ipfs://...",
+})
+
+// Create a collection intent (no SNIP-12 required)
+const collIntent = await client.api.createCollectionIntent({
+  owner: "0x0591...",
+  name: "My Collection",
+  symbol: "MYC",
+  baseUri: "ipfs://...",
+})`}</DocCodeBlock>
 
       <h3 className="text-lg font-semibold text-white mt-6 mb-3">Search</h3>
       <DocCodeBlock>{`const results = await client.api.search({ q: "genesis", type: "collection" })
