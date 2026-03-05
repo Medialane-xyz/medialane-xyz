@@ -12,7 +12,6 @@ const isPublicRoute = createRouteMatcher([
 
 // Paths that don't require a Chipi wallet (API portal is wallet-free)
 const isPortalPath = createRouteMatcher([
-  '/account(.*)',
   '/api/portal(.*)',
 ]);
 

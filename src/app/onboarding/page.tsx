@@ -58,7 +58,7 @@ export default function OnboardingComponent() {
     await session?.touch();
 
     // Non-blocking — provision API key in background
-    fetch("/api/portal/provision", { method: "POST" }).catch(() => {});
+    fetch("/api/portal/provision", { method: "POST" }).catch(() => { });
 
     window.location.assign(redirectUrl);
   };
@@ -157,8 +157,6 @@ export default function OnboardingComponent() {
     );
   }
 
-  // ── Main UI ──────────────────────────────────────────────────────────────
-
   return (
     <main className="min-h-screen flex items-center justify-center p-4">
       <motion.div
@@ -167,11 +165,11 @@ export default function OnboardingComponent() {
         transition={{ duration: 0.6 }}
         className="backdrop-blur-md p-8 rounded-2xl shadow-2xl max-w-md w-full border border-blue-300/20"
       >
-        <h1 className="text-3xl font-extrabold mb-2">Secure your account</h1>
+        <h1 className="text-3xl font-extrabold mb-2">Starknet Account</h1>
         <p className="mb-6 text-sm opacity-70">
           {passkeySupported && !showPinFallback
-            ? "Use a passkey to protect your wallet — works with Face ID, Touch ID, Windows Hello, hardware security keys, and password managers like 1Password."
-            : "Create a security PIN to protect your wallet."}
+            ? "Our app will generate an invisible wallet for your account. Use a passkey to protect your wallet — works with Face ID, Touch ID, Windows Hello, hardware security keys, and password managers like 1Password."
+            : "Our app will generate an invisible wallet for your account. Create a security PIN to protect your wallet and store it safely, we cannot access or restore your PIN."}
         </p>
 
         {generalError && (
@@ -222,11 +220,10 @@ export default function OnboardingComponent() {
                   maxLength={12}
                   required
                   onChange={handlePinChange}
-                  className={`w-full px-3 py-3 bg-blue-200/10 border rounded-lg shadow-sm focus:outline-none focus:ring-2 text-lg tracking-wider transition-all ${
-                    pinError
-                      ? "border-red-300/50 focus:ring-red-300/50 focus:border-red-300"
-                      : "border-blue-200/20 focus:ring-blue-300/50 focus:border-blue-300"
-                  }`}
+                  className={`w-full px-3 py-3 bg-blue-200/10 border rounded-lg shadow-sm focus:outline-none focus:ring-2 text-lg tracking-wider transition-all ${pinError
+                    ? "border-red-300/50 focus:ring-red-300/50 focus:border-red-300"
+                    : "border-blue-200/20 focus:ring-blue-300/50 focus:border-blue-300"
+                    }`}
                   placeholder="Enter 6–12 digit PIN"
                 />
                 {pinError && (
@@ -244,11 +241,10 @@ export default function OnboardingComponent() {
             <button
               type="submit"
               disabled={!!pinError || isSubmitting}
-              className={`w-full px-4 py-3 rounded-lg font-semibold transition-all ${
-                pinError || isSubmitting
-                  ? "bg-gray-400/20 cursor-not-allowed opacity-50"
-                  : "bg-blue-400/20 hover:bg-blue-400/30 hover:shadow-lg hover:scale-[1.02]"
-              }`}
+              className={`w-full px-4 py-3 rounded-lg font-semibold transition-all ${pinError || isSubmitting
+                ? "bg-gray-400/20 cursor-not-allowed opacity-50"
+                : "bg-blue-400/20 hover:bg-blue-400/30 hover:shadow-lg hover:scale-[1.02]"
+                }`}
             >
               {isSubmitting ? "Securing account…" : "Complete Setup"}
             </button>
