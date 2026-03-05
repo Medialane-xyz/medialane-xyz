@@ -55,7 +55,7 @@ export function Navbar() {
     { name: "Home", href: "/", icon: Home },
     { name: "Workshop", href: "/workshop", icon: Play },
     { name: "Mint Event", href: "/mint", icon: Sparkles },
-    { name: "API Portal", href: "/account", icon: Key },
+    { name: "Account", href: "/account", icon: User },
   ]
 
   return (
@@ -121,7 +121,7 @@ export function Navbar() {
                   <DropdownMenuItem asChild>
                     <Link href="/account">
                       <User className="w-4 h-4 mr-2" />
-                      API Portal
+                      Account
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>

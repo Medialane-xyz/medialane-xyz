@@ -55,18 +55,8 @@ export function AccountDashboard({
       <div className="border-b border-white/5 bg-black/30 backdrop-blur-sm">
         <div className="container mx-auto px-4 max-w-5xl pt-28 pb-8">
           <div className="flex flex-col sm:flex-row sm:items-center gap-5">
-            {/* Avatar */}
-            <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-primary/30 shadow-[0_0_16px_rgba(139,92,246,0.25)] shrink-0">
-              <Image
-                src={userImageUrl || "/placeholder-user.jpg"}
-                alt={userFullName || "User"}
-                fill
-                className="object-cover"
-              />
-            </div>
-
-            {/* Name + email */}
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 flex flex-col gap-1 min-w-0">
+              {/* Name + email */}
               <div className="flex flex-wrap items-center gap-2 mb-0.5">
                 <h1 className="text-2xl font-bold truncate">
                   {userFullName ?? userEmail.split("@")[0]}
@@ -188,6 +178,6 @@ export function AccountDashboard({
           </TabsContent>
         </Tabs>
       </div>
-    </div>
+    </div >
   );
 }
