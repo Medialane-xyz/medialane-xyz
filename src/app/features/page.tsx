@@ -16,6 +16,8 @@ import {
   ArrowRight,
   Check,
   Zap,
+  Sparkles,
+  HeartPulse,
 } from "lucide-react"
 
 const API_CARDS = [
@@ -36,9 +38,17 @@ const API_CARDS = [
     border: "border-blue-500/20",
   },
   {
+    icon: Sparkles,
+    title: "Minting & Launchpad",
+    description: "Launch collection contracts and mint assets with ease. Get ready-to-execute calldata for on-chain deployment.",
+    color: "text-orange-400",
+    bg: "bg-orange-500/10",
+    border: "border-orange-500/20",
+  },
+  {
     icon: FileImage,
     title: "Tokens & Metadata",
-    description: "Resolve on-chain and IPFS metadata for any token. Upload and pin metadata with the Medialane CDN.",
+    description: "Resolve metadata for any token. Use JIT resolution for instant data on newly minted assets.",
     color: "text-green-400",
     bg: "bg-green-500/10",
     border: "border-green-500/20",
@@ -58,6 +68,14 @@ const API_CARDS = [
     color: "text-amber-400",
     bg: "bg-amber-500/10",
     border: "border-amber-500/20",
+  },
+  {
+    icon: HeartPulse,
+    title: "Health & Monitoring",
+    description: "Real-time system health checks. Monitor indexer lag and database status for your enterprise integrations.",
+    color: "text-red-400",
+    bg: "bg-red-500/10",
+    border: "border-red-500/20",
   },
   {
     icon: Search,

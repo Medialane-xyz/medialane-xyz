@@ -46,6 +46,45 @@ const client = new MedialaneClient({
         The <code className="font-mono text-xs bg-white/10 px-1.5 py-0.5 rounded">apiKey</code> is sent as <code className="font-mono text-xs bg-white/10 px-1.5 py-0.5 rounded">x-api-key</code> on every request. Get your key at <Link href="/account" className="text-primary hover:underline">/account</Link>.
       </p>
 
+      {/* Minting */}
+      <DocH2 id="minting" border>Minting & Launchpad</DocH2>
+      <p className="text-muted-foreground text-sm mb-3">
+        The SDK provides two ways to mint assets: direct on-chain calls (requires signer) and backend-orchestrated intents.
+      </p>
+
+      <h3 className="text-lg font-semibold text-white mt-6 mb-3">Mint an asset into a collection</h3>
+      <DocCodeBlock>{`// 1. Direct on-chain (client.marketplace)
+await client.marketplace.mint(account, {
+  collectionId: "42",
+  recipient: "0x0591...",
+  tokenUri: "ipfs://...",
+})
+
+// 2. Via backend intent (client.api)
+// No SNIP-12 signing required for mint/create-collection intents
+const { intentId, calls } = await client.api.createMintIntent({
+  owner: "0x0591...", // collection owner
+  collectionId: "42",
+  recipient: "0x0592...",
+  tokenUri: "ipfs://...",
+})`}</DocCodeBlock>
+
+      <h3 className="text-lg font-semibold text-white mt-6 mb-3">Register a new collection</h3>
+      <DocCodeBlock>{`// 1. Direct on-chain
+await client.marketplace.createCollection(account, {
+  name: "My Collection",
+  symbol: "MYC",
+  baseUri: "ipfs://...",
+})
+
+// 2. Via backend intent
+const { intentId, calls } = await client.api.createCollectionIntent({
+  owner: "0x0591...",
+  name: "My Collection",
+  symbol: "MYC",
+  baseUri: "ipfs://...",
+})`}</DocCodeBlock>
+
       {/* Marketplace */}
       <DocH2 id="marketplace" border>Marketplace (on-chain)</DocH2>
       <p className="text-muted-foreground text-sm mb-3">
@@ -55,21 +94,7 @@ const client = new MedialaneClient({
 const order = await client.marketplace.getOrderDetails("0x04f7a1...")
 
 // Get the current nonce for signing
-const nonce = await client.marketplace.getNonce("0x0591...")
-
-// Mint an NFT into a collection
-const tx = await client.marketplace.mint(account, {
-  collectionId: "1",
-  recipient: "0x0591...",
-  tokenUri: "ipfs://...",
-})
-
-// Create a new collection
-const tx2 = await client.marketplace.createCollection(account, {
-  name: "My Collection",
-  symbol: "MYC",
-  baseUri: "ipfs://...",
-})`}</DocCodeBlock>
+const nonce = await client.marketplace.getNonce("0x0591...")`}</DocCodeBlock>
 
       {/* API client */}
       <DocH2 id="api-client" border>API Client (REST)</DocH2>
@@ -109,23 +134,7 @@ const account = new Account(provider, walletAddress, privateKey)
 const signature = await account.signMessage(typedData)
 
 // 3. Submit the signature
-await client.api.intents.submitSignature(intentId, signature)
-
-// Create a mint intent (no SNIP-12 required)
-const mintIntent = await client.api.createMintIntent({
-  owner: "0x0591...",
-  collectionId: "1",
-  recipient: "0x0591...",
-  tokenUri: "ipfs://...",
-})
-
-// Create a collection intent (no SNIP-12 required)
-const collIntent = await client.api.createCollectionIntent({
-  owner: "0x0591...",
-  name: "My Collection",
-  symbol: "MYC",
-  baseUri: "ipfs://...",
-})`}</DocCodeBlock>
+await client.api.intents.submitSignature(intentId, signature)`}</DocCodeBlock>
 
       <h3 className="text-lg font-semibold text-white mt-6 mb-3">Search</h3>
       <DocCodeBlock>{`const results = await client.api.search({ q: "genesis", type: "collection" })
@@ -142,12 +151,25 @@ console.log(newKey.key) // shown once — save it!
 // Get usage
 const usage = await client.api.portal.getUsage()`}</DocCodeBlock>
 
+      {/* Error Handling */}
+      <DocH2 id="errors" border>Error Handling</DocH2>
+      <p className="text-muted-foreground text-sm mb-3">
+        The SDK throws <code className="font-mono text-xs bg-white/10 px-1.5 py-0.5 rounded">MedialaneError</code> for marketplace issues and <code className="font-mono text-xs bg-white/10 px-1.5 py-0.5 rounded">MedialaneApiError</code> for REST API failures.
+      </p>
+      <DocCodeBlock>{`try {
+  await client.marketplace.mint(account, params)
+} catch (err) {
+  if (err instanceof MedialaneError) {
+    console.error("Marketplace error:", err.message, err.cause)
+  }
+}`}</DocCodeBlock>
+
       <div className="mt-10 p-5 rounded-xl border border-primary/20 bg-primary/5">
         <p className="text-sm text-muted-foreground">
           <span className="font-semibold text-white">Full API reference</span> — all REST endpoints, parameters, and response schemas are documented in the{" "}
           <Link href="/docs/api" className="text-primary hover:underline">API Reference</Link>.
         </p>
       </div>
-    </div>
+    </div >
   )
 }

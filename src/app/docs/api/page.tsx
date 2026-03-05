@@ -1,6 +1,6 @@
 import React from "react"
 import { Badge } from "@/src/components/ui/badge"
-import { DocH2 } from "@/src/components/docs/typography"
+import { DocH2, DocCodeBlock } from "@/src/components/docs/typography"
 
 function MethodBadge({ method }: { method: "GET" | "POST" | "PATCH" | "DELETE" }) {
   const colors: Record<string, string> = {
@@ -90,9 +90,32 @@ export default function ApiReferencePage() {
         Full endpoint reference for the Medialane REST API. Base URL: <code className="font-mono text-xs bg-white/10 px-1.5 py-0.5 rounded">{BASE}</code>
       </p>
 
+      {/* ── HEALTH ── */}
+      <DocH2 id="health" border>Health</DocH2>
+      <p className="text-sm text-muted-foreground mb-6">
+        Public uptime and system status. Use this to monitor indexer lag and database connectivity.
+      </p>
+
+      <Endpoint
+        method="GET"
+        path="/health"
+        description="Get system health status, including database connectivity and indexer lag."
+        params={[]}
+        curl={`curl "${BASE}/health"`}
+        response={`{
+  "status": "ok",
+  "timestamp": "2026-03-05T12:00:00Z",
+  "database": "ok",
+  "indexer": {
+    "lastBlock": "6205000",
+    "latestBlock": "6205005",
+    "lagBlocks": 5
+  }
+}`}
+      />
+
       {/* ── ORDERS ── */}
       <DocH2 id="orders" border>Orders</DocH2>
-
       <Endpoint
         method="GET"
         path="/v1/orders"
@@ -175,6 +198,48 @@ export default function ApiReferencePage() {
   "data": [...],
   "meta": { "total": 7, "page": 1, "limit": 20 }
 }`}
+      />
+
+      {/* ── MINTING ── */}
+      <DocH2 id="minting" border>Minting</DocH2>
+      <p className="text-sm text-muted-foreground mb-6">
+        Directly mint assets into existing collections or register new collection contracts. These operations return fully-populated calldata for immediate on-chain execution.
+      </p>
+
+      <Endpoint
+        method="POST"
+        path="/v1/intents/mint"
+        description="Mint an NFT into an existing Medialane collection."
+        params={[
+          { name: "owner", type: "string", required: true, desc: "Collection owner address" },
+          { name: "collectionId", type: "string", required: true, desc: "Hex or decimal collection ID" },
+          { name: "recipient", type: "string", required: true, desc: "Recipient address" },
+          { name: "tokenUri", type: "string", required: true, desc: "IPFS URI or metadata URL" },
+          { name: "collectionContract", type: "string", desc: "Optional: registry contract override" },
+        ]}
+        curl={`curl -X POST "${BASE}/v1/intents/mint" \\
+  -H "x-api-key: ${KEY}" \\
+  -H "Content-Type: application/json" \\
+  -d '{ "owner": "0x0591...", "collectionId": "42", "recipient": "0x0591...", "tokenUri": "ipfs://..." }'`}
+        response={`{ "intentId": "clm_mnt123", "status": "SIGNED", "calls": [...] }`}
+      />
+
+      <Endpoint
+        method="POST"
+        path="/v1/intents/create-collection"
+        description="Register a new NFT collection contract on the Medialane registry."
+        params={[
+          { name: "owner", type: "string", required: true, desc: "Requester address" },
+          { name: "name", type: "string", required: true, desc: "Collection name" },
+          { name: "symbol", type: "string", required: true, desc: "Collection symbol" },
+          { name: "baseUri", type: "string", required: true, desc: "Base URI for tokens" },
+          { name: "collectionContract", type: "string", desc: "Optional: registry contract override" },
+        ]}
+        curl={`curl -X POST "${BASE}/v1/intents/create-collection" \\
+  -H "x-api-key: ${KEY}" \\
+  -H "Content-Type: application/json" \\
+  -d '{ "owner": "0x0591...", "name": "My Collection", "symbol": "MYC", "baseUri": "ipfs://..." }'`}
+        response={`{ "intentId": "clm_coll123", "status": "SIGNED", "calls": [...] }`}
       />
 
       {/* ── COLLECTIONS ── */}
@@ -268,12 +333,13 @@ export default function ApiReferencePage() {
       <Endpoint
         method="GET"
         path="/v1/tokens/:contract/:tokenId"
-        description="Get a single token with resolved metadata."
+        description="Get a single token with resolved metadata. Use ?wait=true for JIT metadata resolution."
         params={[
           { name: "contract", type: "string", required: true, desc: "NFT contract address" },
           { name: "tokenId", type: "string", required: true, desc: "Token ID" },
+          { name: "wait", type: "boolean", desc: "If true, blocks up to 3s to resolve missing metadata" },
         ]}
-        curl={`curl "${BASE}/v1/tokens/0x05e7.../42" \\
+        curl={`curl "${BASE}/v1/tokens/0x05e7.../42?wait=true" \\
   -H "x-api-key: ${KEY}"`}
         response={`{
   "contract": "0x05e7...",
@@ -441,42 +507,6 @@ export default function ApiReferencePage() {
   -H "Content-Type: application/json" \\
   -d '{ "orderHash": "0x04f7a1...", "offerer": "0x0591..." }'`}
         response={`{ "intentId": "clm_jkl012", "typedData": { ... } }`}
-      />
-
-      <Endpoint
-        method="POST"
-        path="/v1/intents/mint"
-        description="Create a mint intent. Mints an NFT into a collection. Executed immediately if pre-validated."
-        params={[
-          { name: "owner", type: "string", required: true, desc: "Collection owner address" },
-          { name: "collectionId", type: "string", required: true, desc: "Hex or decimal collection ID" },
-          { name: "recipient", type: "string", required: true, desc: "Recipient address" },
-          { name: "tokenUri", type: "string", required: true, desc: "IPFS URI or metadata URL" },
-          { name: "collectionContract", type: "string", desc: "Optional: registry contract override" },
-        ]}
-        curl={`curl -X POST "${BASE}/v1/intents/mint" \\
-  -H "x-api-key: ${KEY}" \\
-  -H "Content-Type: application/json" \\
-  -d '{ "owner": "0x0591...", "collectionId": "1", "recipient": "0x0591...", "tokenUri": "ipfs://..." }'`}
-        response={`{ "intentId": "clm_mnt123", "status": "SIGNED", "calls": [...] }`}
-      />
-
-      <Endpoint
-        method="POST"
-        path="/v1/intents/create-collection"
-        description="Create a new collection intent. Registers a new NFT contract."
-        params={[
-          { name: "owner", type: "string", required: true, desc: "Requester address" },
-          { name: "name", type: "string", required: true, desc: "Collection name" },
-          { name: "symbol", type: "string", required: true, desc: "Collection symbol" },
-          { name: "baseUri", type: "string", required: true, desc: "Base URI for tokens" },
-          { name: "collectionContract", type: "string", desc: "Optional: registry contract override" },
-        ]}
-        curl={`curl -X POST "${BASE}/v1/intents/create-collection" \\
-  -H "x-api-key: ${KEY}" \\
-  -H "Content-Type: application/json" \\
-  -d '{ "owner": "0x0591...", "name": "My Collection", "symbol": "MYC", "baseUri": "ipfs://..." }'`}
-        response={`{ "intentId": "clm_coll123", "status": "SIGNED", "calls": [...] }`}
       />
 
       <Endpoint
@@ -746,6 +776,24 @@ export default function ApiReferencePage() {
   -H "x-api-key: ${KEY}"`}
         response={`{ "success": true }`}
       />
+
+      {/* ── TECHNICAL DETAILS ── */}
+      <DocH2 id="technical" border>Technical Details</DocH2>
+
+      <h3 className="text-lg font-semibold text-white mt-6 mb-2">SNIP-12 Domain</h3>
+      <p className="text-sm text-muted-foreground mb-4">
+        Medialane uses SNIP-12 for off-chain message signing. If you are building your own signer, use the following domain:
+      </p>
+      <DocCodeBlock>{`{
+  "name": "Medialane",
+  "version": "1",
+  "revision": "1"
+}`}</DocCodeBlock>
+
+      <h3 className="text-lg font-semibold text-white mt-6 mb-2">Address Normalization</h3>
+      <p className="text-sm text-muted-foreground mb-4">
+        The API normalizes all addresses to 64-character lowercase hex strings (prefixed with <code className="font-mono text-xs bg-white/10 px-1.5 py-0.5 rounded">0x</code>). We recommend normalizing addresses on your end to ensure consistent search and filtering results.
+      </p>
     </div>
   )
 }

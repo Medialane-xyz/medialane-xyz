@@ -33,12 +33,16 @@ const NAV: NavSection[] = [
     items: [
       { label: "Orders", href: "/docs/api", hash: "#orders" },
       { label: "Collections", href: "/docs/api", hash: "#collections" },
+      { label: "Minting", href: "/docs/api", hash: "#minting" },
       { label: "Tokens", href: "/docs/api", hash: "#tokens" },
       { label: "Activities", href: "/docs/api", hash: "#activities" },
       { label: "Intents", href: "/docs/api", hash: "#intents" },
       { label: "Metadata", href: "/docs/api", hash: "#metadata" },
       { label: "Search", href: "/docs/api", hash: "#search" },
       { label: "Portal", href: "/docs/api", hash: "#portal" },
+      { label: "Webhooks", href: "/docs/api", hash: "#portal" },
+      { label: "Health", href: "/docs/api", hash: "#health" },
+      { label: "Technical", href: "/docs/api", hash: "#technical" },
     ],
   },
   {
@@ -46,6 +50,7 @@ const NAV: NavSection[] = [
     items: [
       { label: "Install", href: "/docs/sdk", hash: "#install" },
       { label: "Configure", href: "/docs/sdk", hash: "#configure" },
+      { label: "Minting", href: "/docs/sdk", hash: "#minting" },
       { label: "Marketplace", href: "/docs/sdk", hash: "#marketplace" },
       { label: "API Client", href: "/docs/sdk", hash: "#api-client" },
     ],
