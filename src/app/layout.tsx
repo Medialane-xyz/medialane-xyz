@@ -30,8 +30,8 @@ export const metadata: Metadata = {
     default: "MediaLane",
     template: "%s | MediaLane",
   },
-  description: "Monetization hub for the integrity web. Launch, share and monetize your creative works",
-  keywords: ["NFT", "Marketplace", "Starknet", "IP", "Intellectual Property", "Remix", "Creative Works", "Trade"],
+  description: "Programmable IP Tokenization and Monetization SDK",
+  keywords: ["NFT", "Marketplace", "Starknet", "IP", "Services", "SDK", "API", "Tokenization", "Monetization"],
   authors: [{ name: "MediaLane" }],
   creator: "MediaLane",
   openGraph: {
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "/",
     title: "MediaLane",
-    description: "Monetization hub for the integrity web. Launch, share and monetize your creative works",
+    description: "Monetization hub for the integrity web. Programmable IP Tokenization and Monetization SDK",
     siteName: "MediaLane",
     images: [
       {

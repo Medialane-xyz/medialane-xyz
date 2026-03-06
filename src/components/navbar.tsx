@@ -109,10 +109,12 @@ export function Navbar() {
               {/* User Menu */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="relative">
-                    <Avatar className="w-7 h-7">
-                      <AvatarFallback>U</AvatarFallback>
-                    </Avatar>
+                  <Button variant="ghost" size="sm" className="relative p-0 h-auto">
+                    <Link href="/account">
+                      <Avatar className="w-7 h-7">
+                        <AvatarFallback>U</AvatarFallback>
+                      </Avatar>
+                    </Link>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">

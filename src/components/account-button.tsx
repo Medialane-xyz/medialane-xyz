@@ -4,6 +4,7 @@ import { Button } from "@/src/components/ui/button"
 import { LogOut, Loader2 } from "lucide-react"
 import { SignInButton, useUser, useClerk } from "@clerk/nextjs"
 import { useToast } from "@/src/hooks/use-toast"
+import Link from "next/link"
 
 export function AccountButton() {
   const { user, isLoaded, isSignedIn } = useUser()
@@ -37,7 +38,7 @@ export function AccountButton() {
   if (isSignedIn && user) {
     return (
       <div className="glass-card rounded-full px-4 py-2 flex items-center gap-3">
-        <div className="flex items-center gap-2">
+        <Link href="/account" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
           {user.imageUrl ? (
             <img src={user.imageUrl} alt={user.fullName || "User"} className="w-8 h-8 rounded-full" />
           ) : (
@@ -46,7 +47,7 @@ export function AccountButton() {
             </div>
           )}
           <span className="text-sm font-medium hidden sm:inline">{user.firstName || user.fullName}</span>
-        </div>
+        </Link>
         <Button
           variant="ghost"
           size="icon"

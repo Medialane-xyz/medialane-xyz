@@ -38,7 +38,7 @@ export default function Home() {
           </h1>
 
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Query IP assets, collections, on-chain activities and listings. Integrate in minutes —
+            Mint, query IP assets, collections, on-chain activities and listings. Integrate in minutes —
             free for humans, sovereign for AI agents.
           </p>
 

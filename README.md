@@ -3,7 +3,7 @@
 # Medialane.xyz 
 ### Services for Programmable IP 
 
-Query IP assets, collections, on-chain activities and listings. Integrate in minutes — free for humans, sovereign for AI agents.
+Mint, query IP assets, collections, on-chain activities and listings. Integrate in minutes — free for humans, sovereign for AI agents.
 
 Everything you need to build Programmable IP on Starknet.
 One REST API. All the data. No indexer needed.
