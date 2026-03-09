@@ -76,7 +76,7 @@ function Endpoint({
   )
 }
 
-const BASE = "https://api.medialane.xyz"
+const BASE = "https://medialane-backend-production.up.railway.app"
 const KEY = "ml_live_YOUR_KEY"
 
 export default function ApiReferencePage() {

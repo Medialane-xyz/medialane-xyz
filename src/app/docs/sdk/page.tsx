@@ -38,7 +38,7 @@ yarn add medialane-sdk`}</DocCodeBlock>
 const client = new MedialaneClient({
   network: "mainnet",        // "mainnet" | "sepolia"
   rpcUrl: "https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_7/YOUR_KEY",
-  backendUrl: "https://api.medialane.xyz",
+  backendUrl: "https://medialane-backend-production.up.railway.app",
   apiKey: "ml_live_YOUR_KEY",
   marketplaceContract: "0x059deafbbafbf7051c315cf75a94b03c5547892bc0c6dfa36d7ac7290d4cc33a",
 })`}</DocCodeBlock>

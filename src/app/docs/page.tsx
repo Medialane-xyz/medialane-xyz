@@ -48,7 +48,7 @@ export default function DocsPage() {
           <span className="flex-shrink-0 w-7 h-7 rounded-full bg-primary/20 text-primary text-sm font-bold flex items-center justify-center">2</span>
           <div>
             <p className="text-white font-medium mb-1">Make your first request</p>
-            <DocCodeBlock lang="bash">{`curl https://api.medialane.xyz/v1/orders \\
+            <DocCodeBlock lang="bash">{`curl https://medialane-backend-production.up.railway.app/v1/orders \\
   -H "x-api-key: ml_live_YOUR_KEY"`}</DocCodeBlock>
           </div>
         </li>
@@ -68,7 +68,7 @@ export default function DocsPage() {
       <p className="text-muted-foreground mb-3">
         All requests require an API key. Pass it in the <code className="font-mono text-xs bg-white/10 px-1.5 py-0.5 rounded">x-api-key</code> header:
       </p>
-      <DocCodeBlock lang="bash">{`curl https://api.medialane.xyz/v1/orders \\
+      <DocCodeBlock lang="bash">{`curl https://medialane-backend-production.up.railway.app/v1/orders \\
   -H "x-api-key: ml_live_YOUR_KEY"
 
 # Bearer token also accepted:
@@ -79,7 +79,7 @@ export default function DocsPage() {
 
       {/* Base URL */}
       <DocH2 id="base-url">Base URL</DocH2>
-      <DocCodeBlock>{`https://api.medialane.xyz`}</DocCodeBlock>
+      <DocCodeBlock>{`https://medialane-backend-production.up.railway.app`}</DocCodeBlock>
       <p className="text-muted-foreground text-sm">All endpoints are versioned under <code className="font-mono text-xs bg-white/10 px-1.5 py-0.5 rounded">/v1/</code>.</p>
 
       {/* Response format */}

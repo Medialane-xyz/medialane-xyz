@@ -36,12 +36,12 @@ interface ApiKey {
 const QUICKSTART_SNIPPETS = [
   {
     label: "List open orders",
-    code: `curl https://api.medialane.xyz/v1/orders \\
+    code: `curl https://medialane-backend-production.up.railway.app/v1/orders \\
   -H "x-api-key: YOUR_API_KEY"`,
   },
   {
     label: "Get your tenant profile",
-    code: `curl https://api.medialane.xyz/v1/portal/me \\
+    code: `curl https://medialane-backend-production.up.railway.app/v1/portal/me \\
   -H "x-api-key: YOUR_API_KEY"`,
   },
 ];

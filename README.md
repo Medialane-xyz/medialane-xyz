@@ -211,7 +211,7 @@ import { MedialaneClient } from "@medialane/sdk";
 
 const client = new MedialaneClient({
   network: "mainnet",
-  backendUrl: "https://api.medialane.xyz",
+  backendUrl: "https://medialane-backend-production.up.railway.app",
   apiKey: "ml_live_...", // from medialane.xyz/account
 });
 
