@@ -9,7 +9,7 @@ export default function SdkPage() {
       <Badge className="bg-primary/10 text-primary border-primary/30 px-3 py-1 text-xs">
         SDK
       </Badge>
-      <h1 className="text-4xl font-extrabold text-white">medialane-sdk</h1>
+      <h1 className="text-4xl font-extrabold text-white">@medialane/sdk</h1>
       <p className="text-muted-foreground text-lg mb-8">
         Framework-agnostic TypeScript SDK for the Medialane API. Bundles a full REST client and on-chain marketplace helpers in one package.
       </p>
@@ -17,13 +17,13 @@ export default function SdkPage() {
       {/* Install */}
       <DocH2 id="install" border>Install</DocH2>
       <DocCodeBlock lang="bash">{`# bun
-bun add medialane-sdk
+bun add @medialane/sdk starknet
 
 # npm
-npm install medialane-sdk
+npm install @medialane/sdk starknet
 
 # yarn
-yarn add medialane-sdk`}</DocCodeBlock>
+yarn add @medialane/sdk starknet`}</DocCodeBlock>
       <p className="text-sm text-muted-foreground">
         Peer dependency: <code className="font-mono text-xs bg-white/10 px-1.5 py-0.5 rounded">starknet@^6</code>
       </p>
@@ -33,7 +33,7 @@ yarn add medialane-sdk`}</DocCodeBlock>
       <p className="text-muted-foreground text-sm mb-3">
         Create a <code className="font-mono text-xs bg-white/10 px-1.5 py-0.5 rounded">MedialaneClient</code> with your network and API key.
       </p>
-      <DocCodeBlock>{`import { MedialaneClient } from "medialane-sdk"
+      <DocCodeBlock>{`import { MedialaneClient } from "@medialane/sdk"
 
 const client = new MedialaneClient({
   network: "mainnet",        // "mainnet" | "sepolia"
@@ -103,53 +103,59 @@ const nonce = await client.marketplace.getNonce("0x0591...")`}</DocCodeBlock>
       </p>
 
       <h3 className="text-lg font-semibold text-white mt-6 mb-3">List open orders</h3>
-      <DocCodeBlock>{`const { data, meta } = await client.api.orders.list({
-  status: "OPEN",
-  limit: 20,
-})
+      <DocCodeBlock>{`const orders = await client.api.getOrders({ status: "ACTIVE", limit: 20 })
 
-console.log(data[0].orderHash, data[0].price)`}</DocCodeBlock>
+console.log(orders.data[0].orderHash, orders.data[0].price)`}</DocCodeBlock>
 
       <h3 className="text-lg font-semibold text-white mt-6 mb-3">Get a token with metadata</h3>
-      <DocCodeBlock>{`const token = await client.api.tokens.get({
-  contract: "0x05e7...",
-  tokenId: "42",
-})
+      <DocCodeBlock>{`const token = await client.api.getToken("0x05e7...", "42")
 
-console.log(token.metadata?.name)`}</DocCodeBlock>
+console.log(token.data.metadata?.name)`}</DocCodeBlock>
+
+      <h3 className="text-lg font-semibold text-white mt-6 mb-3">Get collections by owner</h3>
+      <DocCodeBlock>{`// Fetch collections owned by a wallet address
+// Addresses are normalized automatically — pass any valid Starknet format
+const result = await client.api.getCollectionsByOwner("0x0591...")
+result.data.forEach((col) => {
+  console.log(col.name, col.collectionId) // collectionId = on-chain registry ID
+})`}</DocCodeBlock>
 
       <h3 className="text-lg font-semibold text-white mt-6 mb-3">Create a listing intent</h3>
-      <DocCodeBlock>{`// 1. Create the intent — get typed data back
-const { intentId, typedData } = await client.api.intents.createListing({
+      <DocCodeBlock>{`import { toSignatureArray } from "@medialane/sdk"
+
+// 1. Create the intent — get typed data back
+const intent = await client.api.createListingIntent({
   nftContract: "0x05e7...",
   tokenId: "42",
   price: "500000",
   currency: "USDC",
   offerer: walletAddress,
+  endTime: Math.floor(Date.now() / 1000) + 86400 * 30,
 })
 
 // 2. Sign with starknet.js
 import { Account } from "starknet"
 const account = new Account(provider, walletAddress, privateKey)
-const signature = await account.signMessage(typedData)
+const signature = await account.signMessage(intent.data.typedData)
 
 // 3. Submit the signature
-await client.api.intents.submitSignature(intentId, signature)`}</DocCodeBlock>
+await client.api.submitIntentSignature(intent.data.id, toSignatureArray(signature))`}</DocCodeBlock>
 
       <h3 className="text-lg font-semibold text-white mt-6 mb-3">Search</h3>
-      <DocCodeBlock>{`const results = await client.api.search({ q: "genesis", type: "collection" })
-results.data.forEach((r) => console.log(r.name))`}</DocCodeBlock>
+      <DocCodeBlock>{`const results = await client.api.search("genesis", 10)
+results.data.tokens.forEach((t) => console.log(t.metadata?.name))
+results.data.collections.forEach((c) => console.log(c.name))`}</DocCodeBlock>
 
       <h3 className="text-lg font-semibold text-white mt-6 mb-3">Portal — manage keys</h3>
       <DocCodeBlock>{`// List your API keys
-const { data: keys } = await client.api.portal.listKeys()
+const keys = await client.api.getApiKeys()
 
 // Create a new key
-const newKey = await client.api.portal.createKey({ name: "Agent Key" })
-console.log(newKey.key) // shown once — save it!
+const newKey = await client.api.createApiKey("Agent Key")
+console.log(newKey.data.key) // shown once — save it!
 
 // Get usage
-const usage = await client.api.portal.getUsage()`}</DocCodeBlock>
+const usage = await client.api.getUsage()`}</DocCodeBlock>
 
       {/* Error Handling */}
       <DocH2 id="errors" border>Error Handling</DocH2>

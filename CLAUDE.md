@@ -25,7 +25,7 @@ It is a Next.js 15 App Router site — mix of static marketing pages, a ChipiPay
 **Do not confuse it with:**
 - `medialane-io` — separate consumer launchpad (older, being superseded by medialane-xyz features)
 - `medialane-backend` — the Hono REST API + indexer service
-- `medialane-sdk` — the TypeScript SDK (`medialane-sdk` npm package)
+- `medialane-sdk` — the TypeScript SDK (`@medialane/sdk` npm package, v0.3.1)
 
 ---
 
@@ -39,7 +39,7 @@ It is a Next.js 15 App Router site — mix of static marketing pages, a ChipiPay
 | `/connect` | Community links + contact form | Yes |
 | `/docs` | Getting started guide | Yes |
 | `/docs/api` | Full REST endpoint reference | Yes |
-| `/docs/sdk` | medialane-sdk quickstart | Yes |
+| `/docs/sdk` | @medialane/sdk quickstart | Yes |
 | `/changelog` | Static release timeline | Yes |
 | `/terms` | Placeholder TOS | Yes |
 | `/privacy` | Placeholder privacy policy | Yes |

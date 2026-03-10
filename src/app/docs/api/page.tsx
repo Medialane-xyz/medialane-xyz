@@ -252,14 +252,17 @@ export default function ApiReferencePage() {
         params={[
           { name: "page", type: "number", desc: "Page number" },
           { name: "limit", type: "number", desc: "Items per page" },
+          { name: "owner", type: "string", desc: "Filter by collection owner address" },
         ]}
-        curl={`curl "${BASE}/v1/collections" \\
+        curl={`curl "${BASE}/v1/collections?owner=0x0591..." \\
   -H "x-api-key: ${KEY}"`}
         response={`{
   "data": [
     {
       "contract": "0x05e7...",
+      "collectionId": "1",
       "name": "Mediolano Genesis",
+      "owner": "0x0591...",
       "floorPrice": "100000",
       "floorCurrency": "USDC",
       "totalVolume": "5000000",
@@ -281,7 +284,9 @@ export default function ApiReferencePage() {
   -H "x-api-key: ${KEY}"`}
         response={`{
   "contract": "0x05e7...",
+  "collectionId": "1",
   "name": "Mediolano Genesis",
+  "owner": "0x0591...",
   "floorPrice": "100000",
   "totalVolume": "5000000",
   "tokenCount": 512
@@ -792,7 +797,7 @@ export default function ApiReferencePage() {
 
       <h3 className="text-lg font-semibold text-white mt-6 mb-2">Address Normalization</h3>
       <p className="text-sm text-muted-foreground mb-4">
-        The API normalizes all addresses to 64-character lowercase hex strings (prefixed with <code className="font-mono text-xs bg-white/10 px-1.5 py-0.5 rounded">0x</code>). We recommend normalizing addresses on your end to ensure consistent search and filtering results.
+        The API normalizes all addresses server-side to 64-character lowercase hex strings (prefixed with <code className="font-mono text-xs bg-white/10 px-1.5 py-0.5 rounded">0x</code>). You can pass any valid Starknet address format — short, long, or mixed-case — and the API will handle normalization automatically. The <code className="font-mono text-xs bg-white/10 px-1.5 py-0.5 rounded">@medialane/sdk</code> also normalizes addresses before every API call.
       </p>
     </div>
   )
