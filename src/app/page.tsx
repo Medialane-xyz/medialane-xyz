@@ -23,7 +23,6 @@ const SAMPLE_RESPONSE = `{
 export default function Home() {
   return (
     <div className="relative w-full overflow-hidden">
-      <BackgroundGradients />
 
       <div className="relative z-10">
         {/* Hero */}
@@ -140,31 +139,10 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Event + Workshop cards */}
+
         <section className="container mx-auto px-4 pb-20 max-w-5xl">
           <div className="grid md:grid-cols-2 gap-6">
-            {/* Tec de Monterrey Mint Event */}
-            <Card className="border-purple-500/20 bg-gradient-to-br from-purple-900/20 to-background/50 backdrop-blur-sm overflow-hidden group hover:border-purple-500/40 transition-all">
-              <CardContent className="p-8 space-y-4">
-                <div className="inline-flex items-center rounded-full border border-purple-500/30 bg-purple-500/10 px-3 py-1 text-xs text-purple-300">
-                  <span className="flex h-2 w-2 rounded-full bg-purple-500 mr-2 animate-pulse" />
-                  Live Event
-                </div>
-                <h2 className="text-2xl font-bold text-white">
-                  Tec de Monterrey NFT Mint
-                </h2>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  Gasless NFT minting experience powered by ChipiPay and Starknet.
-                  Mint your unique digital collectible — no wallet setup required.
-                </p>
-                <Button asChild variant="outline" className="border-purple-500/30 hover:bg-purple-500/10 text-purple-300 hover:text-purple-200">
-                  <Link href="/mint">
-                    Mint Now
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
+
 
             {/* Workshop */}
             <Card className="border-cyan-500/20 bg-gradient-to-br from-cyan-900/20 to-background/50 backdrop-blur-sm overflow-hidden group hover:border-cyan-500/40 transition-all">

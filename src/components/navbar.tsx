@@ -28,7 +28,6 @@ import {
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar"
-import { ThemeToggle } from "@/src/components/theme-toggle"
 import { useMobile } from "@/src/hooks/use-mobile"
 
 export function Navbar() {
@@ -103,9 +102,6 @@ export function Navbar() {
 
             {/* Right Side Actions */}
             <div className="flex items-center space-x-2">
-              {/* Theme Toggle */}
-              <ThemeToggle />
-
               {/* User Menu */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
