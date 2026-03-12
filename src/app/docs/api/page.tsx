@@ -381,6 +381,39 @@ export default function ApiReferencePage() {
 }`}
       />
 
+      {/* ── BATCH TOKENS ── */}
+      <DocH2 id="batch-tokens" border>Batch Tokens</DocH2>
+      <p className="text-sm text-muted-foreground mb-6">
+        Fetch up to 50 tokens in a single request by providing contract+tokenId pairs. More efficient than individual token lookups when hydrating a list or cart.
+      </p>
+
+      <Endpoint
+        method="GET"
+        path="/v1/tokens/batch"
+        description="Fetch multiple tokens by contract and tokenId pairs. Returns the same shape as the single token endpoint but as an array."
+        params={[
+          { name: "items", type: "string", required: true, desc: "Comma-separated contract:tokenId pairs — e.g. 0x05e7...:1,0x05e7...:2 (max 50 pairs)" },
+        ]}
+        curl={`curl "${BASE}/v1/tokens/batch?items=0x05e7...:1,0x05e7...:2" \\
+  -H "x-api-key: ${KEY}"`}
+        response={`{
+  "data": [
+    {
+      "contract": "0x05e7...",
+      "tokenId": "1",
+      "owner": "0x0591...",
+      "metadata": { "name": "Genesis #1", "image": "ipfs://..." }
+    },
+    {
+      "contract": "0x05e7...",
+      "tokenId": "2",
+      "owner": "0x0482...",
+      "metadata": { "name": "Genesis #2", "image": "ipfs://..." }
+    }
+  ]
+}`}
+      />
+
       {/* ── ACTIVITIES ── */}
       <DocH2 id="activities" border>Activities</DocH2>
 
@@ -549,6 +582,44 @@ export default function ApiReferencePage() {
 }`}
       />
 
+      {/* ── CHECKOUT INTENT ── */}
+      <DocH2 id="checkout-intent" border>Checkout Intent</DocH2>
+      <p className="text-sm text-muted-foreground mb-6">
+        Create fulfillment intents for multiple orders in a single request. Useful for cart-style checkout flows. Failed items return an error field rather than aborting the whole batch.
+      </p>
+
+      <Endpoint
+        method="POST"
+        path="/v1/intents/checkout"
+        description="Batch fulfill intent creation. Accepts up to 20 order hashes. Per-item error handling — failed items return { orderHash, error } instead of rejecting the entire request."
+        params={[
+          { name: "fulfiller", type: "string", required: true, desc: "Fulfiller Starknet address" },
+          { name: "orderHashes", type: "string[]", required: true, desc: "Array of order hashes to fulfill (max 20)" },
+        ]}
+        curl={`curl -X POST "${BASE}/v1/intents/checkout" \\
+  -H "x-api-key: ${KEY}" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "fulfiller": "0x0482...",
+    "orderHashes": ["0xabc...", "0xdef..."]
+  }'`}
+        response={`{
+  "data": [
+    {
+      "id": "clm_xyz001",
+      "orderHash": "0xabc...",
+      "typedData": { "types": { ... }, "primaryType": "Order", "domain": { ... }, "message": { ... } },
+      "calls": [...],
+      "expiresAt": "2026-03-12T10:15:00Z"
+    },
+    {
+      "orderHash": "0xdef...",
+      "error": "Order no longer available"
+    }
+  ]
+}`}
+      />
+
       {/* ── METADATA ── */}
       <DocH2 id="metadata" border>Metadata</DocH2>
 
@@ -637,6 +708,112 @@ export default function ApiReferencePage() {
   ]
 }`}
       />
+
+      {/* ── EVENTS (SSE) ── */}
+      <DocH2 id="events" border>Events (SSE)</DocH2>
+      <p className="text-sm text-muted-foreground mb-6">
+        Subscribe to a real-time Server-Sent Events stream for transfers, order lifecycle events, and keepalive pings. Authentication uses a query parameter since browsers cannot send custom headers with the native <code className="font-mono text-xs bg-white/10 px-1.5 py-0.5 rounded">EventSource</code> API. PREMIUM plan recommended for sustained connections.
+      </p>
+
+      <Endpoint
+        method="GET"
+        path="/v1/events"
+        description="Open a Server-Sent Events stream. The server sends transfer, order.created, order.fulfilled, order.cancelled, and ping (keepalive every 15s) events. Automatically reconnects after 10 minutes via a reconnect event."
+        params={[
+          { name: "apiKey", type: "string", required: true, desc: "Your API key (query param — required because EventSource cannot send custom headers)" },
+          { name: "since", type: "string", desc: "ISO 8601 timestamp — resume stream from this point in time" },
+        ]}
+        curl={`# Open the stream (cURL streams until closed)
+curl -N "${BASE}/v1/events?apiKey=${KEY}"
+
+# Resume from a specific timestamp
+curl -N "${BASE}/v1/events?apiKey=${KEY}&since=2026-03-12T10:00:00Z"
+
+# Resume using Last-Event-ID header (standard SSE resume)
+curl -N "${BASE}/v1/events?apiKey=${KEY}" \\
+  -H "Last-Event-ID: evt_abc123"`}
+        response={`id: evt_001
+event: transfer
+data: {"contractAddress":"0x05e7...","tokenId":"42","from":"0x0000...","to":"0x0591...","txHash":"0xabc...","timestamp":"2026-03-12T10:00:01Z"}
+
+id: evt_002
+event: order.created
+data: {"orderHash":"0x04f7a1...","nftContract":"0x05e7...","tokenId":"42","price":"500000","currency":"USDC","offerer":"0x0591..."}
+
+id: evt_003
+event: order.fulfilled
+data: {"orderHash":"0x04f7a1...","fulfiller":"0x0482...","txHash":"0xdef..."}
+
+id: evt_004
+event: order.cancelled
+data: {"orderHash":"0x04f7a1...","offerer":"0x0591..."}
+
+id: evt_005
+event: ping
+data: {}
+
+event: reconnect
+data: {}`}
+      />
+
+      <div className="mb-10 space-y-4">
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Browser (native EventSource)</p>
+        <div className="rounded-lg bg-black/50 border border-white/10">
+          <pre className="p-4 text-xs font-mono text-green-300/90 overflow-x-auto whitespace-pre">{`const url = \`${BASE}/v1/events?apiKey=\${YOUR_KEY}\`
+const source = new EventSource(url)
+
+source.addEventListener("transfer", (e) => {
+  const transfer = JSON.parse(e.data)
+  console.log("Transfer:", transfer.contractAddress, transfer.tokenId)
+})
+
+source.addEventListener("order.fulfilled", (e) => {
+  const order = JSON.parse(e.data)
+  console.log("Order fulfilled:", order.orderHash)
+})
+
+source.addEventListener("order.created", (e) => {
+  const order = JSON.parse(e.data)
+  console.log("New listing:", order.orderHash, order.price, order.currency)
+})
+
+// Reconnect with resume on error
+source.addEventListener("error", () => {
+  const lastId = source.lastEventId
+  source.close()
+  const resumeUrl = \`${BASE}/v1/events?apiKey=\${YOUR_KEY}\${lastId ? \`&since=\${lastId}\` : ""}\`
+  // reconnect: new EventSource(resumeUrl)
+})`}</pre>
+        </div>
+
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mt-4">Node.js (eventsource npm package)</p>
+        <div className="rounded-lg bg-black/50 border border-white/10">
+          <pre className="p-4 text-xs font-mono text-green-300/90 overflow-x-auto whitespace-pre">{`import EventSource from "eventsource"
+
+const url = \`${BASE}/v1/events?apiKey=\${YOUR_KEY}\`
+const source = new EventSource(url)
+
+source.addEventListener("order.fulfilled", (e) => {
+  const order = JSON.parse(e.data)
+  console.log("Order fulfilled:", order.orderHash)
+})
+
+source.addEventListener("ping", () => {
+  // keepalive — no action needed
+})
+
+source.addEventListener("reconnect", () => {
+  // server is closing after 10 min — reconnect
+  source.close()
+  new EventSource(\`${BASE}/v1/events?apiKey=\${YOUR_KEY}\`)
+})
+
+// Resume from a known point using Last-Event-ID
+const resumeSource = new EventSource(url, {
+  headers: { "Last-Event-ID": "evt_abc123" },
+})`}</pre>
+        </div>
+      </div>
 
       {/* ── PORTAL ── */}
       <DocH2 id="portal" border>Portal (Self-service)</DocH2>

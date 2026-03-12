@@ -10,6 +10,21 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
   {
+    date: "2026-03-12",
+    title: "Backend v0.2.0 + SDK v0.4.0",
+    tag: "Release",
+    items: [
+      "Batch token fetch: GET /v1/tokens/batch — fetch up to 50 tokens in one request",
+      "Batch checkout intent: POST /v1/intents/checkout — fulfill up to 20 orders at once with per-item error handling",
+      "Real-time SSE stream: GET /v1/events — subscribe to transfers, order lifecycle events, and keepalive pings",
+      "Search upgraded to PostgreSQL full-text with ts_rank relevance scoring",
+      "SDK v0.4.0: typed error codes (MedialaneErrorCode) on all errors — MedialaneError and MedialaneApiError now expose .code",
+      "SDK v0.4.0: automatic retry with exponential backoff — configurable via retryOptions (maxAttempts, baseDelayMs, maxDelayMs); 4xx errors not retried",
+      "SDK v0.4.0: Sepolia network guard — throws NETWORK_NOT_SUPPORTED unless contract addresses are explicitly provided",
+      "SDK v0.4.0: CollectionSort named type — \"recent\" | \"supply\" | \"floor\" | \"volume\" | \"name\"",
+    ],
+  },
+  {
     date: "2026-03-01",
     title: "Portal v1 Launch",
     tag: "Launch",
